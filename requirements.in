@@ -3,3 +3,5 @@ pyaudio
 click
 trio
 lark
+toml
+importlib_resources

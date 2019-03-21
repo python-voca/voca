@@ -1,7 +1,12 @@
+import pathlib
 import subprocess
+import importlib_resources
+import sys
 
-import attr
 import trio
+import toml
+
+import intervoice
 
 
 async def run_subprocess(command, *, input=None, capture_output=False, **options):
@@ -69,9 +74,25 @@ class Registry:
 registry = Registry()
 
 
+def get_pronunciation(word):
+    text = importlib_resources.read_text(intervoice, "pronunciation.toml")
+    return toml.loads(text)[word]
+
+
 @registry.register
 async def say(message):
-    await run_subprocess(["notify-send", *message])
+    await run_subprocess(["notify-send", " ".join(message)])
+
+
+async def press(chord):
+    await run_subprocess(["xdotool", "key", chord])
+
+
+@registry.register
+async def switch(message):
+    [message] = message
+    key = get_pronunciation(message)
+    await press(f"super+{key}")
 
 
 async def handle_message(message):
@@ -79,6 +100,9 @@ async def handle_message(message):
     try:
         function = registry.mapping[command]
     except KeyError:
-        print('Unknown command', message)
+        print("Unknown command", message)
         return
-    await function(body)
+    try:
+        await function(body)
+    except Exception:
+        print(sys.exc_info())
