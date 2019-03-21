@@ -1,3 +1,5 @@
+import sys
+
 from intervoice import utils
 
 
@@ -18,3 +20,8 @@ async def switch(message):
     [message] = message
     key = utils.pronunciation_to_value()[message]
     await press(f"super+{key}")
+
+
+@registry.register
+async def reload(message):
+    sys.exit(3)

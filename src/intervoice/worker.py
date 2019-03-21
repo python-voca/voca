@@ -3,27 +3,36 @@ import functools
 import sys
 import os
 
+
+import eliot
 import trio
 import toml
 
+
 from intervoice import utils
-from intervoice import reader
+from intervoice import streaming
 
 
-async def _handle_message(registry, message):
-    print(os.getpid(), message)
+@utils.log_call
+async def handle_message(registry, message):
+
     command, *body = message.split()
     try:
         function = registry.mapping[command]
     except KeyError:
-        print("Unknown command", message)
+        eliot.Message.log(
+            message_type="unknown_command", message=message, registry=registry
+        )
+
         return
-    try:
-        await function(body)
-    except Exception:
-        print(sys.exc_info())
+    with eliot.start_action(action_type="run_command", command=command, body=body):
+        try:
+            await function(body)
+        except Exception:
+            eliot.write_traceback(exc_info=sys.exc_info())
 
 
+@utils.log_call
 def collect_modules(import_paths):
     modules = []
     for path in import_paths:
@@ -31,6 +40,7 @@ def collect_modules(import_paths):
     return modules
 
 
+@utils.log_call
 def combine_modules(modules):
     registry = utils.Registry()
     for module in modules:
@@ -38,23 +48,26 @@ def combine_modules(modules):
     return registry
 
 
+@utils.log_call
 def build_handler(registry):
-    message_handler = lambda message: _handle_message(
-        registry=registry, message=message
-    )
-    return lambda stream: reader.handle_stream(message_handler, stream)
+    def message_handler(message):
+        return handle_message(registry=registry, message=message)
+
+    return lambda stream: streaming.handle_stream(message_handler, stream)
 
 
-async def async_main(handle_message, stream_path):
-    print(os.getpid(), 'listening to ', stream_path)
-    await reader.serve_unix_domain(handler=handle_message, path=stream_path)
+@utils.log_call
+async def async_main(message_handler, stream_path):
+    await streaming.serve_unix_domain(handler=message_handler, path=stream_path)
 
 
+@utils.log_call
 def main(import_paths, socket_path):
-    print("worker", os.getpid(), "running")
+
     modules = collect_modules(import_paths)
     registry = combine_modules(modules)
     handler = build_handler(registry)
+
     trio.run(
-        functools.partial(async_main, handle_message=handler, stream_path=socket_path)
+        functools.partial(async_main, message_handler=handler, stream_path=socket_path)
     )

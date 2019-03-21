@@ -20,7 +20,7 @@ import click
 
 from intervoice import app
 from intervoice import mic
-from intervoice import reader
+from intervoice import manager
 from intervoice import worker
 
 
@@ -44,10 +44,10 @@ def _(**kwargs):
     mic.run(args=types.SimpleNamespace(**kwargs), path=path, content_type=content_type)
 
 
-@cli.command("read")
+@cli.command("manage")
 @click.argument("path", type=click.Path())
 def _(**kwargs):
-    reader.main(**kwargs)
+    manager.main(**kwargs)
 
 
 @cli.command("worker")

@@ -5,3 +5,5 @@ trio
 lark
 toml
 importlib_resources
+six
+eliot
