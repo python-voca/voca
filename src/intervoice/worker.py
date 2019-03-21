@@ -1,6 +1,7 @@
 import importlib
 import functools
 import sys
+import os
 
 import trio
 import toml
@@ -10,6 +11,7 @@ from intervoice import reader
 
 
 async def _handle_message(registry, message):
+    print(os.getpid(), message)
     command, *body = message.split()
     try:
         function = registry.mapping[command]
@@ -44,10 +46,12 @@ def build_handler(registry):
 
 
 async def async_main(handle_message, stream_path):
+    print(os.getpid(), 'listening to ', stream_path)
     await reader.serve_unix_domain(handler=handle_message, path=stream_path)
 
 
 def main(import_paths, socket_path):
+    print("worker", os.getpid(), "running")
     modules = collect_modules(import_paths)
     registry = combine_modules(modules)
     handler = build_handler(registry)
