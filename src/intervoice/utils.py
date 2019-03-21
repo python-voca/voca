@@ -1,12 +1,24 @@
-import pathlib
-import subprocess
 import importlib_resources
-import sys
+import subprocess
 
-import trio
 import toml
+import trio
 
 import intervoice
+
+
+class Registry:
+    def __init__(self, mapping=None):
+        self.mapping = mapping or {}
+
+    def register(self, function):
+        self.mapping[function.__name__] = function
+        return function
+
+
+def pronunciation_to_value():
+    text = importlib_resources.read_text(intervoice, "pronunciation.toml")
+    return toml.loads(text)
 
 
 async def run_subprocess(command, *, input=None, capture_output=False, **options):
@@ -54,55 +66,3 @@ async def run_subprocess(command, *, input=None, capture_output=False, **options
         )
     else:
         return subprocess.CompletedProcess(proc.args, proc.returncode, stdout, stderr)
-
-
-async def sleep_for(i, length):
-    print(i, "sleeping for", length)
-    await trio.sleep(length)
-    print(i, "woke up")
-
-
-class Registry:
-    def __init__(self, mapping=None):
-        self.mapping = mapping or {}
-
-    def register(self, function):
-        self.mapping[function.__name__] = function
-        return function
-
-
-registry = Registry()
-
-
-def get_pronunciation(word):
-    text = importlib_resources.read_text(intervoice, "pronunciation.toml")
-    return toml.loads(text)[word]
-
-
-@registry.register
-async def say(message):
-    await run_subprocess(["notify-send", " ".join(message)])
-
-
-async def press(chord):
-    await run_subprocess(["xdotool", "key", chord])
-
-
-@registry.register
-async def switch(message):
-    [message] = message
-    key = get_pronunciation(message)
-    await press(f"super+{key}")
-
-
-async def handle_message(message):
-    command, *body = message.split()
-    try:
-        function = registry.mapping[command]
-    except KeyError:
-        print("Unknown command", message)
-        return
-    try:
-        await function(body)
-    except Exception:
-        print(sys.exc_info())

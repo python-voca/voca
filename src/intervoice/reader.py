@@ -5,7 +5,6 @@ import itertools
 
 import trio
 
-from . import handlers
 
 BUFSIZE = 2 ** 14
 counter = itertools.count()
@@ -119,14 +118,13 @@ numbers = {
 }
 
 
-
-async def handle_stream(stream):
+async def handle_stream(handle_message, stream):
 
     receiver = TerminatedFrameReceiver(stream, b"\n")
     async with trio.open_nursery() as nursery:
         async for message in receiver:
             text = message.decode()
-            nursery.start_soon(handlers.handle_message, text)
+            nursery.start_soon(handle_message, text)
 
 
 async def async_main(path):

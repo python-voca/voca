@@ -21,6 +21,7 @@ import click
 from intervoice import app
 from intervoice import mic
 from intervoice import reader
+from intervoice import worker
 
 
 @click.group()
@@ -47,3 +48,10 @@ def _(**kwargs):
 @click.argument("path", type=click.Path())
 def _(**kwargs):
     reader.main(**kwargs)
+
+
+@cli.command("worker")
+@click.option("import_paths", "-i", multiple=True)
+@click.argument("socket_path")
+def _(**kwargs):
+    worker.main(**kwargs)
