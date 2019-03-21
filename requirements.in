@@ -1,3 +1,5 @@
 ws4py
 pyaudio
 click
+trio
+lark
