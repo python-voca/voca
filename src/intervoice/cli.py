@@ -54,6 +54,5 @@ def _manage(**kwargs):
 
 @cli.command("worker")
 @click.option("import_paths", "-i", multiple=True)
-@click.argument("socket_path")
 def _worker(**kwargs):
     worker.main(**kwargs)

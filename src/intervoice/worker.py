@@ -39,30 +39,24 @@ def collect_modules(import_paths):
 
 
 @log.log_call
-def build_handler(combo):
-    async def message_handler(message):
-        message = json.loads(message)
+async def async_main(message_handler):
+    stream = trio._unix_pipes.PipeReceiveStream(os.dup(0))
+    receiver = streaming.TerminatedFrameReceiver(stream, b"\n")
+
+    async for message_bytes in receiver:
+        message = json.loads(message_bytes.decode())
         try:
             with eliot.Action.continue_task(task_id=message["eliot_task_id"]):
-                await handle_message(combo=combo, message=message["body"])
+                await handle_message(combo=message_handler, message=message["body"])
         except Exception:
             pass
 
-    return lambda stream: streaming.handle_stream(message_handler, stream)
-
 
 @log.log_call
-async def async_main(message_handler, stream_path):
-    await streaming.serve_unix_domain(handler=message_handler, path=stream_path)
-
-
-@log.log_call
-def main(import_paths, socket_path):
+def main(import_paths):
 
     modules = collect_modules(import_paths)
     registry = parsing.combine_modules(modules)
-    handler = build_handler(registry)
 
-    trio.run(
-        functools.partial(async_main, message_handler=handler, stream_path=socket_path)
-    )
+
+    trio.run(functools.partial(async_main, message_handler=registry))
