@@ -69,6 +69,7 @@ async def make_worker(import_paths, socket_path, task_status=trio.TASK_STATUS_IG
 
 @log.log_call
 async def make_pool(nursery, import_paths, socket_paths):
+    # TODO Use standard streams instead of unix domain sockets.
     for socket_path in socket_paths:
         nursery.start_soon(make_worker, import_paths, socket_path)
 
