@@ -20,17 +20,19 @@ from intervoice import parsing
 @log.log_call
 async def handle_message(combo, message):
     try:
-        tree = combo.parser.parse(message)
+        with eliot.start_action(action_type="parse_command"):
+            tree = combo.parser.parse(message)
     except lark.exceptions.UnexpectedCharacters:
-        eliot.write_traceback(exc_info=sys.exc_info())
         return
 
     command, args = parsing.extract(tree)
     function = combo.rule_name_to_function[command]
+
     try:
-        return await function(args)
+        with eliot.start_action(action_type="call_user_function"):
+            return await function(args)
     except Exception as e:
-        eliot.write_traceback(exc_info=sys.exc_info())
+        pass
 
 
 @log.log_call
