@@ -2,8 +2,8 @@ ws4py
 pyaudio
 click
 trio
-lark
 toml
 importlib_resources
 six
 eliot
+lark-parser

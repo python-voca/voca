@@ -5,4 +5,4 @@ run (){
     venv/bin/intervoice mic | nc -U /tmp/intervoice/sock
 }
 
-run 2>/dev/null
+run

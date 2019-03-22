@@ -11,6 +11,7 @@ import eliot
 from intervoice import utils
 from intervoice import plugins
 from intervoice import streaming
+from intervoice import log
 
 
 def find_modules():
@@ -22,7 +23,7 @@ def find_modules():
     return modules
 
 
-@utils.log_call
+@log.log_call
 async def make_worker(import_paths, socket_path, task_status=trio.TASK_STATUS_IGNORED):
     options = []
     for path in import_paths:
@@ -40,13 +41,13 @@ async def make_worker(import_paths, socket_path, task_status=trio.TASK_STATUS_IG
                 raise
 
 
-@utils.log_call
+@log.log_call
 async def make_pool(nursery, import_paths, socket_paths):
     for socket_path in socket_paths:
         nursery.start_soon(make_worker, import_paths, socket_path)
 
 
-@utils.log_call
+@log.log_call
 async def delegate_stream(stream):
     receiver = streaming.TerminatedFrameReceiver(stream, b"\n")
     socket_paths = [f"/tmp/intervoice/{i}" for i in range(3)]
@@ -63,11 +64,11 @@ async def delegate_stream(stream):
                 await worker_socket.send_all(message + b"\n")
 
 
-@utils.log_call
+@log.log_call
 async def async_main(path):
     await streaming.serve_unix_domain(handler=delegate_stream, path=path)
 
 
-@utils.log_call
+@log.log_call
 def main(path):
     trio.run(functools.partial(async_main, path=path))
