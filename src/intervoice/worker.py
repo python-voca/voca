@@ -3,7 +3,7 @@ import functools
 import sys
 import os
 import textwrap
-
+import json
 
 import eliot
 import trio
@@ -19,20 +19,15 @@ from intervoice import parsing
 
 @log.log_call
 async def handle_message(combo, message):
-    try:
-        with eliot.start_action(action_type="parse_command"):
-            tree = combo.parser.parse(message)
-    except lark.exceptions.UnexpectedCharacters:
-        return
+
+    with eliot.start_action(action_type="parse_command"):
+        tree = combo.parser.parse(message)
 
     command, args = parsing.extract(tree)
     function = combo.rule_name_to_function[command]
 
-    try:
-        with eliot.start_action(action_type="call_user_function"):
-            return await function(args)
-    except Exception as e:
-        pass
+    with eliot.start_action(action_type="call_user_function"):
+        return await function(args)
 
 
 @log.log_call
@@ -45,8 +40,13 @@ def collect_modules(import_paths):
 
 @log.log_call
 def build_handler(combo):
-    def message_handler(message):
-        return handle_message(combo=combo, message=message)
+    async def message_handler(message):
+        message = json.loads(message)
+        try:
+            with eliot.Action.continue_task(task_id=message["eliot_task_id"]):
+                await handle_message(combo=combo, message=message["body"])
+        except Exception:
+            pass
 
     return lambda stream: streaming.handle_stream(message_handler, stream)
 

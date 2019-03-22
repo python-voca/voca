@@ -4,6 +4,7 @@ import itertools
 import sys
 import pathlib
 import subprocess
+import json
 
 import trio
 import eliot
@@ -31,6 +32,7 @@ async def make_worker(import_paths, socket_path, task_status=trio.TASK_STATUS_IG
     options = []
     for path in import_paths:
         options += ["-i", path]
+
     original_command = [
         sys.executable,
         "-m",
@@ -83,13 +85,20 @@ async def delegate_stream(stream):
         await make_pool(nursery, find_modules(plugins), socket_paths)
         await trio.sleep(2)
         worker_socket = await trio.open_unix_socket(socket_paths[0])
-        async for message in receiver:
-            try:
-                await worker_socket.send_all(message + b"\n")
-            except trio.BrokenResourceError:
-                await trio.sleep(1)
-                worker_socket = await trio.open_unix_socket(socket_paths[0])
-                await worker_socket.send_all(message + b"\n")
+        async for input_message in receiver:
+            with eliot.start_action() as action:
+                output_message = json.dumps(
+                    {
+                        "eliot_task_id": action.serialize_task_id().decode(),
+                        "body": input_message.decode(),
+                    }
+                ).encode()
+                try:
+                    await worker_socket.send_all(output_message + b"\n")
+                except trio.BrokenResourceError:
+                    await trio.sleep(1)
+                    worker_socket = await trio.open_unix_socket(socket_paths[0])
+                    await worker_socket.send_all(output_message + b"\n")
 
 
 @log.log_call
