@@ -69,33 +69,6 @@ class TerminatedFrameReceiver:
             raise StopAsyncIteration
 
 
-async def open_unix_domain_listeners(path, *, permissions=None):
-    sock = trio.socket.socket(trio.socket.AF_UNIX, trio.socket.SOCK_STREAM)
-    try:
-        os.unlink(path)
-    except OSError:
-        pass
-    await sock.bind(path)
-    if permissions is not None:
-        os.fchmod(sock.fileno(), permissions)
-    sock.listen(100)
-    return [trio.SocketListener(sock)]
-
-
-async def serve_unix_domain(
-    handler,
-    path,
-    *,
-    permissions=None,
-    handler_nursery=None,
-    task_status=trio.TASK_STATUS_IGNORED,
-):
-    listeners = await open_unix_domain_listeners(path, permissions=permissions)
-    await trio.serve_listeners(
-        handler, listeners, handler_nursery=handler_nursery, task_status=task_status
-    )
-
-
 async def handle_stream(handle_message, stream):
 
     receiver = TerminatedFrameReceiver(stream, b"\n")

@@ -73,7 +73,8 @@ async def delegate_stream(stream):
 
 @log.log_call
 async def async_main(path):
-    await streaming.serve_unix_domain(handler=delegate_stream, path=path)
+    stream = trio._unix_pipes.PipeReceiveStream(os.dup(0))
+    await delegate_stream(stream)
 
 
 @log.log_call
