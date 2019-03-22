@@ -37,6 +37,6 @@ async def _reload(message):
     sys.exit(3)
 
 
-@registry.register('"announce"')
-async def announce(message):
-    await _say(["ab"])
+@registry.register('"stop"')
+async def _stop(message):
+    sys.exit(4)

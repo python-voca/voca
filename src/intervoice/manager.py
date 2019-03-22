@@ -31,15 +31,38 @@ async def make_worker(import_paths, socket_path, task_status=trio.TASK_STATUS_IG
     options = []
     for path in import_paths:
         options += ["-i", path]
-    command = [sys.executable, "-m", "intervoice", "worker", *options, socket_path]
+    original_command = [
+        sys.executable,
+        "-m",
+        "intervoice",
+        "worker",
+        *options,
+        socket_path,
+    ]
+    command = original_command
     while True:
         try:
             await utils.run_subprocess(command)
         except subprocess.CalledProcessError as e:
             if e.returncode == 3:
                 eliot.Message.log(
-                    message_type="restarting_worker", socket_path=socket_path
+                    message_type="restarting_worker",
+                    socket_path=socket_path,
+                    returncode=e.returncode,
                 )
+                command = original_command
+            elif e.returncode == 4:
+                eliot.Message.log(message_type="stop_voice")
+                command = [
+                    sys.executable,
+                    "-m",
+                    "intervoice",
+                    "worker",
+                    "-i",
+                    "intervoice.plugins.stopstart",
+                    socket_path,
+                ]
+
             else:
                 raise
 
