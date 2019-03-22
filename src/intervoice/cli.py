@@ -18,6 +18,7 @@ import types
 
 import click
 
+
 from intervoice import app
 from intervoice import mic
 from intervoice import manager
@@ -37,7 +38,7 @@ def cli(**kwargs):
 @click.option("--save-adaptation-state", type=bool)
 @click.option("--send-adaptation-state", type=bool)
 @click.option("--audio-gate", default=0, type=int)
-def _(**kwargs):
+def _mic(**kwargs):
     content_type = "audio/x-raw, layout=(string)interleaved, rate=(int)16000, format=(string)S16LE, channels=(int)1"
     path = "client/ws/speech"
 
@@ -46,12 +47,12 @@ def _(**kwargs):
 
 @cli.command("manage")
 @click.argument("path", type=click.Path())
-def _(**kwargs):
+def _manage(**kwargs):
     manager.main(**kwargs)
 
 
 @cli.command("worker")
 @click.option("import_paths", "-i", multiple=True)
 @click.argument("socket_path")
-def _(**kwargs):
+def _worker(**kwargs):
     worker.main(**kwargs)

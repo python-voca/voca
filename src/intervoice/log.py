@@ -4,6 +4,7 @@ import functools
 import json
 import sys
 import inspect
+import os
 
 import attr
 import eliot
@@ -100,6 +101,3 @@ def log_call(
             return result
 
     return logging_wrapper
-
-
-eliot.add_destinations(json_to_file(sys.stdout))
