@@ -8,7 +8,7 @@ registry = utils.Registry()
 
 registry.define(
     {
-        "?text": "/\w.+/",
+        "?text": r"/\w.+/",
         "key": utils.regex("|".join(utils.pronunciation_to_value().keys())),
         "chord": 'key ("+" chord)*',
     }
