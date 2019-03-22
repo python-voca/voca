@@ -47,7 +47,6 @@ def _mic(**kwargs):
 
 
 @cli.command("manage")
-@click.argument("path", type=click.Path())
 def _manage(**kwargs):
     manager.main(**kwargs)
 

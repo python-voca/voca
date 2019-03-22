@@ -72,11 +72,11 @@ async def delegate_stream(stream):
 
 
 @log.log_call
-async def async_main(path):
+async def async_main():
     stream = trio._unix_pipes.PipeReceiveStream(os.dup(0))
     await delegate_stream(stream)
 
 
 @log.log_call
-def main(path):
-    trio.run(functools.partial(async_main, path=path))
+def main():
+    trio.run(functools.partial(async_main))
