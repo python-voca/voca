@@ -58,5 +58,4 @@ def main(import_paths):
     modules = collect_modules(import_paths)
     registry = parsing.combine_modules(modules)
 
-
     trio.run(functools.partial(async_main, message_handler=registry))
