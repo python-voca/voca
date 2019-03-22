@@ -26,6 +26,7 @@ from intervoice import worker
 
 
 @click.group()
+@click.option('--log/--no-log', is_flag=True, default=True)
 def cli(**kwargs):
     app.main(**kwargs)
 

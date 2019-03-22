@@ -3,9 +3,10 @@ import sys
 
 import eliot
 
-from intervoice import log
+import intervoice.log
 
 
-def main():
+def main(log):
     eliot.add_global_fields(pid=os.getpid(), argv=sys.argv)
-    eliot.add_destinations(log.json_to_file(sys.stdout))
+    if log:
+        eliot.add_destinations(intervoice.log.json_to_file(sys.stdout))
