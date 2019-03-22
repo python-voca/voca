@@ -8,18 +8,21 @@ import subprocess
 import trio
 import eliot
 
-from intervoice import utils
 from intervoice import plugins
+from intervoice import utils
 from intervoice import streaming
 from intervoice import log
 
 
-def find_modules():
+def find_modules(package):
     modules = []
-    for path in (pathlib.Path(__file__).parent / "plugins").iterdir():
-        if not path.name.endswith("__init__.py"):
-            module = "intervoice.plugins." + path.name.split(".")[0]
-            modules.append(module)
+    for path in package.__path__:
+        for child in pathlib.Path(path).iterdir():
+            if child.is_dir() or child.is_file() and child.suffix == ".py":
+                rel_path = child.relative_to(path)
+                name = ".".join(rel_path.parts[:-1] + (rel_path.stem,))
+                module = package.__name__ + "." + name
+                modules.append(module)
     return modules
 
 
@@ -52,7 +55,7 @@ async def delegate_stream(stream):
     receiver = streaming.TerminatedFrameReceiver(stream, b"\n")
     socket_paths = [f"/tmp/intervoice/{i}" for i in range(3)]
     async with trio.open_nursery() as nursery:
-        await make_pool(nursery, find_modules(), socket_paths)
+        await make_pool(nursery, find_modules(plugins), socket_paths)
         await trio.sleep(2)
         worker_socket = await trio.open_unix_socket(socket_paths[0])
         async for message in receiver:
