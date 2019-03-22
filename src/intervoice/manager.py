@@ -76,6 +76,7 @@ async def make_pool(nursery, import_paths, socket_paths):
 @log.log_call
 async def delegate_stream(stream):
     receiver = streaming.TerminatedFrameReceiver(stream, b"\n")
+    # TODO This is insecure. Use TemporaryDirectory.
     socket_paths = [f"/tmp/intervoice/{i}" for i in range(3)]
     async with trio.open_nursery() as nursery:
         await make_pool(nursery, find_modules(plugins), socket_paths)

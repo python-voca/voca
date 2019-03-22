@@ -66,8 +66,21 @@ Installation
 Documentation
 =============
 
+* Prerequisites:
+  - kaldi/silvius server. Also available online.
+  - Python 3
 
-https://python-intervoice.readthedocs.io/
+Install
+~~~~~~~
+
+- git clone this repo and cd inside
+- ./run-kaldi-server.sh
+- pip install intervoice
+- intervoice mic &
+- intervoice manage
+
+
+
 
 
 Development
