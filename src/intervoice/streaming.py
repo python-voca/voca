@@ -1,5 +1,9 @@
+from __future__ import annotations
+
 import itertools
 import os
+
+from typing import Callable
 
 import trio
 
@@ -26,14 +30,19 @@ class TerminatedFrameReceiver:
 
     """
 
-    def __init__(self, stream, terminator, max_frame_length=16384):
+    def __init__(
+        self,
+        stream: trio.abc.ReceiveStream,
+        terminator: bytes,
+        max_frame_length: int = 16384,
+    ) -> None:
         self.stream = stream
         self.terminator = terminator
         self.max_frame_length = max_frame_length
         self._buf = bytearray()
         self._next_find_idx = 0
 
-    async def receive(self):
+    async def receive(self) -> bytearray:
         while True:
             terminator_idx = self._buf.find(self.terminator, self._next_find_idx)
             if terminator_idx < 0:
@@ -59,17 +68,17 @@ class TerminatedFrameReceiver:
                 self._next_find_idx = 0
                 return frame
 
-    def __aiter__(self):
+    def __aiter__(self) -> TerminatedFrameReceiver:
         return self
 
-    async def __anext__(self):
+    async def __anext__(self) -> bytearray:
         try:
             return await self.receive()
         except trio.EndOfChannel:
             raise StopAsyncIteration
 
 
-async def handle_stream(handle_message, stream):
+async def handle_stream(handle_message: Callable, stream: trio.abc.ReceiveStream):
 
     receiver = TerminatedFrameReceiver(stream, b"\n")
     async with trio.open_nursery() as nursery:

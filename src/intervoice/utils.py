@@ -2,8 +2,16 @@ import importlib_resources
 import subprocess
 import types
 
-import attr
+from typing import Any
+from typing import List
+from typing import Dict
+from typing import Optional
+from typing import Callable
+from typing import MutableMapping
+from typing import Mapping
 
+
+import attr
 import toml
 import trio
 import lark
@@ -13,35 +21,37 @@ import intervoice
 
 @attr.s
 class Registry:
-    pattern_to_function = attr.ib(factory=dict)
-    patterns = attr.ib(factory=dict)
+    pattern_to_function: MutableMapping[str, Callable] = attr.ib(factory=dict)
+    patterns: MutableMapping = attr.ib(factory=dict)
 
-    def register(self, pattern):
-        def _register(function):
+    def register(self, pattern: str) -> Callable:
+        def _register(function: Callable) -> Callable:
             self.pattern_to_function[pattern] = function
             return function
 
         return _register
 
-    def define(self, patterns=None, **kwargs):
+    def define(self, patterns: Optional[Mapping[str, str]] = None, **kwargs):
         if patterns:
             self.patterns.update(patterns)
         self.patterns.update(kwargs)
 
 
-def pronunciation_to_value():
+def pronunciation_to_value() -> MutableMapping[str, Any]:
     text = importlib_resources.read_text(intervoice, "pronunciation.toml")
     return toml.loads(text)
 
 
-async def run_subprocess(command, *, input=None, capture_output=False, **options):
+async def run_subprocess(
+    command: List[str], *, input=None, capture_output=False, **options
+):
     if input is not None:
         options["stdin"] = subprocess.PIPE
     if capture_output:
         options["stdout"] = options["stderr"] = subprocess.PIPE
 
-    stdout_chunks = []
-    stderr_chunks = []
+    stdout_chunks: List = []
+    stderr_chunks: List = []
 
     async with trio.Process(command, **options) as proc:
 
@@ -81,7 +91,7 @@ async def run_subprocess(command, *, input=None, capture_output=False, **options
         return subprocess.CompletedProcess(proc.args, proc.returncode, stdout, stderr)
 
 
-def quote(word):
+def quote(word: str) -> str:
     if word.startswith('"'):
         return f"'{word}'"
     return f'"{word}"'
@@ -102,4 +112,4 @@ class Handler:
 class Rule:
     name: str
     pattern: str
-    function: types.FunctionType
+    function: Callable

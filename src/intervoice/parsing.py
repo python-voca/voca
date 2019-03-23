@@ -1,6 +1,16 @@
+from __future__ import annotations
+
+
 import textwrap
+import types
+
+from typing import Tuple
+from typing import List
+from typing import Iterable
+
 
 import lark
+
 
 from intervoice import log
 from intervoice import utils
@@ -18,13 +28,13 @@ class Transformer(lark.Transformer):
 
 
 @log.log_call
-def extract(tree):
+def extract(tree: lark.Tree) -> Tuple[str, List]:
     tree = Transformer().transform(tree)
     return tree.data, tree.children
 
 
 @log.log_call
-def build_rules(registry):
+def build_rules(registry: utils.Registry) -> List[utils.Rule]:
     rules = []
     for i, (pattern, function) in enumerate(registry.pattern_to_function.items()):
         name = f"rule_{i}"
@@ -34,7 +44,7 @@ def build_rules(registry):
 
 
 @log.log_call
-def build_grammar(registry, rules):
+def build_grammar(registry: utils.Registry, rules: List[utils.Rule]) -> str:
 
     start = "?start : message"
 
@@ -61,7 +71,7 @@ def build_grammar(registry, rules):
 
 
 @log.log_call
-def combine_modules(modules):
+def combine_modules(modules: Iterable[types.ModuleType]):
     registry = utils.Registry()
     for module in modules:
         registry.pattern_to_function.update(module.registry.pattern_to_function)

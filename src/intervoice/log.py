@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import collections
 import contextlib
 import functools
@@ -5,6 +7,14 @@ import json
 import sys
 import inspect
 import os
+import io
+
+from typing import Optional
+from typing import Callable
+from typing import Any
+from typing import Union
+from typing import Iterable
+
 
 import attr
 import eliot
@@ -12,14 +22,14 @@ import six
 
 
 @functools.singledispatch
-def to_serializable(obj):
+def to_serializable(obj: Any) -> Union[str, list, dict, int, float]:
     try:
         return attr.asdict(obj)
     except attr.exceptions.NotAnAttrsClassError:
         return str(obj)
 
 
-def json_to_file(file=None):
+def json_to_file(file: Optional[io.TextIOWrapper] = None) -> Callable:
 
     if file is None:
         file = sys.stdout
@@ -31,8 +41,11 @@ def json_to_file(file=None):
 
 
 def log_call(
-    wrapped_function=None, action_type=None, include_args=None, include_result=True
-):
+    wrapped_function: Optional[Callable] = None,
+    action_type: Optional[str] = None,
+    include_args: Optional[Iterable[str]] = None,
+    include_result: bool = True,
+) -> Callable:
     """Decorator/decorator factory that logs inputs and the return result.
     If used with inputs (i.e. as a decorator factory), it accepts the following
     parameters:

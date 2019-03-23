@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import functools
 import os
 import itertools
@@ -16,6 +18,11 @@ from intervoice import streaming
 from intervoice import log
 
 
+from trio import Process
+from trio._unix_pipes import PipeReceiveStream
+from typing import List
+
+
 def find_modules(package):
     modules = []
     for path in package.__path__:
@@ -28,7 +35,7 @@ def find_modules(package):
     return modules
 
 
-def worker_cli(modules=None):
+def worker_cli(modules: None = None) -> List[str]:
     if modules is None:
         modules = find_modules(plugins)
 
@@ -40,7 +47,7 @@ def worker_cli(modules=None):
 
 
 @log.log_call
-async def delegate_messages(stream, child):
+async def delegate_messages(stream: PipeReceiveStream, child: Process):
     async for message in streaming.TerminatedFrameReceiver(stream, b"\n"):
         with eliot.start_action() as action:
             wrapped_message = json.dumps(
@@ -53,7 +60,7 @@ async def delegate_messages(stream, child):
 
 
 @log.log_call
-async def replay_child_messages(child):
+async def replay_child_messages(child: Process) -> None:
     async for message_from_child in streaming.TerminatedFrameReceiver(
         child.stdout, b"\n"
     ):
@@ -61,7 +68,7 @@ async def replay_child_messages(child):
 
 
 @log.log_call
-async def delegate_stream(stream):
+async def delegate_stream(stream: PipeReceiveStream):
 
     async with trio.Process(
         worker_cli(), stdin=subprocess.PIPE, stdout=subprocess.PIPE
