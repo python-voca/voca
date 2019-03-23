@@ -1,4 +1,4 @@
-import importlib_resources
+import functools
 import subprocess
 import types
 
@@ -9,12 +9,14 @@ from typing import Optional
 from typing import Callable
 from typing import MutableMapping
 from typing import Mapping
+from typing import Awaitable
 
 
 import attr
 import toml
 import trio
 import lark
+import importlib_resources
 
 import intervoice
 
@@ -113,3 +115,14 @@ class Rule:
     name: str
     pattern: str
     function: Callable
+
+
+def async_runner(async_function: Callable):
+    def build(*args, **kwargs) -> Callable:
+        @functools.wraps(async_function)
+        async def run(_message: str):
+            await async_function(*args, **kwargs)
+
+        return run
+
+    return build

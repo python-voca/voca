@@ -1,6 +1,11 @@
+import functools
 import sys
 
+
 from typing import List
+from typing import Callable
+from typing import Coroutine
+from typing import Awaitable
 
 from intervoice import utils
 
@@ -48,3 +53,10 @@ async def _reload(message: str):
 @registry.register('"stop"')
 async def _stop(message: str):
     sys.exit(4)
+
+
+key: Callable = utils.async_runner(press)
+
+
+registry.pattern_to_function['"monitor"'] = key("M")
+registry.pattern_to_function['"mouse"'] = key("O")
