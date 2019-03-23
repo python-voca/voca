@@ -6,4 +6,4 @@ toml
 importlib_resources
 six
 eliot
-lark-parser
+-e git+https://github.com/lark-parser/lark.git#egg=lark-parser

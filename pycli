@@ -69,7 +69,8 @@ def init(cfg):
         check=True,
     )
     subprocess.run(
-        [cfg.venv_path / "bin/pip", "install", "--editable", "."], check=True
+        [cfg.venv_path / "bin/pip", "install", "--no-deps", "--editable", "."],
+        check=True,
     )
 
 
@@ -80,10 +81,11 @@ def lock(cfg):
     subprocess.run(
         [
             cfg.venv_path / "bin/pip-compile",
-            "--generate-hashes",
+            # TODO Generate hashes once lark is released
+            # "--generate-hashes",
             "--output-file",
             "requirements.txt",
-            "setup.py",
+            "requirements.in",
         ],
         check=True,
     )
@@ -94,7 +96,6 @@ def lock(cfg):
                 "--generate-hashes",
                 "--output-file",
                 "dev-requirements.txt",
-                "setup.py",
                 "dev-requirements.in",
             ],
             check=True,

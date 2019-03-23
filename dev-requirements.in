@@ -5,7 +5,8 @@ tox
 versioneer
 flake8
 pylint
-# mypy
 black
 pex
 bump2version
+trio-typing
+mypy

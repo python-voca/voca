@@ -25,7 +25,7 @@ def read(*names, **kwargs):
 
 try:
     with open("requirements.in") as f:
-        INSTALL_REQUIRES = f.read().splitlines()
+        INSTALL_REQUIRES = [line for line in f.read().splitlines() if line[0].isalpha()]
 except FileNotFoundError:
     print(sys.exc_info())
     INSTALL_REQUIRES = []
