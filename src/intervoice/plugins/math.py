@@ -13,6 +13,7 @@ registry.define({"?math": r"/[A-Za-z0-9\-\+ ]+/"})
 
 
 @registry.register('"solve" math')
+@registry.register('"arch" math')
 async def _solve(items: List[str]):
 
     [message] = items
