@@ -1,3 +1,4 @@
+import re
 import functools
 import subprocess
 import types
@@ -126,3 +127,9 @@ def async_runner(async_function: Callable):
         return run
 
     return build
+
+
+def replace(message):
+    lookup = pronunciation_to_value()
+    pattern = re.compile(r"\b(" + "|".join(lookup.keys()) + r")\b")
+    return pattern.sub(lambda x: lookup[x.group()], message)

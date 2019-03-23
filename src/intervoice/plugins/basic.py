@@ -25,6 +25,10 @@ async def press(chord: str):
     await utils.run_subprocess(["xdotool", "key", chord])
 
 
+async def speak(message):
+    await utils.run_subprocess(["say", message])
+
+
 @registry.register('"say" chord')
 async def _say(message: List[str]):
     [chord_string] = message
@@ -33,7 +37,7 @@ async def _say(message: List[str]):
 
 
 @registry.register('"announce" text')
-async def _announce(text: List[str]):
+async def announce(text: List[str]):
     await utils.run_subprocess(["notify-send", " ".join(text)])
 
 

@@ -56,6 +56,7 @@ def _listen(**kwargs):
 
 
 @cli.command("manage")
+@click.option("--import-path", "-i", "module_names", multiple=True, default=None)
 def _manage(**kwargs):
     manager.main(**kwargs)
 

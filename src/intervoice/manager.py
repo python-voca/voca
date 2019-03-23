@@ -8,6 +8,9 @@ import pathlib
 import subprocess
 import json
 
+from typing import List
+from typing import Optional
+
 import attr
 import trio
 import eliot
@@ -16,11 +19,6 @@ from intervoice import plugins
 from intervoice import utils
 from intervoice import streaming
 from intervoice import log
-
-
-from trio import Process
-from trio._unix_pipes import PipeReceiveStream
-from typing import List
 
 
 def find_modules(package):
@@ -35,19 +33,19 @@ def find_modules(package):
     return modules
 
 
-def worker_cli(modules: None = None) -> List[str]:
-    if modules is None:
-        modules = find_modules(plugins)
+def worker_cli(module_names: Optional[List[str]] = None) -> List[str]:
+    if module_names is None:
+        module_names = find_modules(plugins)
 
     prefix = [sys.executable, "-m", "intervoice", "worker"]
     command = prefix.copy()
-    for module in modules:
-        command += ["-i", module]
+    for module_name in module_names:
+        command += ["-i", module_name]
     return command
 
 
 @log.log_call
-async def delegate_messages(stream: PipeReceiveStream, child: Process):
+async def delegate_messages(stream: trio.abc.ReceiveStream, child: trio.Process):
     async for message in streaming.TerminatedFrameReceiver(stream, b"\n"):
         with eliot.start_action() as action:
             wrapped_message = json.dumps(
@@ -60,7 +58,7 @@ async def delegate_messages(stream: PipeReceiveStream, child: Process):
 
 
 @log.log_call
-async def replay_child_messages(child: Process) -> None:
+async def replay_child_messages(child: trio.Process) -> None:
     async for message_from_child in streaming.TerminatedFrameReceiver(
         child.stdout, b"\n"
     ):
@@ -68,22 +66,41 @@ async def replay_child_messages(child: Process) -> None:
 
 
 @log.log_call
-async def delegate_stream(stream: PipeReceiveStream):
+async def delegate_stream(
+    stream: trio.abc.ReceiveStream, module_names: Optional[List[str]] = None
+):
 
     async with trio.Process(
-        worker_cli(), stdin=subprocess.PIPE, stdout=subprocess.PIPE
+        worker_cli(module_names), stdin=subprocess.PIPE, stdout=subprocess.PIPE
     ) as child:
-        async with trio.open_nursery() as nursery:
-            nursery.start_soon(delegate_messages, stream, child)
-            nursery.start_soon(replay_child_messages, child)
+        try:
+            async with trio.open_nursery() as nursery:
+                nursery.start_soon(delegate_messages, stream, child)
+                nursery.start_soon(replay_child_messages, child)
+        except trio.BrokenResourceError:
+            pass
+
+        return child
 
 
 @log.log_call
-async def async_main():
+async def async_main(module_names: Optional[List[str]]):
     stream = trio._unix_pipes.PipeReceiveStream(os.dup(0))
-    await delegate_stream(stream)
+    default_module_names = None
+    module_names = default_module_names
+    while True:
+
+        with eliot.start_action():
+            child = await delegate_stream(stream, module_names)
+
+        if child.returncode == 3:
+            module_names = default_module_names
+        elif child.returncode == 4:
+            module_names = ["intervoice.plugins.startstop"]
+        else:
+            raise ValueError(child)
 
 
 @log.log_call
-def main():
-    trio.run(functools.partial(async_main))
+def main(module_names: Optional[List[str]]):
+    trio.run(functools.partial(async_main, module_names))

@@ -27,14 +27,24 @@ from intervoice import parsing
 @log.log_call
 async def handle_message(combo: utils.Handler, message: str):
 
-    with eliot.start_action(action_type="parse_command"):
-        tree = combo.parser.parse(message)
+    with eliot.start_action(action_type="parse_command") as action:
+        try:
+            tree = combo.parser.parse(message)
+        except Exception as e:
+            action.finish(e)
+            raise
 
     command, args = parsing.extract(tree)
     function = combo.rule_name_to_function[command]
 
-    with eliot.start_action(action_type="call_user_function"):
-        return await function(args)
+    with eliot.start_action(
+        action_type="call_user_function", function_name=function.__name__
+    ) as action:
+        try:
+            await function(args)
+        except Exception as e:
+            action.finish(e)
+            raise
 
 
 @log.log_call
@@ -53,10 +63,10 @@ async def async_main(message_handler: utils.Handler):
     async for message_bytes in receiver:
         message = json.loads(message_bytes.decode())
         try:
-            with eliot.Action.continue_task(task_id=message["eliot_task_id"]):
+            with eliot.Action.continue_task(task_id=message["eliot_task_id"]) as action:
                 await handle_message(combo=message_handler, message=message["body"])
-        except Exception:
-            pass
+        except Exception as e:
+            action.finish(e)
 
 
 @log.log_call
