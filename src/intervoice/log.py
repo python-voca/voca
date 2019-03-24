@@ -8,13 +8,14 @@ import sys
 import inspect
 import os
 import io
+import traceback
 
 from typing import Optional
 from typing import Callable
 from typing import Any
 from typing import Union
 from typing import Iterable
-
+from typing import Container
 
 import attr
 import eliot
@@ -38,6 +39,22 @@ def json_to_file(file: Optional[io.TextIOWrapper] = None) -> Callable:
         print(json.dumps(x, default=to_serializable), file=file)
 
     return _json_to_file
+
+
+def _exception_lines(exc: BaseException):
+    return traceback.format_exception(type(exc), exc, exc.__traceback__)
+
+
+def _exception_data(exc: BaseException):
+    exclude = set(dir(Exception())) - {"args", "__cause__", "__context__"}
+    return {k: v for k, v in inspect.getmembers(exc) if k not in exclude}
+
+
+def summarize_exception(exc: BaseException):
+    return {
+        "exception_lines": _exception_lines(exc),
+        "exception_data": _exception_data(exc),
+    }
 
 
 def log_call(
