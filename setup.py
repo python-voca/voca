@@ -48,7 +48,7 @@ setup(
     author="Full Name",
     author_email="email@example.com",
     url="https://github.com/githubuser/python-intervoice",
-    packages=list(find_packages("src")) + [f"{NAME}.plugins"],
+    packages=list(find_packages("src")),
     package_dir={"": "src"},
     py_modules=[splitext(basename(path))[0] for path in glob("src/*.py")],
     include_package_data=True,
@@ -87,5 +87,11 @@ setup(
         #   'rst': ['docutils>=0.11'],
         #   ':python_version=="2.6"': ['argparse'],
     },
-    entry_points={"console_scripts": ["intervoice = intervoice.cli:cli"]},
+    entry_points={
+        "console_scripts": ["intervoice = intervoice.cli:cli"],
+        "intervoice_plugins": [
+            "basic = intervoice.plugins:basic",
+            "math = intervoice.plugins:math",
+        ],
+    },
 )

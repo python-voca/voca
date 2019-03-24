@@ -21,21 +21,11 @@ from intervoice import streaming
 from intervoice import log
 
 
-def find_modules(package):
-    modules = []
-    for path in package.__path__:
-        for child in pathlib.Path(path).iterdir():
-            if child.is_dir() or child.is_file() and child.suffix == ".py":
-                rel_path = child.relative_to(path)
-                name = ".".join(rel_path.parts[:-1] + (rel_path.stem,))
-                module = package.__name__ + "." + name
-                modules.append(module)
-    return modules
 
 
 def worker_cli(module_names: Optional[List[str]] = None) -> List[str]:
     if module_names is None:
-        module_names = find_modules(plugins)
+        module_names = utils.plugin_module_paths()
 
     prefix = [sys.executable, "-m", "intervoice", "worker"]
     command = prefix.copy()

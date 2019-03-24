@@ -2,6 +2,8 @@ import re
 import functools
 import subprocess
 import types
+import importlib
+
 
 from typing import Any
 from typing import List
@@ -17,7 +19,9 @@ import attr
 import toml
 import trio
 import lark
+import pkg_resources
 import importlib_resources
+
 
 import intervoice
 
@@ -133,3 +137,10 @@ def replace(message):
     lookup = pronunciation_to_value()
     pattern = re.compile(r"\b(" + "|".join(lookup.keys()) + r")\b")
     return pattern.sub(lambda x: lookup[x.group()], message)
+
+
+def plugin_module_paths() -> List[str]:
+    return [
+        entry_point.module_name + "." + entry_point.name
+        for entry_point in pkg_resources.iter_entry_points("intervoice_plugins")
+    ]

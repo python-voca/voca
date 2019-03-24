@@ -64,3 +64,7 @@ key: Callable = utils.async_runner(press)
 
 registry.pattern_to_function['"monitor"'] = key("M")
 registry.pattern_to_function['"mouse"'] = key("O")
+
+@registry.register('"div0"')
+async def _div0(*args):
+    1/0
