@@ -21,8 +21,6 @@ from intervoice import streaming
 from intervoice import log
 
 
-
-
 def worker_cli(module_names: Optional[List[str]] = None) -> List[str]:
     if module_names is None:
         module_names = utils.plugin_module_paths()
