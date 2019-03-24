@@ -94,8 +94,7 @@ async def run_subprocess(
         raise subprocess.CalledProcessError(
             proc.returncode, proc.args, output=stdout, stderr=stderr
         )
-    else:
-        return subprocess.CompletedProcess(proc.args, proc.returncode, stdout, stderr)
+    return subprocess.CompletedProcess(proc.args, proc.returncode, stdout, stderr)
 
 
 def quote(word: str) -> str:
@@ -133,7 +132,7 @@ def async_runner(async_function: Callable):
     return build
 
 
-def replace(message):
+def replace(message: str) -> str:
     lookup = pronunciation_to_value()
     pattern = re.compile(r"\b(" + "|".join(lookup.keys()) + r")\b")
     return pattern.sub(lambda x: lookup[x.group()], message)
