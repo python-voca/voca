@@ -12,12 +12,14 @@ click==7.0
 eliot==1.7.0
 idna==2.8                 # via trio
 importlib-resources==1.0.2
+mpmath==1.1.0             # via sympy
 outcome==1.0.0            # via trio
 pyaudio==0.2.11
 pyrsistent==0.14.11       # via eliot
 six==1.12.0
 sniffio==1.0.0            # via trio
 sortedcontainers==2.1.0   # via trio
+sympy==1.3
 toml==0.10.0
 trio==0.11.0
 ws4py==0.5.1

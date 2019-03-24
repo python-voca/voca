@@ -7,3 +7,4 @@ importlib_resources
 six
 eliot
 -e git+https://github.com/lark-parser/lark.git#egg=lark-parser
+sympy
