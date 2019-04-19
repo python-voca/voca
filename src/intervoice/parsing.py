@@ -51,7 +51,7 @@ def build_grammar(registry: utils.Registry, rules: List[utils.Rule]) -> str:
     message = "?message : " + "|".join(rule.name for rule in rules)
 
     rules_segment = "\n".join([f"{rule.name} : {rule.pattern}" for rule in rules])
-    patterns_segment = "\n".join([f"{k}:{v}" for k, v in registry.patterns.items()])
+    patterns_segment = "\n".join([f"{k} : {v}" for k, v in registry.patterns.items()])
     body = "\n".join([message, rules_segment, patterns_segment])
 
     imports = textwrap.dedent(
