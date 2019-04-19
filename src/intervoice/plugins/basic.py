@@ -38,7 +38,7 @@ async def _say(message: List[str]):
 
 @registry.register('"announce" text')
 async def announce(text: List[str]):
-    await utils.run_subprocess(["notify-send", " ".join(text)])
+    await utils.run_subprocess(["dbus-launch", "notify-send", " ".join(text)])
 
 
 @registry.register('"switch" chord')
