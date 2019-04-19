@@ -56,6 +56,8 @@ def build_grammar(registry: utils.Registry, rules: List[utils.Rule]) -> str:
 
     imports = textwrap.dedent(
         """\
+
+
         %import common.ESCAPED_STRING
         %import common.SIGNED_NUMBER
         %import common.WS
