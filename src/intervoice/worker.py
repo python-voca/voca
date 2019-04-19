@@ -58,7 +58,9 @@ async def async_main(message_handler: utils.Handler):
     async for message_bytes in receiver:
         message = json.loads(message_bytes.decode())
         try:
-            with eliot.Action.continue_task(task_id=message["eliot_task_id"]) as action:
+            with eliot.Action.continue_task(
+                task_id=message.get("eliot_task_id", "@")
+            ) as action:
                 await handle_message(combo=message_handler, message=message["body"])
         except Exception as e:
             action.finish(e)
