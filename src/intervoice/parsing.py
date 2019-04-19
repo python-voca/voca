@@ -34,6 +34,13 @@ def extract(tree: lark.Tree) -> Tuple[str, List]:
 
 
 @log.log_call
+def extract_commands(tree: lark.Tree) -> Tuple[str, List]:
+    tree = Transformer().transform(tree)
+
+    return tree.children
+
+
+@log.log_call
 def build_rules(registry: utils.Registry) -> List[utils.Rule]:
     rules = []
     for i, (pattern, function) in enumerate(registry.pattern_to_function.items()):
@@ -46,13 +53,15 @@ def build_rules(registry: utils.Registry) -> List[utils.Rule]:
 @log.log_call
 def build_grammar(registry: utils.Registry, rules: List[utils.Rule]) -> str:
 
-    start = "?start : message"
+    start = "?start : message_group"
+
+    message_group = "message_group : message+"
 
     message = "?message : " + "|".join(rule.name for rule in rules)
 
     rules_segment = "\n".join([f"{rule.name} : {rule.pattern}" for rule in rules])
     patterns_segment = "\n".join([f"{k} : {v}" for k, v in registry.patterns.items()])
-    body = "\n".join([message, rules_segment, patterns_segment])
+    body = "\n".join([message_group, message, rules_segment, patterns_segment])
 
     imports = textwrap.dedent(
         """\

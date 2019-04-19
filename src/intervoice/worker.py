@@ -28,23 +28,18 @@ from intervoice import parsing
 async def handle_message(combo: utils.Handler, message: str):
 
     with eliot.start_action(action_type="parse_command") as action:
-        try:
-            tree = combo.parser.parse(message)
-        except Exception as e:
-            action.finish(e)
-            raise
 
-    command, args = parsing.extract(tree)
-    function = combo.rule_name_to_function[command]
+        tree = combo.parser.parse(message)
 
-    with eliot.start_action(
-        action_type="call_user_function", function_name=function.__name__
-    ) as action:
-        try:
+    commands = parsing.extract_commands(tree)
+
+    for command in commands:
+        rule_name, args = command.data, command.children
+        function = combo.rule_name_to_function[rule_name]
+        with eliot.start_action(
+            action_type="run_command", command=rule_name, args=args, function=function
+        ):
             await function(args)
-        except Exception as e:
-            action.finish(e)
-            raise
 
 
 @log.log_call
