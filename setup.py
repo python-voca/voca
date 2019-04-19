@@ -92,6 +92,7 @@ setup(
         "intervoice_plugins": [
             "basic = intervoice.plugins:basic",
             "math = intervoice.plugins:math",
+            "python = intervoice.plugins:python"
         ],
     },
 )

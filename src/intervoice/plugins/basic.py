@@ -25,6 +25,10 @@ async def press(chord: str):
     await utils.run_subprocess(["xdotool", "key", chord])
 
 
+async def write(message: str):
+    await utils.run_subprocess(["xdotool", "type", message])
+
+
 async def speak(message):
     await utils.run_subprocess(["say", message])
 
