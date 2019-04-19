@@ -21,11 +21,12 @@ from intervoice import streaming
 from intervoice import log
 
 
-def worker_cli(module_names: Optional[List[str]] = None) -> List[str]:
+def worker_cli(should_log, module_names: Optional[List[str]] = None) -> List[str]:
     if module_names is None:
         module_names = utils.plugin_module_paths()
 
-    prefix = [sys.executable, "-m", "intervoice", "worker"]
+    log_arg = "--log" if should_log else "--no-log"
+    prefix = [sys.executable, "-m", "intervoice", log_arg, "worker"]
     command = prefix.copy()
     for module_name in module_names:
         command += ["-i", module_name]
@@ -55,11 +56,15 @@ async def replay_child_messages(child: trio.Process) -> None:
 
 @log.log_call
 async def delegate_stream(
-    stream: trio.abc.ReceiveStream, module_names: Optional[List[str]] = None
+    stream: trio.abc.ReceiveStream,
+    should_log: bool,
+    module_names: Optional[List[str]] = None,
 ):
 
     async with trio.Process(
-        worker_cli(module_names), stdin=subprocess.PIPE, stdout=subprocess.PIPE
+        worker_cli(should_log, module_names),
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
     ) as child:
         try:
             async with trio.open_nursery() as nursery:
@@ -72,14 +77,14 @@ async def delegate_stream(
 
 
 @log.log_call
-async def async_main(module_names: Optional[List[str]]):
+async def async_main(should_log, module_names: Optional[List[str]]):
     stream = trio._unix_pipes.PipeReceiveStream(os.dup(0))
     default_module_names = None
     module_names = default_module_names
     while True:
 
         with eliot.start_action():
-            child = await delegate_stream(stream, module_names)
+            child = await delegate_stream(stream, should_log, module_names)
 
         if child.returncode == 3:
             module_names = default_module_names
@@ -90,5 +95,5 @@ async def async_main(module_names: Optional[List[str]]):
 
 
 @log.log_call
-def main(module_names: Optional[List[str]]):
-    trio.run(functools.partial(async_main, module_names))
+def main(should_log, module_names: Optional[List[str]]):
+    trio.run(functools.partial(async_main, should_log, module_names))

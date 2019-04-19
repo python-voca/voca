@@ -6,9 +6,9 @@ import eliot
 import intervoice.log
 
 
-def main(log):
+def main(should_log):
 
-    if not log:
+    if not should_log:
         return
 
     eliot.add_global_fields(pid=os.getpid(), argv=sys.argv)

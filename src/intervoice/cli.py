@@ -27,8 +27,10 @@ from intervoice import worker
 
 
 @click.group()
-@click.option("--log/--no-log", is_flag=True, default=True)
-def cli(**kwargs):
+@click.option("--log/--no-log", "should_log", is_flag=True, default=True)
+@click.pass_context
+def cli(ctx, **kwargs):
+    ctx.obj = kwargs.copy()
     app.main(**kwargs)
 
 
@@ -57,11 +59,13 @@ def _listen(**kwargs):
 
 @cli.command("manage")
 @click.option("--import-path", "-i", "module_names", multiple=True, default=None)
-def _manage(**kwargs):
-    manager.main(**kwargs)
+@click.pass_obj
+def _manage(obj, **kwargs):
+    manager.main(**obj, **kwargs)
 
 
 @cli.command("worker")
 @click.option("import_paths", "-i", multiple=True)
-def _worker(**kwargs):
+@click.pass_obj
+def _worker(obj, **kwargs):
     worker.main(**kwargs)
