@@ -20,6 +20,8 @@ mapping = {
         + Key("enter"),
         rdescript="Python: Try Catch",
     ),
+    "name": R(Text('if __name__ == "__main__":\n\t'), rdescript="Python: name==main"),
 }
+
 
 registry = add_to_registry(mapping, registry)
