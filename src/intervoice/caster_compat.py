@@ -10,7 +10,7 @@ from intervoice.plugins import basic
 
 
 class AsyncActionType(Protocol):
-    async def aexecute(self, arg=None) -> None:
+    async def execute(self, arg=None) -> None:
         ...
 
 
@@ -35,7 +35,7 @@ class RegisteredAction:
     instruction: AsyncActionType = attr.ib()
     rdescript: Optional[str] = attr.ib(default=None)
 
-    async def execute(self, arg=None):
+    async def execute(self, arg=None) -> None:
         await self.instruction.execute(arg)
 
 
