@@ -18,7 +18,7 @@ class AsyncActionType(Protocol):
 class TextAction:
     text: str
 
-    async def execute(self, arg):
+    async def execute(self, arg=None) -> None:
         await basic.write(self.text.format_map(arg))
 
 
