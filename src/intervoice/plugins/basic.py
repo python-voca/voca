@@ -52,17 +52,6 @@ async def _switch(message: List[str]):
     await press(f"super+{chord_value}")
 
 
-@registry.register('"act"')
-@registry.register('"reload"')
-async def _reload(message: str):
-    sys.exit(3)
-
-
-@registry.register('"stop"')
-async def _stop(message: str):
-    sys.exit(4)
-
-
 key: Callable = utils.async_runner(press)
 
 

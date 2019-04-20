@@ -25,7 +25,8 @@ from intervoice import parsing
 
 
 @log.log_call
-async def handle_message(combo: utils.Handler, message: str):
+async def handle_message(combo: utils.Handler, data: dict):
+    message = data["result"]["hypotheses"][0]["transcript"]
 
     with eliot.start_action(action_type="parse_command") as action:
 
@@ -56,14 +57,15 @@ async def async_main(message_handler: utils.Handler):
     receiver = streaming.TerminatedFrameReceiver(stream, b"\n")
 
     async for message_bytes in receiver:
-        message = json.loads(message_bytes.decode())
+        data = json.loads(message_bytes.decode())
         try:
             with eliot.Action.continue_task(
-                task_id=message.get("eliot_task_id", "@")
+                task_id=data.get("eliot_task_id", "@")
             ) as action:
-                await handle_message(combo=message_handler, message=message["body"])
+                await handle_message(combo=message_handler, data=data)
         except Exception as e:
             action.finish(e)
+            raise
 
 
 @log.log_call
