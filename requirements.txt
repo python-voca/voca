@@ -14,8 +14,15 @@ idna==2.8                 # via trio
 importlib-resources==1.0.2
 mpmath==1.1.0             # via sympy
 outcome==1.0.0            # via trio
+pillow==6.0.0             # via pyautogui, pyscreeze
 pyaudio==0.2.11
+pyautogui==0.9.42
+pygetwindow==0.0.4        # via pyautogui
+pymsgbox==1.0.6           # via pyautogui
+pyrect==0.1.4             # via pygetwindow
 pyrsistent==0.14.11       # via eliot
+pyscreeze==0.1.20         # via pyautogui
+pytweening==1.0.3         # via pyautogui
 six==1.12.0
 sniffio==1.0.0            # via trio
 sortedcontainers==2.1.0   # via trio

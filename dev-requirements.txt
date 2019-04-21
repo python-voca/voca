@@ -17,7 +17,7 @@ bump2version==0.5.10
 certifi==2019.3.9         # via requests
 cffi==1.12.2              # via sounddevice
 chardet==3.0.4            # via requests
-click==7.0                # via black, cuvner
+click==7.0                # via black, cuvner, pip-tools
 coverage==4.5.3
 cuvner==18.0.1
 cycler==0.10.0            # via matplotlib
@@ -39,6 +39,7 @@ numpy==1.16.2             # via matplotlib
 outcome==1.0.0            # via trio
 pathtools==0.1.2          # via watchdog
 pex==1.6.3
+pip-tools==3.6.0
 pkginfo==1.5.0.1          # via twine
 pluggy==0.9.0             # via pytest, tox
 py==1.8.0                 # via pytest, tox
@@ -53,10 +54,11 @@ pytest==4.3.1
 python-dateutil==2.8.0    # via matplotlib
 python-xlib==0.25         # via sneakysnek
 pyyaml==5.1               # via watchdog
+q==2.6
 readme-renderer==24.0     # via twine
 requests-toolbelt==0.9.1  # via twine
 requests==2.21.0          # via requests-toolbelt, twine
-six==1.12.0               # via astroid, bleach, cuvner, cycler, pytest, python-dateutil, python-xlib, readme-renderer, tox
+six==1.12.0               # via astroid, bleach, cuvner, cycler, pip-tools, pytest, python-dateutil, python-xlib, readme-renderer, tox
 sneakysnek==0.1.1
 sniffio==1.0.0            # via trio
 sortedcontainers==2.1.0   # via trio

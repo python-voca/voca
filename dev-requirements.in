@@ -16,3 +16,4 @@ pytest-cov
 twine
 sneakysnek
 pip-tools
+q
