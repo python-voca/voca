@@ -45,6 +45,7 @@ setup(
         ),
         re.sub(":[a-z]+:`~?(.*?)`", r"``\1``", read("CHANGELOG.rst")),
     ),
+    long_description_content_type="text/x-rst",
     author="Full Name",
     author_email="email@example.com",
     url="https://github.com/githubuser/python-intervoice",
@@ -92,7 +93,7 @@ setup(
         "intervoice_plugins": [
             "basic = intervoice.plugins:basic",
             "math = intervoice.plugins:math",
-            "python = intervoice.plugins:python"
+            "python = intervoice.plugins:python",
         ],
     },
 )

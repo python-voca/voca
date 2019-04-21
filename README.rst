@@ -63,6 +63,7 @@ Installation
 
     pip install intervoice
 
+
 Documentation
 =============
 
@@ -70,8 +71,10 @@ Documentation
   - kaldi/silvius server. Also available online.
   - Python 3
 
-Install
-~~~~~~~
+
+
+Development
+===========
 
 - git clone this repo and cd inside
 - ./run-kaldi-server.sh
@@ -79,12 +82,6 @@ Install
 - intervoice mic &
 - intervoice manage
 
-
-
-
-
-Development
-===========
 
 To run the all tests run::
 
