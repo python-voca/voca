@@ -42,11 +42,12 @@ pex==1.6.3
 pip-tools==3.6.0
 pkginfo==1.5.0.1          # via twine
 pluggy==0.9.0             # via pytest, tox
+pudb==2018.1
 py==1.8.0                 # via pytest, tox
 pycodestyle==2.5.0        # via flake8
 pycparser==2.19           # via cffi
 pyflakes==2.1.1           # via flake8
-pygments==2.3.1           # via cuvner, readme-renderer
+pygments==2.3.1           # via cuvner, pudb, readme-renderer
 pylint==2.3.1
 pyparsing==2.4.0          # via matplotlib
 pytest-cov==2.6.1
@@ -73,6 +74,7 @@ typed-ast==1.3.1          # via astroid, mypy
 typing-extensions==3.7.2  # via trio-typing
 unidiff==0.5.5            # via cuvner
 urllib3==1.24.2           # via requests
+urwid==2.0.1              # via pudb
 versioneer==0.18
 virtualenv==16.4.3        # via tox
 watchdog==0.9.0           # via cuvner
