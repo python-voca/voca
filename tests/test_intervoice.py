@@ -75,7 +75,7 @@ def _virtual_display():
 
 @pytest.mark.usefixtures("virtual_display")
 def test_manage():
-    utterances = ["say alpha", "say bravo", "say charlie"]
+    utterances = ["say alpha", "say bravo", "say charlie", "say delta"]
 
     rows = [make_command(utterance) for utterance in utterances]
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
@@ -83,5 +83,5 @@ def test_manage():
     with capture_typed() as typed:
         helpers.run(["manage"], input=lines)
 
-    expected = ["KEY_A", "KEY_B", "KEY_C"]
+    expected = ["KEY_A", "KEY_B", "KEY_C", "KEY_D"]
     assert typed == expected

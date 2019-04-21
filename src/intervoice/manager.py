@@ -89,17 +89,13 @@ class Pool:
 
 
 @log.log_call
-async def run_worker(data, state, pool, nursery):
+async def run_worker(data, state, pool):
 
     with eliot.start_action(action_type="run_with_work") as action:
         worker = pool.get_process()
 
-        nursery.start_soon(
-            functools.partial(
-                delegate_task, data=data, state=state, worker=worker, action=action
-            )
-        )
-        nursery.start_soon(replay_child_messages, worker)
+        await delegate_task(data=data, state=state, worker=worker, action=action)
+        await replay_child_messages(worker)
 
         await worker.wait()
         pool.add_new_process()
@@ -113,27 +109,22 @@ async def process_stream(receiver, num_workers, should_log, module_names):
     pool = Pool(num_workers, should_log=should_log, module_names=module_names)
     pool.start()
 
-    async with trio.open_nursery() as nursery:
-        async for message in receiver:
-            with eliot.start_action(state=state):
-                # Handle state changes.
-                data = json.loads(message.decode())
-                maybe_new_state = set_state(data, state)
-                if maybe_new_state is not None:
-                    state = maybe_new_state
-                    continue
+    async for message in receiver:
+        with eliot.start_action(state=state):
+            # Handle state changes.
+            data = json.loads(message.decode())
+            maybe_new_state = set_state(data, state)
+            if maybe_new_state is not None:
+                state = maybe_new_state
+                continue
 
-                # This logic could be moved into worker/plugin to allow for more modes.
-                if not data["result"]["final"] and state["modes"]["strict"]:
-                    continue
-                if data["result"]["final"] and not state["modes"]["strict"]:
-                    continue
+            # This logic could be moved into worker/plugin to allow for more modes.
+            if not data["result"]["final"] and state["modes"]["strict"]:
+                continue
+            if data["result"]["final"] and not state["modes"]["strict"]:
+                continue
 
-                nursery.start_soon(
-                    functools.partial(
-                        run_worker, data=data, state=state, pool=pool, nursery=nursery
-                    )
-                )
+            await run_worker(data=data, state=state, pool=pool)
 
 
 @log.log_call
