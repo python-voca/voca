@@ -68,6 +68,7 @@ async def async_main(message_handler: utils.Handler):
             action.finish(e)
             raise
 
+        sys.exit(0)
 
 @log.log_call
 def main(import_paths: Tuple[str]):

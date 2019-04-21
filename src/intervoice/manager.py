@@ -64,34 +64,55 @@ async def delegate_task(data, worker, state, action):
     await worker.stdin.send_all(json.dumps(wrapped_data).encode() + b"\n")
 
 
-@log.log_call
-async def run_worker(data, should_log, module_names, state, limiter, nursery):
+@attr.s
+class Pool:
+    max_workers: int = attr.ib(default=1)
+    should_log: bool = attr.ib(default=True)
+    module_names: list = attr.ib(factory=list)
+    processes: set = attr.ib(factory=set)
 
-    async with limiter:
+    def start(self):
+        for _ in range(self.max_workers):
+            self.add_new_process()
 
-        with eliot.start_action(action_type="run_worker") as action:
+    def get_process(self):
+        return self.processes.pop()
 
-            worker = trio.Process(
-                worker_cli(should_log, module_names),
+    def add_new_process(self):
+        self.processes.add(
+            trio.Process(
+                worker_cli(self.should_log, self.module_names),
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
             )
+        )
 
-            nursery.start_soon(
-                functools.partial(
-                    delegate_task, data=data, state=state, worker=worker, action=action
-                )
+
+@log.log_call
+async def run_worker(data, state, pool, nursery):
+
+    with eliot.start_action(action_type="run_with_work") as action:
+        worker = pool.get_process()
+
+        nursery.start_soon(
+            functools.partial(
+                delegate_task, data=data, state=state, worker=worker, action=action
             )
-            nursery.start_soon(replay_child_messages, worker)
+        )
+        nursery.start_soon(replay_child_messages, worker)
 
-            await worker.wait()
+        await worker.wait()
+        pool.add_new_process()
 
 
 @log.log_call
 async def process_stream(receiver, max_workers, should_log, module_names):
 
     state = {"modes": {"strict": True}}
-    limiter = trio.CapacityLimiter(max_workers)
+
+    pool = Pool(max_workers, should_log=should_log, module_names=module_names)
+    pool.start()
+
     async with trio.open_nursery() as nursery:
         async for message in receiver:
             with eliot.start_action(state=state):
@@ -110,21 +131,9 @@ async def process_stream(receiver, max_workers, should_log, module_names):
 
                 nursery.start_soon(
                     functools.partial(
-                        run_worker,
-                        data=data,
-                        should_log=should_log,
-                        module_names=module_names,
-                        state=state,
-                        limiter=limiter,
-                        nursery=nursery,
+                        run_worker, data=data, state=state, pool=pool, nursery=nursery
                     )
                 )
-
-
-@attr.s
-class Pool:
-    processes: set = attr.ib(factory=set)
-    limiter: trio.CapacityLimiter = attr.ib(default=lambda n: trio.CapacityLimiter(n))
 
 
 @log.log_call
