@@ -51,11 +51,13 @@ pyparsing==2.4.0          # via matplotlib
 pytest-cov==2.6.1
 pytest==4.3.1
 python-dateutil==2.8.0    # via matplotlib
+python-xlib==0.25         # via sneakysnek
 pyyaml==5.1               # via watchdog
 readme-renderer==24.0     # via twine
 requests-toolbelt==0.9.1  # via twine
 requests==2.21.0          # via requests-toolbelt, twine
-six==1.12.0               # via astroid, bleach, cuvner, cycler, pytest, python-dateutil, readme-renderer, tox
+six==1.12.0               # via astroid, bleach, cuvner, cycler, pytest, python-dateutil, python-xlib, readme-renderer, tox
+sneakysnek==0.1.1
 sniffio==1.0.0            # via trio
 sortedcontainers==2.1.0   # via trio
 sounddevice==0.3.13

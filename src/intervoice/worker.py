@@ -58,7 +58,7 @@ async def async_main(message_handler: utils.Handler):
 
     async for message_bytes in receiver:
         data = json.loads(message_bytes.decode())
-        print("worker got", data, file=sys.stderr)
+
         try:
             with eliot.Action.continue_task(
                 task_id=data.get("eliot_task_id", "@")
