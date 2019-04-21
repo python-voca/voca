@@ -8,7 +8,7 @@ from typing import Coroutine
 from typing import Awaitable
 
 from intervoice import utils
-
+from intervoice import platforms
 
 registry = utils.Registry()
 
@@ -21,12 +21,19 @@ registry.define(
 )
 
 
+@platforms.implementation(platforms.Platform.LINUX)
 async def press(chord: str):
     await utils.run_subprocess(["xdotool", "key", chord])
 
 
+@platforms.implementation(platforms.Platform.LINUX)
 async def write(message: str):
     await utils.run_subprocess(["xdotool", "type", message])
+
+
+@platforms.implementation(platforms.Platform.LINUX)
+async def notify(text):
+    await utils.run_subprocess(["dbus-launch", "notify-send", " ".join(text)])
 
 
 async def speak(message):
@@ -41,8 +48,8 @@ async def _say(message: List[str]):
 
 
 @registry.register('"announce" text')
-async def announce(text: List[str]):
-    await utils.run_subprocess(["dbus-launch", "notify-send", " ".join(text)])
+async def _announce(text: List[str]):
+    await notify(text)
 
 
 @registry.register('"switch" chord')
