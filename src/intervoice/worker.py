@@ -47,7 +47,13 @@ async def handle_message(combo: utils.Handler, data: dict):
 def collect_modules(import_paths: Iterable[str]) -> List[types.ModuleType]:
     modules = []
     for path in import_paths:
-        modules.append(importlib.import_module(path))
+        try:
+            with eliot.start_action(action_type="import_module", path=path):
+                module = importlib.import_module(path)
+        except Exception:
+            pass
+        else:
+            modules.append(module)
     return modules
 
 
