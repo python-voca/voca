@@ -65,13 +65,36 @@ async def delegate_task(data, worker, state, action):
 
 
 @log.log_call
-async def process_stream(receiver, pool):
+async def run_worker(data, should_log, module_names, state, limiter, nursery):
+
+    async with limiter:
+
+        with eliot.start_action(action_type="run_worker") as action:
+
+            worker = trio.Process(
+                worker_cli(should_log, module_names),
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+            )
+
+            nursery.start_soon(
+                functools.partial(
+                    delegate_task, data=data, state=state, worker=worker, action=action
+                )
+            )
+            nursery.start_soon(replay_child_messages, worker)
+
+            await worker.wait()
+
+
+@log.log_call
+async def process_stream(receiver, max_workers, should_log, module_names):
 
     state = {"modes": {"strict": True}}
-
+    limiter = trio.CapacityLimiter(max_workers)
     async with trio.open_nursery() as nursery:
         async for message in receiver:
-            with eliot.start_action(state=state) as action:
+            with eliot.start_action(state=state):
                 # Handle state changes.
                 data = json.loads(message.decode())
                 maybe_new_state = set_state(data, state)
@@ -85,21 +108,27 @@ async def process_stream(receiver, pool):
                 if data["result"]["final"] and not state["modes"]["strict"]:
                     continue
 
-                worker = pool.pop()
                 nursery.start_soon(
                     functools.partial(
-                        delegate_task,
+                        run_worker,
                         data=data,
+                        should_log=should_log,
+                        module_names=module_names,
                         state=state,
-                        worker=worker,
-                        action=action,
+                        limiter=limiter,
+                        nursery=nursery,
                     )
                 )
-                nursery.start_soon(replay_child_messages, worker)
+
+
+@attr.s
+class Pool:
+    processes: set = attr.ib(factory=set)
+    limiter: trio.CapacityLimiter = attr.ib(default=lambda n: trio.CapacityLimiter(n))
 
 
 @log.log_call
-async def async_main(should_log, module_names: Optional[List[str]], num_workers=3):
+async def async_main(should_log, module_names: Optional[List[str]], max_workers=3):
 
     stream = trio._unix_pipes.PipeReceiveStream(os.dup(0))
     receiver = streaming.TerminatedFrameReceiver(stream, b"\n")
@@ -107,21 +136,12 @@ async def async_main(should_log, module_names: Optional[List[str]], num_workers=
     default_module_names = None
     module_names = default_module_names
 
-    pool = set()
-    async with contextlib.AsyncExitStack() as stack:
-        limiter = trio.CapacityLimiter(num_workers)
-        for _ in range(num_workers):
-
-            worker = await stack.enter_async_context(
-                trio.Process(
-                    worker_cli(should_log, module_names),
-                    stdin=subprocess.PIPE,
-                    stdout=subprocess.PIPE,
-                )
-            )
-            pool.add(worker)
-
-        await process_stream(receiver, pool)
+    await process_stream(
+        receiver,
+        max_workers=max_workers,
+        should_log=should_log,
+        module_names=module_names,
+    )
 
 
 @log.log_call
