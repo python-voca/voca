@@ -57,8 +57,10 @@ def set_state(data, state):
 
 
 @log.log_call
-async def delegate_task(data, worker, action):
-    wrapped_data = dict(**data, eliot_task_id=action.serialize_task_id().decode())
+async def delegate_task(data, worker, state, action):
+    wrapped_data = dict(
+        **data, state=state, eliot_task_id=action.serialize_task_id().decode()
+    )
     await worker.stdin.send_all(json.dumps(wrapped_data).encode() + b"\n")
 
 
@@ -66,10 +68,10 @@ async def delegate_task(data, worker, action):
 async def process_stream(receiver, pool):
 
     state = {"modes": {"strict": True}}
-    workers = itertools.cycle(pool)
+
     async with trio.open_nursery() as nursery:
         async for message in receiver:
-            with eliot.start_action() as action:
+            with eliot.start_action(state=state) as action:
                 # Handle state changes.
                 data = json.loads(message.decode())
                 maybe_new_state = set_state(data, state)
@@ -77,8 +79,22 @@ async def process_stream(receiver, pool):
                     state = maybe_new_state
                     continue
 
-                worker = next(workers)
-                nursery.start_soon(delegate_task, data, worker, action)
+                # This logic could be moved into worker/plugin to allow for more modes.
+                if not data["result"]["final"] and state["modes"]["strict"]:
+                    continue
+                if data["result"]["final"] and not state["modes"]["strict"]:
+                    continue
+
+                worker = pool.pop()
+                nursery.start_soon(
+                    functools.partial(
+                        delegate_task,
+                        data=data,
+                        state=state,
+                        worker=worker,
+                        action=action,
+                    )
+                )
                 nursery.start_soon(replay_child_messages, worker)
 
 
@@ -91,9 +107,11 @@ async def async_main(should_log, module_names: Optional[List[str]], num_workers=
     default_module_names = None
     module_names = default_module_names
 
-    pool = []
+    pool = set()
     async with contextlib.AsyncExitStack() as stack:
+        limiter = trio.CapacityLimiter(num_workers)
         for _ in range(num_workers):
+
             worker = await stack.enter_async_context(
                 trio.Process(
                     worker_cli(should_log, module_names),
@@ -101,7 +119,7 @@ async def async_main(should_log, module_names: Optional[List[str]], num_workers=
                     stdout=subprocess.PIPE,
                 )
             )
-            pool.append(worker)
+            pool.add(worker)
 
         await process_stream(receiver, pool)
 
