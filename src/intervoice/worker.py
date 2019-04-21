@@ -5,13 +5,15 @@ import os
 import textwrap
 import json
 import types
-
+import shutil
+import pathlib
+import importlib.util
 
 from typing import Iterable
 from typing import List
 from typing import Tuple
 
-
+import appdirs
 import eliot
 import trio
 import toml
@@ -44,16 +46,43 @@ async def handle_message(combo: utils.Handler, data: dict):
 
 
 @log.log_call
-def collect_modules(import_paths: Iterable[str]) -> List[types.ModuleType]:
-    modules = []
-    for path in import_paths:
+def load_from_path(import_path, filename):
+    spec = importlib.util.spec_from_file_location(import_path, filename)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def get_module(import_path, backup_dir):
+    """Import module and cache it in backup_dir, returning backup on failure."""
+    try:
+        with eliot.start_action(action_type="import_module", import_path=import_path):
+            module = importlib.import_module(import_path)
+    except Exception:
+        sys.path.insert(0, str(backup_dir))
         try:
-            with eliot.start_action(action_type="import_module", path=path):
-                module = importlib.import_module(path)
+            module = importlib.import_module(import_path)
         except Exception:
-            pass
-        else:
+            module = None
+        finally:
+            del sys.path[0]
+    return module
+
+
+@log.log_call
+def collect_modules(import_paths: Iterable[str]) -> List[types.ModuleType]:
+    backup_dir = pathlib.Path(appdirs.user_config_dir("intervoice")) / "backup_modules"
+
+    modules = []
+    for import_path in import_paths:
+        module = get_module(import_path, backup_dir)
+
+        if module is not None:
             modules.append(module)
+            new_path = (backup_dir / import_path.replace(".", "/")).with_suffix(".py")
+            new_path.parent.mkdir(exist_ok=True, parents=True)
+            shutil.copy2(module.__file__, new_path)
+
     return modules
 
 
