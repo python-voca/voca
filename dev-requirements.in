@@ -12,3 +12,5 @@ trio-typing
 mypy
 matplotlib
 sounddevice
+pytest-cov
+twine
