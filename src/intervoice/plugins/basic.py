@@ -10,6 +10,9 @@ from typing import Awaitable
 from intervoice import utils
 from intervoice import platforms
 
+import trio
+import pyautogui
+
 registry = utils.Registry()
 
 registry.define(
@@ -21,14 +24,16 @@ registry.define(
 )
 
 
-@platforms.implementation(platforms.Platform.LINUX)
 async def press(chord: str):
-    await utils.run_subprocess(["xdotool", "key", chord])
+    await trio.run_sync_in_worker_thread(
+        functools.partial(pyautogui.typewrite, [chord])
+    )
 
 
-@platforms.implementation(platforms.Platform.LINUX)
 async def write(message: str):
-    await utils.run_subprocess(["xdotool", "type", message])
+    await trio.run_sync_in_worker_thread(
+        functools.partial(pyautogui.typewrite, message)
+    )
 
 
 @platforms.implementation(platforms.Platform.LINUX)
