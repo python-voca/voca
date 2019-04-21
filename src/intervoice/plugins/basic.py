@@ -36,9 +36,9 @@ async def write(message: str):
     )
 
 
-@platforms.implementation(platforms.Platform.LINUX)
-async def notify(text):
-    await utils.run_subprocess(["dbus-launch", "notify-send", " ".join(text)])
+@registry.register('"alert" text')
+async def _alert(text):
+    await trio.run_sync_in_worker_thread(functools.partial(pyautogui.alert, text))
 
 
 async def speak(message):
@@ -50,11 +50,6 @@ async def _say(message: List[str]):
     [chord_string] = message
     chord_value = utils.pronunciation_to_value()[chord_string]
     await press(chord_value)
-
-
-@registry.register('"announce" text')
-async def _announce(text: List[str]):
-    await notify(text)
 
 
 @registry.register('"switch" chord')
