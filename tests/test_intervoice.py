@@ -44,7 +44,7 @@ def capture_typed():
     rec.stop()
 
 
-@pytest.fixture(name="virtual_display")
+@pytest.fixture(name="virtual_display", scope="session")
 def _virtual_display():
 
     original_display = os.environ.get("DISPLAY", None)
@@ -74,14 +74,30 @@ def _virtual_display():
 
 
 @pytest.mark.usefixtures("virtual_display")
-def test_manage():
-    utterances = ["say alpha", "say bravo", "say charlie", "say delta"]
+def test_strict():
+    """Strict mode, not eager mode, executes final commands."""
+    utterances = ["say alpha", "say bravo", "mode", "say charlie", "say delta"]
 
-    rows = [make_command(utterance) for utterance in utterances]
+    rows = [make_command(utterance, final=True) for utterance in utterances]
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
 
     with capture_typed() as typed:
         helpers.run(["manage"], input=lines)
 
-    expected = ["KEY_A", "KEY_B", "KEY_C", "KEY_D"]
+    expected = ["KEY_A", "KEY_B"]
+    assert typed == expected
+
+
+@pytest.mark.usefixtures("virtual_display")
+def test_eager():
+    """Eager mode, not strict mode, executes non-final commands."""
+    utterances = ["say alpha", "say bravo", "mode", "say charlie", "say delta"]
+
+    rows = [make_command(utterance, final=False) for utterance in utterances]
+    lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
+
+    with capture_typed() as typed:
+        helpers.run(["manage"], input=lines)
+
+    expected = ["KEY_C", "KEY_D"]
     assert typed == expected
