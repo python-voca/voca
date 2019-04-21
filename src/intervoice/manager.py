@@ -66,13 +66,13 @@ async def delegate_task(data, worker, state, action):
 
 @attr.s
 class Pool:
-    max_workers: int = attr.ib(default=1)
+    num_workers: int = attr.ib(default=1)
     should_log: bool = attr.ib(default=True)
     module_names: list = attr.ib(factory=list)
     processes: set = attr.ib(factory=set)
 
     def start(self):
-        for _ in range(self.max_workers):
+        for _ in range(self.num_workers):
             self.add_new_process()
 
     def get_process(self):
@@ -106,11 +106,11 @@ async def run_worker(data, state, pool, nursery):
 
 
 @log.log_call
-async def process_stream(receiver, max_workers, should_log, module_names):
+async def process_stream(receiver, num_workers, should_log, module_names):
 
     state = {"modes": {"strict": True}}
 
-    pool = Pool(max_workers, should_log=should_log, module_names=module_names)
+    pool = Pool(num_workers, should_log=should_log, module_names=module_names)
     pool.start()
 
     async with trio.open_nursery() as nursery:
@@ -137,7 +137,7 @@ async def process_stream(receiver, max_workers, should_log, module_names):
 
 
 @log.log_call
-async def async_main(should_log, module_names: Optional[List[str]], max_workers=3):
+async def async_main(should_log, module_names: Optional[List[str]], num_workers: int):
 
     stream = trio._unix_pipes.PipeReceiveStream(os.dup(0))
     receiver = streaming.TerminatedFrameReceiver(stream, b"\n")
@@ -147,12 +147,12 @@ async def async_main(should_log, module_names: Optional[List[str]], max_workers=
 
     await process_stream(
         receiver,
-        max_workers=max_workers,
+        num_workers=num_workers,
         should_log=should_log,
         module_names=module_names,
     )
 
 
 @log.log_call
-def main(should_log, module_names: Optional[List[str]]):
-    trio.run(functools.partial(async_main, should_log, module_names))
+def main(should_log, module_names: Optional[List[str]], num_workers: int):
+    trio.run(functools.partial(async_main, should_log, module_names, num_workers))

@@ -59,6 +59,7 @@ def _listen(**kwargs):
 
 @cli.command("manage")
 @click.option("--import-path", "-i", "module_names", multiple=True, default=None)
+@click.option("--num-workers", type=int, default=5)
 @click.pass_obj
 def _manage(obj, **kwargs):
     manager.main(**obj, **kwargs)
