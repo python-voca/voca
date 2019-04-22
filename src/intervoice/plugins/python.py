@@ -1,7 +1,7 @@
-from intervoice.caster_compat import R
-from intervoice.caster_compat import Text
-from intervoice.caster_compat import Key
-from intervoice.caster_compat import add_to_registry
+from intervoice.casterlike import R
+from intervoice.casterlike import Text
+from intervoice.casterlike import Key
+from intervoice.casterlike import add_to_registry
 
 
 from intervoice import utils
