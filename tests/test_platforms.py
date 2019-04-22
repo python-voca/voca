@@ -3,17 +3,17 @@ import platform
 from intervoice import platforms
 
 
-@platforms.implementation(platforms.Platform.LINUX)
+@platforms.implementation(platforms.System.LINUX)
 def get_platform():
     return "This is Linux"
 
 
-@platforms.implementation(platforms.Platform.DARWIN)
+@platforms.implementation(platforms.System.DARWIN)
 def get_platform():
     return "This is Darwin"
 
 
-@platforms.implementation(platforms.Platform.WINDOWS)
+@platforms.implementation(platforms.System.WINDOWS)
 def get_platform():
     return "This is Windows"
 
