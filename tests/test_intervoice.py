@@ -44,35 +44,6 @@ def capture_typed():
     rec.stop()
 
 
-@pytest.fixture(name="virtual_display", scope="session")
-def _virtual_display():
-
-    original_display = os.environ.get("DISPLAY", None)
-    name = ":4"
-    os.environ["DISPLAY"] = name
-
-    proc = subprocess.Popen(
-        [
-            "/usr/bin/Xvfb",
-            f"{name}",
-            "-screen",
-            "0",
-            "1920x1080x24+32",
-            "-fbdir",
-            "/var/tmp",
-        ]
-    )
-
-    yield
-
-    proc.terminate()
-
-    if original_display is None:
-        del os.environ["DISPLAY"]
-    else:
-        os.environ["DISPLAY"] = original_display
-
-
 @pytest.mark.usefixtures("virtual_display")
 def test_strict():
     """Strict mode, not eager mode, executes final commands."""
