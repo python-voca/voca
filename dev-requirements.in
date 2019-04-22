@@ -18,3 +18,4 @@ sneakysnek
 pip-tools
 q
 pudb
+pytest-trio
