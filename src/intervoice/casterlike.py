@@ -1,3 +1,5 @@
+import types
+
 from typing import Optional
 from typing import List
 from typing_extensions import Protocol
@@ -50,6 +52,33 @@ class ActionSequence:
 
         for action in self.actions:
             await action.execute(arg)
+
+
+@attr.dataclass
+class ConditionalAction:
+    condition: types.FunctionType
+    action: RegisteredAction
+
+    async def execute(self, arg=None):
+        if await condition(arg):
+            await self.action(arg)
+
+
+@attr.dataclass
+class AppContext:
+    executable: str
+
+
+@attr.dataclass
+class Dictation:
+    name: str
+
+
+@attr.dataclass
+class IntegerRefST:
+    name: str
+    start: int
+    end: int
 
 
 def add_to_registry(mapping, registry):
