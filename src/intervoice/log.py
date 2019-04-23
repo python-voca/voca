@@ -51,6 +51,10 @@ def _exception_lines(exc: BaseException):
     return traceback.format_exception(type(exc), exc, exc.__traceback__)
 
 
+def _extract_traceback(exc: BaseException):
+    return "".join(_exception_lines(exc))
+
+
 def _exception_data(exc: BaseException):
     exclude = set(dir(Exception())) - {"args", "__cause__", "__context__"}
     return {k: v for k, v in inspect.getmembers(exc) if k not in exclude}
@@ -58,7 +62,7 @@ def _exception_data(exc: BaseException):
 
 def summarize_exception(exc: BaseException):
     return {
-        "exception_lines": _exception_lines(exc),
+        "traceback": _extract_traceback(exc),
         "exception_data": _exception_data(exc),
     }
 
