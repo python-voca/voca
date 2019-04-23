@@ -9,6 +9,7 @@ import inspect
 import os
 import io
 import traceback
+import types
 
 from typing import Optional
 from typing import Callable
@@ -28,6 +29,11 @@ def to_serializable(obj: Any) -> Union[str, list, dict, int, float]:
         return attr.asdict(obj)
     except attr.exceptions.NotAnAttrsClassError:
         return str(obj)
+
+
+@to_serializable.register(types.SimpleNamespace)
+def _(obj):
+    return vars(obj)
 
 
 def json_to_file(file: Optional[io.TextIOWrapper] = None) -> Callable:

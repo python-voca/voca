@@ -16,21 +16,32 @@ Why does this file exist, and why not put this in __main__?
 """
 import sys
 import types
+import os
 
 import click
-
+import eliot
 
 from intervoice import app
 from intervoice import listen
 from intervoice import manager
 from intervoice import worker
+from intervoice import log
+
+
+def log_cli_call(f):
+    def wrap(*args, **kwargs):
+        with eliot.start_action(action_type="cli_command", pid=os.getpid(), argv=sys.argv):
+            return log.log_call(f)(*args, **kwargs)
+
+    return wrap
 
 
 @click.group()
 @click.option("--log/--no-log", "should_log", is_flag=True, default=True)
 @click.pass_context
 def cli(ctx, **kwargs):
-    ctx.obj = kwargs.copy()
+    ctx.obj = types.SimpleNamespace()
+    ctx.obj.kwargs = kwargs.copy()
     app.main(**kwargs)
 
 
@@ -48,6 +59,7 @@ def _detect_mic(**kwargs):
 @click.option("--save-adaptation-state", type=bool)
 @click.option("--send-adaptation-state", type=bool)
 @click.option("--audio-gate", default=0, type=int)
+@log_cli_call
 def _listen(**kwargs):
     content_type = "audio/x-raw, layout=(string)interleaved, rate=(int)16000, format=(string)S16LE, channels=(int)1"
     path = "client/ws/speech"
@@ -61,12 +73,14 @@ def _listen(**kwargs):
 @click.option("--import-path", "-i", "module_names", multiple=True, default=None)
 @click.option("--num-workers", type=int, default=5)
 @click.pass_obj
+@log_cli_call
 def _manage(obj, **kwargs):
-    manager.main(**obj, **kwargs)
+    manager.main(**obj.kwargs, **kwargs)
 
 
 @cli.command("worker")
 @click.option("import_paths", "-i", multiple=True)
 @click.pass_obj
+@log_cli_call
 def _worker(obj, **kwargs):
     worker.main(**kwargs)
