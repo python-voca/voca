@@ -11,6 +11,8 @@ from os.path import basename
 from os.path import dirname
 from os.path import join
 from os.path import splitext
+import pathlib
+
 
 from setuptools import find_packages
 from setuptools import setup
@@ -23,8 +25,10 @@ def read(*names, **kwargs):
         return fh.read()
 
 
+PROJECT_ROOT = pathlib.Path(__file__).parent
+
 try:
-    with open("requirements.in") as f:
+    with open(PROJECT_ROOT / "requirements.in") as f:
         INSTALL_REQUIRES = [line for line in f.read().splitlines() if line[0].isalpha()]
 except FileNotFoundError:
     print(sys.exc_info())
