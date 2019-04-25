@@ -8,12 +8,7 @@ import trio
 from intervoice import context
 
 
-@pytest.mark.xfail(strict=True)
-@pytest.mark.usefixtures("virtual_display")
-async def test_get_current_window_title():
-    import pyautogui
+async def test_get_current_window_title(turtle_window):
 
-    proc = trio.Process(["xterm", "+bc"])
     title = await context.get_current_window_title()
-    await proc.terminate()
-    assert title == "xterm"
+    assert title == "Python Turtle Graphics"

@@ -1,3 +1,5 @@
+import subprocess
+
 import trio
 
 from intervoice import utils
@@ -14,4 +16,7 @@ async def get_current_window_title():
 
 @platforms.implementation(platforms.System.LINUX)
 async def get_current_window_title():
-    await utils.run_subprocess(["xdotool", "getwindowfocus", "getwindowname"])
+    proc = await utils.run_subprocess(
+        ["/usr/bin/xdotool", "getwindowfocus", "getwindowname"], stdout=subprocess.PIPE
+    )
+    return proc.stdout.decode()[:-1]
