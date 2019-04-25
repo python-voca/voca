@@ -36,7 +36,7 @@ def worker_cli(should_log, module_names: Optional[List[str]] = None) -> List[str
     return command
 
 
-@log.log_call
+@log.log_async_call
 async def replay_child_messages(child: trio.Process) -> None:
     async for message_from_child in streaming.TerminatedFrameReceiver(
         child.stdout, b"\n"
@@ -56,7 +56,7 @@ def set_state(data, state):
     return None
 
 
-@log.log_call
+@log.log_async_call
 async def delegate_task(data, worker, state, action):
     wrapped_data = dict(
         **data, state=state, eliot_task_id=action.serialize_task_id().decode()
@@ -88,7 +88,7 @@ class Pool:
         )
 
 
-@log.log_call
+@log.log_async_call
 async def run_worker(data, state, pool):
 
     with eliot.start_action(action_type="run_with_work") as action:
@@ -101,7 +101,7 @@ async def run_worker(data, state, pool):
         pool.add_new_process()
 
 
-@log.log_call
+@log.log_async_call
 async def process_stream(receiver, num_workers, should_log, module_names):
 
     state = {"modes": {"strict": True}}
@@ -127,7 +127,7 @@ async def process_stream(receiver, num_workers, should_log, module_names):
             await run_worker(data=data, state=state, pool=pool)
 
 
-@log.log_call
+@log.log_async_call
 async def async_main(should_log, module_names: Optional[List[str]], num_workers: int):
 
     stream = trio._unix_pipes.PipeReceiveStream(os.dup(0))

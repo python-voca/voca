@@ -120,24 +120,81 @@ def log_call(
         if include_args is not None:
             bound_args.arguments = {k: bound_args.arguments[k] for k in include_args}
 
-        with contextlib.ExitStack() as stack:
-            ctx = stack.enter_context(
-                eliot.start_action(action_type=action_type, **bound_args.arguments)
-            )
+        with eliot.start_action(
+            action_type=action_type, **bound_args.arguments
+        ) as action:
+
             result = wrapped_function(*args, **kwargs)
             if not include_result:
                 return result
-            if isinstance(result, collections.abc.Coroutine):
+            action.add_success_fields(result=result)
+            return result
 
-                async def wrap_await(stack_dup):
-                    with stack_dup:
-                        actual_result = await result
-                        ctx.add_success_fields(result=actual_result)
-                        return actual_result
+    return logging_wrapper
 
-                return wrap_await(stack.pop_all())
 
-            ctx.add_success_fields(result=result)
+def log_async_call(
+    wrapped_function: Optional[Callable] = None,
+    action_type: Optional[str] = None,
+    include_args: Optional[Iterable[str]] = None,
+    include_result: bool = True,
+) -> Callable:
+    """Decorator/decorator factory that logs inputs and the return result.
+    If used with inputs (i.e. as a decorator factory), it accepts the following
+    parameters:
+    @param action_type: The action type to use.  If not given the function name
+        will be used.
+    @param include_args: If given, should be a list of strings, the arguments to log.
+    @param include_result: True by default. If False, the return result isn't logged.
+    """
+    if wrapped_function is None:
+        return functools.partial(
+            log_call,
+            action_type=action_type,
+            include_args=include_args,
+            include_result=include_result,
+        )
+
+    if action_type is None:
+        if six.PY3:
+            action_type = "{}.{}".format(
+                wrapped_function.__module__, wrapped_function.__qualname__
+            )
+        else:
+            action_type = wrapped_function.__name__
+
+    if six.PY3 and include_args is not None:
+        from inspect import signature
+
+        sig = signature(wrapped_function)
+        if set(include_args) - set(sig.parameters):
+            raise ValueError(
+                (
+                    "include_args ({}) lists arguments not in the " "wrapped function"
+                ).format(include_args)
+            )
+
+    @functools.wraps(wrapped_function)
+    async def logging_wrapper(*args, **kwargs):
+        bound_args = inspect.signature(wrapped_function).bind(*args, **kwargs)
+
+        # Remove self if it's included:
+        if "self" in bound_args.arguments:
+            bound_args.arguments.pop("self")
+
+        # Filter arguments to log, if necessary:
+        if include_args is not None:
+            bound_args.arguments = {k: bound_args.arguments[k] for k in include_args}
+
+        with eliot.start_action(
+            action_type=action_type, **bound_args.arguments
+        ) as action:
+
+            result = await wrapped_function(*args, **kwargs)
+
+            if include_result:
+                action.add_success_fields(result=result)
+
             return result
 
     return logging_wrapper

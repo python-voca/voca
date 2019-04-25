@@ -26,7 +26,7 @@ from intervoice import log
 from intervoice import parsing
 
 
-@log.log_call
+@log.log_async_call
 async def handle_message(combo: utils.Handler, data: dict):
     message = data["result"]["hypotheses"][0]["transcript"]
 
@@ -86,7 +86,7 @@ def collect_modules(import_paths: Iterable[str]) -> List[types.ModuleType]:
     return modules
 
 
-@log.log_call
+@log.log_async_call
 async def async_main(message_handler: utils.Handler):
     stream = trio._unix_pipes.PipeReceiveStream(os.dup(0))
     receiver = streaming.TerminatedFrameReceiver(stream, b"\n")
