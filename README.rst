@@ -68,7 +68,8 @@ Documentation
 =============
 
 * Prerequisites:
-  - kaldi/silvius server. Also available online.
+  - kaldi/silvius server via included dockerfile or online
+  - Microphone
   - Python 3
 
 
@@ -77,10 +78,9 @@ Development
 ===========
 
 - git clone this repo and cd inside
-- ./run-kaldi-server.sh
-- pip install intervoice
-- intervoice mic &
-- intervoice manage
+- To start the kaldi server and workers in docker, plus a client listening to your mic, run ``./run-kaldi-server.sh``
+- ``./pycli init`` will create a virtualenv and install the package into it
+- ``./venv/bin/intervoice manage`` to start the manager process which accepts commands on stdin. The manager will start its workers.
 
 
 To run the all tests run::
