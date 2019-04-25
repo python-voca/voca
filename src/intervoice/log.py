@@ -90,17 +90,13 @@ def log_call(
         )
 
     if action_type is None:
-        if six.PY3:
-            action_type = "{}.{}".format(
-                wrapped_function.__module__, wrapped_function.__qualname__
-            )
-        else:
-            action_type = wrapped_function.__name__
+        action_type = "{}.{}".format(
+            wrapped_function.__module__, wrapped_function.__qualname__
+        )
 
-    if six.PY3 and include_args is not None:
-        from inspect import signature
+    if include_args is not None:
 
-        sig = signature(wrapped_function)
+        sig = inspect.signature(wrapped_function)
         if set(include_args) - set(sig.parameters):
             raise ValueError(
                 (
@@ -156,22 +152,18 @@ def log_async_call(
         )
 
     if action_type is None:
-        if six.PY3:
-            action_type = "{}.{}".format(
-                wrapped_function.__module__, wrapped_function.__qualname__
-            )
-        else:
-            action_type = wrapped_function.__name__
 
-    if six.PY3 and include_args is not None:
-        from inspect import signature
+        action_type = "{}.{}".format(
+            wrapped_function.__module__, wrapped_function.__qualname__
+        )
 
-        sig = signature(wrapped_function)
+    if include_args is not None:
+
+        sig = inspect.signature(wrapped_function)
         if set(include_args) - set(sig.parameters):
             raise ValueError(
-                (
-                    "include_args ({}) lists arguments not in the " "wrapped function"
-                ).format(include_args)
+                f"include_args ({include_args}) lists arguments not in the "
+                "wrapped function"
             )
 
     @functools.wraps(wrapped_function)
