@@ -63,7 +63,9 @@ def init(cfg):
         [cfg.venv_bin / "pip", "install", "--requirement", "requirements.txt"],
         check=True,
     )
-    subprocess.run([cfg.venv_bin / "pip", "install", "--editable", "."], check=True)
+    subprocess.run(
+        [cfg.venv_bin / "pip", "install", "--no-deps", "--editable", "."], check=True
+    )
 
 
 @_register

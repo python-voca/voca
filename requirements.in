@@ -5,7 +5,7 @@ trio
 toml
 importlib_resources
 six
-eliot
+-e git+git://github.com/itamarst/eliot.git/@0645b6a5ff00cf926cdd9ff2379f51ac324329eb#egg=eliot
 -e git+https://github.com/lark-parser/lark.git#egg=lark-parser
 sympy
 pyautogui

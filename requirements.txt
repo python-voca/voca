@@ -4,12 +4,12 @@
 #
 #    pip-compile --output-file requirements.txt requirements.in
 #
+-e git+git://github.com/itamarst/eliot.git/@0645b6a5ff00cf926cdd9ff2379f51ac324329eb#egg=eliot
 -e git+https://github.com/lark-parser/lark.git#egg=lark-parser
 async-generator==1.10     # via trio
 attrs==19.1.0             # via outcome, trio
-boltons==19.1.0           # via eliot
+boltons==19.1.0
 click==7.0
-eliot==1.7.0
 idna==2.8                 # via trio
 importlib-resources==1.0.2
 mpmath==1.1.0             # via sympy
@@ -20,7 +20,7 @@ pyautogui==0.9.42
 pygetwindow==0.0.4        # via pyautogui
 pymsgbox==1.0.6           # via pyautogui
 pyrect==0.1.4             # via pygetwindow
-pyrsistent==0.14.11       # via eliot
+pyrsistent==0.14.11
 pyscreeze==0.1.20         # via pyautogui
 pytweening==1.0.3         # via pyautogui
 six==1.12.0
@@ -30,4 +30,4 @@ sympy==1.3
 toml==0.10.0
 trio==0.11.0
 ws4py==0.5.1
-zope.interface==4.6.0     # via eliot
+zope.interface==4.6.0
