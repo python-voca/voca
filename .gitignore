@@ -66,3 +66,7 @@ docs/_build
 
 # Mypy Cache
 .mypy_cache/
+
+# logs
+log.jsonl
+*.log
