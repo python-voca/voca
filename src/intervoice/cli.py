@@ -30,7 +30,9 @@ from intervoice import log
 
 def log_cli_call(f):
     def wrap(*args, **kwargs):
-        with eliot.start_action(action_type="cli_command", pid=os.getpid(), argv=sys.argv):
+        with eliot.start_action(
+            action_type="cli_command", pid=os.getpid(), argv=sys.argv
+        ):
             return log.log_call(f)(*args, **kwargs)
 
     return wrap
