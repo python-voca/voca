@@ -98,6 +98,8 @@ setup(
             "basic = intervoice.plugins:basic",
             "math = intervoice.plugins:math",
             "python = intervoice.plugins:python",
+            "yes = intervoice.plugins:yes",
+            "no = intervoice.plugins:no",
         ],
     },
 )

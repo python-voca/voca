@@ -6,7 +6,6 @@ import subprocess
 import string
 
 from click.testing import CliRunner
-import sneakysnek.recorder
 import pytest
 
 from intervoice import cli
@@ -31,19 +30,6 @@ def make_command(utterance, final=True):
     }
 
 
-@contextlib.contextmanager
-def capture_typed():
-    captured = []
-
-    def capture(event):
-        if event.event == sneakysnek.keyboard_event.KeyboardEvents.DOWN:
-            captured.append(event.keyboard_key.name)
-
-    rec = sneakysnek.recorder.Recorder.record(capture)
-    yield captured
-    rec.stop()
-
-
 @pytest.mark.usefixtures("virtual_display")
 def test_strict():
     """Strict mode, not eager mode, executes final commands."""
@@ -52,7 +38,7 @@ def test_strict():
     rows = [make_command(utterance, final=True) for utterance in utterances]
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
 
-    with capture_typed() as typed:
+    with helpers.capture_keypresses() as typed:
         helpers.run(["manage"], input=lines)
 
     expected = ["KEY_A", "KEY_B"]
@@ -67,8 +53,38 @@ def test_eager():
     rows = [make_command(utterance, final=False) for utterance in utterances]
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
 
-    with capture_typed() as typed:
+    with helpers.capture_keypresses() as typed:
         helpers.run(["manage"], input=lines)
 
     expected = ["KEY_C", "KEY_D"]
+    assert typed == expected
+
+
+@pytest.mark.usefixtures("virtual_display")
+def test_context_always():
+
+    utterances = ["hit alpha", "hit bravo"]
+
+    rows = [make_command(utterance, final=True) for utterance in utterances]
+    lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
+
+    with helpers.capture_keypresses() as typed:
+        helpers.run(["manage"], input=lines)
+
+    expected = ["KEY_D", "KEY_E", "KEY_F"] * 2
+    assert typed == expected
+
+
+@pytest.mark.usefixtures("virtual_display")
+def test_context_never():
+
+    utterances = ["nope", "nope"]
+
+    rows = [make_command(utterance, final=True) for utterance in utterances]
+    lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
+
+    with helpers.capture_keypresses() as typed:
+        helpers.run(["manage"], input=lines)
+
+    expected = []
     assert typed == expected

@@ -61,6 +61,7 @@ def get_module(import_path, backup_dir):
         with eliot.start_action(action_type="import_module", import_path=import_path):
             module = importlib.import_module(import_path)
     except Exception:
+        raise
         sys.path.insert(0, str(backup_dir))
         try:
             module = importlib.import_module(import_path)
@@ -138,6 +139,7 @@ async def async_main(wrapper_group):
 def main(import_paths: Tuple[str]):
 
     modules = collect_modules(import_paths)
+    print(modules)
     wrapper_group = parsing.combine_modules(modules)
 
     trio.run(functools.partial(async_main, wrapper_group=wrapper_group))
