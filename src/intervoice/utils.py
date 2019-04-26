@@ -14,6 +14,7 @@ from typing import MutableMapping
 from typing import Mapping
 from typing import Awaitable
 
+from typing_extensions import Protocol
 
 import attr
 import toml
@@ -24,7 +25,7 @@ import importlib_resources
 
 
 import intervoice
-
+from intervoice import context
 
 @attr.s
 class Registry:
@@ -115,10 +116,39 @@ class Handler:
 
 
 @attr.dataclass
+class HandlerGroup:
+    handlers: List[Handler]
+
+    async def pick_handler(self, data):
+        return self.handlers[0]
+
+
+class Context(Protocol):
+    async def check(self, data=None) -> bool:
+        ...
+
+
+@attr.dataclass
+class Wrapper:
+    registry: Registry
+    context: Context = attr.ib(default=context.AlwaysContext)
+
+
+@attr.s
+class WrapperGroup:
+    wrappers: List[Wrapper] = attr.ib(factory=list)
+
+
+@attr.dataclass
 class Rule:
     name: str
     pattern: str
     function: Callable
+
+
+@attr.dataclass
+class PluginModule(Protocol):
+    wrapper: Wrapper
 
 
 def async_runner(async_function: Callable):

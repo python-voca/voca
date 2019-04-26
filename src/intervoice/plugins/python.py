@@ -25,3 +25,5 @@ mapping = {
 
 
 registry = add_to_registry(mapping, registry)
+
+wrapper = utils.Wrapper(registry)

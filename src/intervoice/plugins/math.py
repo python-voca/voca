@@ -23,3 +23,6 @@ async def _solve(items: List[str]):
 
     await basic.announce([result])
     await basic.speak(str(result))
+
+
+wrapper = utils.Wrapper(registry)

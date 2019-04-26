@@ -24,21 +24,23 @@ from intervoice import utils
 from intervoice import streaming
 from intervoice import log
 from intervoice import parsing
+from intervoice import context
 
 
 @log.log_async_call
-async def handle_message(combo: utils.Handler, data: dict):
+async def handle_message(wrapper_group: utils.WrapperGroup, data: dict):
     message = data["result"]["hypotheses"][0]["transcript"]
 
     with eliot.start_action(action_type="parse_command") as action:
 
-        tree = combo.parser.parse(message)
+        handler = await make_specific_handler(wrapper_group, data)
+        tree = handler.parser.parse(message)
 
     commands = parsing.extract_commands(tree)
 
     for command in commands:
         rule_name, args = command.data, command.children
-        function = combo.rule_name_to_function[rule_name]
+        function = handler.rule_name_to_function[rule_name]
         with eliot.start_action(
             action_type="run_command", command=rule_name, args=args, function=function
         ):
@@ -86,8 +88,34 @@ def collect_modules(import_paths: Iterable[str]) -> List[types.ModuleType]:
     return modules
 
 
+def combine_registries(registries):
+    combined = utils.Registry()
+    for registry in registries:
+        combined.pattern_to_function.update(registry.pattern_to_function)
+        combined.patterns.update(registry.patterns)
+    return combined
+
+
+async def make_specific_handler(wrapper_group, data):
+    filtered = await context.filter_wrappers(wrapper_group, data)
+    registry = combine_registries([wrapper.registry for wrapper in filtered.wrappers])
+
+    rules = parsing.build_rules(registry)
+    grammar = parsing.build_grammar(registry, rules)
+
+    rule_name_to_function = {rule.name: rule.function for rule in rules}
+
+    parser = lark.Lark(
+        grammar, debug=True, lexer="dynamic_complete", maybe_placeholders=True
+    )
+
+    return utils.Handler(
+        registry=registry, parser=parser, rule_name_to_function=rule_name_to_function
+    )
+
+
 @log.log_async_call
-async def async_main(message_handler: utils.Handler):
+async def async_main(wrapper_group):
     stream = trio._unix_pipes.PipeReceiveStream(os.dup(0))
     receiver = streaming.TerminatedFrameReceiver(stream, b"\n")
 
@@ -98,7 +126,7 @@ async def async_main(message_handler: utils.Handler):
             with eliot.Action.continue_task(
                 task_id=data.get("eliot_task_id", "@")
             ) as action:
-                await handle_message(combo=message_handler, data=data)
+                await handle_message(wrapper_group=wrapper_group, data=data)
         except Exception as e:
             action.finish(e)
             raise
@@ -110,6 +138,6 @@ async def async_main(message_handler: utils.Handler):
 def main(import_paths: Tuple[str]):
 
     modules = collect_modules(import_paths)
-    registry = parsing.combine_modules(modules)
+    wrapper_group = parsing.combine_modules(modules)
 
-    trio.run(functools.partial(async_main, message_handler=registry))
+    trio.run(functools.partial(async_main, wrapper_group=wrapper_group))

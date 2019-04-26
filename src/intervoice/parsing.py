@@ -82,21 +82,10 @@ def build_grammar(registry: utils.Registry, rules: List[utils.Rule]) -> str:
 
 
 @log.log_call
-def combine_modules(modules: Iterable[types.ModuleType]):
-    registry = utils.Registry()
+def combine_modules(modules: Iterable[utils.PluginModule]):
+
+    wrapper_group = utils.WrapperGroup()
     for module in modules:
-        registry.pattern_to_function.update(module.registry.pattern_to_function)
-        registry.patterns.update(module.registry.patterns)
+        wrapper_group.wrappers.append(module.wrapper)
 
-    rules = build_rules(registry)
-    grammar = build_grammar(registry, rules)
-
-    rule_name_to_function = {rule.name: rule.function for rule in rules}
-
-    parser = lark.Lark(
-        grammar, debug=True, lexer="dynamic_complete", maybe_placeholders=True
-    )
-
-    return utils.Handler(
-        registry=registry, parser=parser, rule_name_to_function=rule_name_to_function
-    )
+    return wrapper_group

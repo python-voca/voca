@@ -69,3 +69,6 @@ registry.pattern_to_function['"mouse"'] = key("O")
 @registry.register('"div0"')
 async def _div0(*args):
     1 / 0
+
+
+wrapper = utils.Wrapper(registry)
