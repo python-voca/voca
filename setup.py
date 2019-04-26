@@ -100,6 +100,7 @@ setup(
             "python = intervoice.plugins:python",
             "yes = intervoice.plugins:yes",
             "no = intervoice.plugins:no",
+            "turtle_context = intervoice.plugins:turtle_context",
         ],
     },
 )

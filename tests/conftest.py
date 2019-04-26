@@ -50,3 +50,11 @@ def _turtle_window(window_manager):
     time.sleep(1)
     yield
     turtle.terminate()
+
+
+@pytest.fixture(name="idle_window")
+def _idle_window(window_manager):
+    idle = subprocess.Popen(["/usr/bin/idle"])
+    time.sleep(1)
+    yield
+    idle.terminate()

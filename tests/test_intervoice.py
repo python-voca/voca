@@ -60,7 +60,7 @@ def test_eager():
     assert typed == expected
 
 
-@pytest.mark.usefixtures("virtual_display")
+@pytest.mark.usefixtures("virtual_display", "turtle_window")
 def test_context_always():
 
     utterances = ["hit alpha", "hit bravo"]
@@ -75,10 +75,42 @@ def test_context_always():
     assert typed == expected
 
 
-@pytest.mark.usefixtures("virtual_display")
+@pytest.mark.usefixtures("virtual_display", "turtle_window")
 def test_context_never():
 
     utterances = ["nope", "nope"]
+
+    rows = [make_command(utterance, final=True) for utterance in utterances]
+    lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
+
+    with helpers.capture_keypresses() as typed:
+        helpers.run(["manage"], input=lines)
+
+    expected = []
+    assert typed == expected
+
+
+@pytest.mark.usefixtures("virtual_display", "turtle_window")
+def test_app_context_matches():
+    """The spec is matched and the action is executed if the app is open."""
+
+    utterances = ["check", "check"]
+
+    rows = [make_command(utterance, final=True) for utterance in utterances]
+    lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
+
+    with helpers.capture_keypresses() as typed:
+        helpers.run(["manage"], input=lines)
+
+    expected = ["KEY_T", "KEY_U", "KEY_R", "KEY_T"] * 2
+    assert typed == expected
+
+
+@pytest.mark.usefixtures("virtual_display", "idle_window")
+def test_app_context_does_not_match():
+    """The spec is matched and the action is executed if the app is open."""
+
+    utterances = ["check", "check"]
 
     rows = [make_command(utterance, final=True) for utterance in utterances]
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()

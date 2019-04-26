@@ -55,6 +55,7 @@ async def filter_wrappers(
 ) -> utils.WrapperGroup:
     allowed = []
     for wrapper in wrapper_group.wrappers:
+
         if await wrapper.context.check(data):
             allowed.append(wrapper)
     return utils.WrapperGroup(allowed)
