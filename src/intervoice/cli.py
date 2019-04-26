@@ -28,6 +28,9 @@ from intervoice import worker
 from intervoice import log
 
 
+CONTEXT_SETTINGS = {"auto_envvar_prefix": "INTERVOICE"}
+
+
 def log_cli_call(f):
     def wrap(*args, **kwargs):
         with eliot.start_action(
@@ -38,7 +41,7 @@ def log_cli_call(f):
     return wrap
 
 
-@click.group()
+@click.group(context_settings=CONTEXT_SETTINGS)
 @click.option("--log/--no-log", "should_log", is_flag=True, default=True)
 @click.pass_context
 def cli(ctx, **kwargs):

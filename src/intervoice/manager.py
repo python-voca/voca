@@ -133,9 +133,6 @@ async def async_main(should_log, module_names: Optional[List[str]], num_workers:
     stream = trio._unix_pipes.PipeReceiveStream(os.dup(0))
     receiver = streaming.TerminatedFrameReceiver(stream, b"\n")
 
-    default_module_names = None
-    module_names = default_module_names
-
     await process_stream(
         receiver,
         num_workers=num_workers,

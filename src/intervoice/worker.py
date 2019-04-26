@@ -139,7 +139,6 @@ async def async_main(wrapper_group):
 def main(import_paths: Tuple[str]):
 
     modules = collect_modules(import_paths)
-    print(modules)
     wrapper_group = parsing.combine_modules(modules)
 
     trio.run(functools.partial(async_main, wrapper_group=wrapper_group))

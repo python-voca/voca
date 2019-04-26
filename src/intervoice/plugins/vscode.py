@@ -443,4 +443,5 @@ if settings.SETTINGS["apps"]["visualstudiocode"]:
 
 
 from intervoice import utils
+
 wrapper = utils.Wrapper(utils.Registry())

@@ -39,7 +39,7 @@ def test_strict():
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
 
     with helpers.capture_keypresses() as typed:
-        helpers.run(["manage"], input=lines)
+        helpers.run(["manage", "-i", "intervoice.plugins.basic"], input=lines)
 
     expected = ["KEY_A", "KEY_B"]
     assert typed == expected
@@ -54,7 +54,7 @@ def test_eager():
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
 
     with helpers.capture_keypresses() as typed:
-        helpers.run(["manage"], input=lines)
+        helpers.run(["manage", "-i", "intervoice.plugins.basic"], input=lines)
 
     expected = ["KEY_C", "KEY_D"]
     assert typed == expected
@@ -69,7 +69,18 @@ def test_context_always():
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
 
     with helpers.capture_keypresses() as typed:
-        helpers.run(["manage"], input=lines)
+        helpers.run(
+            [
+                "manage",
+                "-i",
+                "intervoice.plugins.basic",
+                "-i",
+                "intervoice.plugins.yes",
+                "-i",
+                "intervoice.plugins.no",
+            ],
+            input=lines,
+        )
 
     expected = ["KEY_D", "KEY_E", "KEY_F"] * 2
     assert typed == expected
@@ -100,7 +111,16 @@ def test_app_context_matches():
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
 
     with helpers.capture_keypresses() as typed:
-        helpers.run(["manage"], input=lines)
+        helpers.run(
+            [
+                "manage",
+                "-i",
+                "intervoice.plugins.basic",
+                "-i",
+                "intervoice.plugins.turtle_context",
+            ],
+            input=lines,
+        )
 
     expected = ["KEY_T", "KEY_U", "KEY_R", "KEY_T"] * 2
     assert typed == expected

@@ -27,6 +27,7 @@ import importlib_resources
 import intervoice
 from intervoice import context
 
+
 @attr.s
 class Registry:
     pattern_to_function: MutableMapping[str, Callable] = attr.ib(factory=dict)
