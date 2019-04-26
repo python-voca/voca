@@ -60,12 +60,13 @@ class ConditionalAction:
     action: RegisteredAction
 
     async def execute(self, arg=None):
-        if await condition(arg):
+        if await self.condition(arg):
             await self.action(arg)
 
 
 @attr.dataclass
 class AppContext:
+    title: str
     executable: str
 
 
@@ -81,6 +82,41 @@ class IntegerRefST:
     end: int
 
 
+@attr.dataclass
+class RepeatedAction:
+    action: AsyncActionType
+    extra: str
+
+    async def execute(self, arg=None):
+        times = arg[self.extra]
+        for _ in range(times):
+            await self.action.execute()
+
+
+@attr.dataclass
+class Choice:
+    name: str
+    mapping: dict
+
+
+@attr.dataclass
+class Repeat:
+    extra: str
+
+    def __rmul__(self, action):
+        return RepeatedAction(action, self.extra)
+
+
+@attr.dataclass
+class FunctionAction:
+    callable: types.FunctionType
+    positional_arguments: tuple
+    keyword_arguments: dict
+
+    async def execute(self, arg):
+        return self.callable(*self.positional_arguments, **self.keyword_arguments)
+
+
 def add_to_registry(mapping, registry):
     # TODO don't mutate registry
     for pattern, action in mapping.items():
@@ -89,6 +125,35 @@ def add_to_registry(mapping, registry):
     return registry
 
 
+def _function(f, **kwargs):
+    return FunctionAction(f, positional_arguments=(), keyword_arguments=kwargs)
+
+
+class MergeRule:
+    pass
+
+
+class CCRMerger:
+    CORE = 1
+
+
+@attr.dataclass
+class Grammar:
+    name: str
+    context: AppContext
+
+
+class Settings:
+    def __getitem__(self, name):
+        return Settings()
+
+    def __bool__(self):
+        return False
+
+
 R = RegisteredAction
 Text = lambda x: ActionSequence([TextAction(x)])
 Key = lambda x: ActionSequence([KeyAction(x)])
+Function = _function
+settings = types.SimpleNamespace(SETTINGS=Settings())
+control = None
