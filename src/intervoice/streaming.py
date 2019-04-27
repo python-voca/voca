@@ -34,7 +34,7 @@ class TerminatedFrameReceiver:
         self,
         stream: trio.abc.ReceiveStream,
         terminator: bytes,
-        max_frame_length: int = 16384,
+        max_frame_length: int = 2**20,
     ) -> None:
         self.stream = stream
         self.terminator = terminator

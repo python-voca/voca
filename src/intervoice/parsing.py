@@ -89,3 +89,11 @@ def combine_modules(modules: Iterable[utils.PluginModule]):
         wrapper_group.wrappers.append(module.wrapper)
 
     return wrapper_group
+
+
+def combine_registries(registries):
+    combined = utils.Registry()
+    for registry in registries:
+        combined.pattern_to_function.update(registry.pattern_to_function)
+        combined.patterns.update(registry.patterns)
+    return combined

@@ -1,30 +1,37 @@
-from intervoice.caster_adapter import (
-    Key,
-    Text,
-    R,
-    Repeat,
-    Dictation,
-    IntegerRefST,
-    Choice,
-    Function,
-    MergeRule,
-    CCRMerger,
-    AppContext,
+# thanks to Casper for contributing commands to this.
+
+from dragonfly import (
     Grammar,
-    settings,
-    control,
+    Context,
+    AppContext,
+    Dictation,
+    Repeat,
+    Function,
+    Choice,
+    Mouse,
+    Pause,
 )
+
+from castervoice.lib import control
+from castervoice.lib import settings
+from castervoice.lib.actions import Key, Text
+from castervoice.lib.context import AppContext
+from castervoice.lib.dfplus.additions import IntegerRefST
+from castervoice.lib.dfplus.merge import gfilter
+from castervoice.lib.dfplus.merge.mergerule import MergeRule
+from castervoice.lib.dfplus.state.short import R
+from castervoice.lib.dfplus.merge.ccrmerger import CCRMerger
 
 
 def findNthToken(text, n, direction):
     Key("c-f").execute()
     Text("%(text)s").execute({"text": text})
     if direction == "reverse":
-        print("yeah? %(n)d")
+        # print("yeah? %(n)d")
         Key("s-enter:%(n)d").execute()
     else:
         Key("enter:%(n)d").execute()
-        print("no? %(n)d")
+        # print("no? %(n)d")
     Key("escape").execute()
 
 
@@ -35,6 +42,7 @@ class VSCodeCcrRule(MergeRule):
     mapping = {
         # Note: If you get the bad grammar grammar too complex error, move some of these commands into the non-CCR rule
         # cursor/line navigation
+        "simple": R(Key("x")),
         "scroll up [<n>]": R(
             Key("c-up") * Repeat(extra="n"),
             rdescript="VS Code: Scroll Up One Line at a Time",
@@ -440,8 +448,3 @@ if settings.SETTINGS["apps"]["visualstudiocode"]:
         control.nexus().merger.add_global_rule(VSCodeCcrRule())
     else:
         control.nexus().merger.add_app_rule(VSCodeCcrRule(), context)
-
-
-from intervoice import utils
-
-wrapper = utils.Wrapper(utils.Registry())

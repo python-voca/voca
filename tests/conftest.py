@@ -17,7 +17,7 @@ class VirtualDisplay:
 def _virtual_display():
 
     original_display = os.environ.get("DISPLAY", None)
-    name = ":5"
+    name = ":6"
     os.environ["DISPLAY"] = name
 
     proc = subprocess.Popen(

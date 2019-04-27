@@ -152,6 +152,22 @@ class PluginModule(Protocol):
     wrapper: Wrapper
 
 
+@attr.dataclass
+class KeyModifier:
+    name: str
+
+
+@attr.dataclass
+class SimpleKey:
+    name: str
+
+
+@attr.dataclass
+class KeyChord:
+    modifiers: List[KeyModifier]
+    name: SimpleKey
+
+
 def async_runner(async_function: Callable):
     def build(*args, **kwargs) -> Callable:
         @functools.wraps(async_function)
@@ -174,3 +190,12 @@ def plugin_module_paths() -> List[str]:
         entry_point.module_name + "." + entry_point.name
         for entry_point in pkg_resources.iter_entry_points("intervoice_plugins")
     ]
+
+
+MODULE_TRANSFORMERS = []
+
+
+def transform_module(module):
+    for transform in MODULE_TRANSFORMERS:
+        transform(module)
+    return module

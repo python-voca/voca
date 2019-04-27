@@ -55,20 +55,38 @@ def load_from_path(import_path, filename):
     return module
 
 
+@log.log_call
+def get_backup_module(import_path, backup_dir):
+    sys.path.insert(0, str(backup_dir))
+    try:
+        module = importlib.import_module(import_path)
+    except Exception:
+        module = None
+    finally:
+        del sys.path[0]
+    return module
+
+
+@log.log_call
+def save_backup_module(module, import_path, backup_dir):
+    new_path = (backup_dir / import_path.replace(".", "/")).with_suffix(".py")
+    new_path.parent.mkdir(exist_ok=True, parents=True)
+    shutil.copy2(module.__file__, new_path)
+
+
+@log.log_call
 def get_module(import_path, backup_dir):
     """Import module and cache it in backup_dir, returning backup on failure."""
     try:
         with eliot.start_action(action_type="import_module", import_path=import_path):
             module = importlib.import_module(import_path)
     except Exception:
+        # XXX Probably remove this ``raise``.
         raise
-        sys.path.insert(0, str(backup_dir))
-        try:
-            module = importlib.import_module(import_path)
-        except Exception:
-            module = None
-        finally:
-            del sys.path[0]
+
+        module = get_backup_module(import_path, backup_dir)
+    else:
+        save_backup_module(module, import_path, backup_dir)
     return module
 
 
@@ -79,13 +97,8 @@ def collect_modules(import_paths: Iterable[str]) -> List[types.ModuleType]:
     modules = []
     for import_path in import_paths:
         module = get_module(import_path, backup_dir)
-
         if module is not None:
             modules.append(module)
-            new_path = (backup_dir / import_path.replace(".", "/")).with_suffix(".py")
-            new_path.parent.mkdir(exist_ok=True, parents=True)
-            shutil.copy2(module.__file__, new_path)
-
     return modules
 
 
@@ -103,7 +116,6 @@ async def make_specific_handler(wrapper_group, data):
 
     rules = parsing.build_rules(registry)
     grammar = parsing.build_grammar(registry, rules)
-
     rule_name_to_function = {rule.name: rule.function for rule in rules}
 
     parser = lark.Lark(
@@ -139,6 +151,8 @@ async def async_main(wrapper_group):
 def main(import_paths: Tuple[str]):
 
     modules = collect_modules(import_paths)
+    modules = [utils.transform_module(module) for module in modules]
+
     wrapper_group = parsing.combine_modules(modules)
 
     trio.run(functools.partial(async_main, wrapper_group=wrapper_group))

@@ -101,6 +101,7 @@ setup(
             "yes = intervoice.plugins:yes",
             "no = intervoice.plugins:no",
             "turtle_context = intervoice.plugins:turtle_context",
+            'vscode = intervoice.plugins:vscode'
         ],
     },
 )
