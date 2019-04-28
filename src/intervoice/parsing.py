@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-
+import re
 import textwrap
 import types
+import unicodedata
 
 from typing import Tuple
 from typing import List
@@ -40,11 +41,23 @@ def extract_commands(tree: lark.Tree) -> Tuple[str, List]:
     return tree.children
 
 
+def _replace_match(match):
+    body = unicodedata.name(match.group(0)).replace(' ', '_')
+    return f'_{body}_'
+
+
+@log.log_call
+def normalize_pattern(text):
+
+    return re.sub(r"\W", _replace_match, text).lower()
+
+
 @log.log_call
 def build_rules(registry: utils.Registry) -> List[utils.Rule]:
     rules = []
     for i, (pattern, function) in enumerate(registry.pattern_to_function.items()):
-        name = f"rule_{i}"
+        normalized_pattern = normalize_pattern(pattern)
+        name = f"rule_{i}__{normalized_pattern}"
         rules.append(utils.Rule(name=name, pattern=pattern, function=function))
 
     return rules
