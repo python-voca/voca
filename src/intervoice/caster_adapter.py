@@ -176,6 +176,8 @@ class CasterTransformer(lark.Transformer):
 
 
 def transform_tree(tree):
+    if not tree:
+        return tree
     result = CasterTransformer().transform(tree[0])
     return result
 
