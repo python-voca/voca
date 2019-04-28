@@ -315,6 +315,9 @@ def monkeypatch_each(patches):
 
 @log.log_call
 def add_wrapper(module):
+    if getattr(module, 'wrapper', False):
+        return module
+
     rules = find_merge_rule_classes(module)
 
     registry = utils.Registry()
@@ -333,7 +336,8 @@ def add_wrapper(module):
     # TODO use module.context
     wrapper = utils.Wrapper(registry, context=context.AlwaysContext())
     module.wrapper = wrapper
-
+    # XXX Avoid mutate-and-return.
+    return module
 
 def patch_all():
     finder = patching.make_finder(module_mapping)

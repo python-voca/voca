@@ -197,5 +197,6 @@ MODULE_TRANSFORMERS = []
 
 def transform_module(module):
     for transform in MODULE_TRANSFORMERS:
-        transform(module)
+        module = transform(module)
+
     return module
