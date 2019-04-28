@@ -378,6 +378,12 @@ def add_wrapper(module):
 
 
 def patch_all():
+
+
+    # XXX Should fix this to avoid having to actually import castervoice.
+    # Currently sys.modules is used to find castervoice in order to find its submodules.
+    import castervoice
+
     finder = patching.make_finder(module_mapping)
     sys.meta_path.insert(0, finder)
 
@@ -419,6 +425,8 @@ module_mapping = {
         "Pause": None,
     },
     "castervoice.lib.control": {},
+    "castervoice.lib.utilities": {},
+    "castervoice.apps.__init__": {},
     "castervoice.lib.settings": {"SETTINGS": Settings()},
     "castervoice.lib.actions": {"Key": adapt_Key, "Text": adapt_Text},
     "castervoice.lib.context": {"AppContext": adapt_AppContext},

@@ -1,6 +1,7 @@
 import contextlib
 import subprocess
 import sys
+import time
 
 import trio
 import sneakysnek.recorder
@@ -22,6 +23,7 @@ def capture_keypresses():
 
     rec = sneakysnek.recorder.Recorder.record(capture)
     yield captured
+    time.sleep(2)
     rec.stop()
 
 @contextlib.asynccontextmanager

@@ -1,19 +1,21 @@
 import functools
 import sys
-
+import time
 
 from typing import List
 from typing import Callable
 from typing import Coroutine
 from typing import Awaitable
 
-from intervoice import utils
-from intervoice import platforms
 
 import trio
 import pyautogui
 import pynput
 import pynput.keyboard
+
+from intervoice import utils
+from intervoice import platforms
+from intervoice import log
 
 registry = utils.Registry()
 
@@ -38,9 +40,10 @@ def type_chord(chord):
 
     if modifiers:
         with keyboard.pressed(*modifiers):
-
+            # XXX This seems like it wouldn't work, but it is working in tests.
             keyboard.press(key)
             keyboard.release(key)
+            pyautogui.press(chord.name)
 
     else:
         # I'm not sure why pynput wasn't working on simple keys, but this seems to work.

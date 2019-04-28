@@ -6,25 +6,23 @@ import sys
 import types
 import importlib
 import importlib.machinery
+import importlib.util
 
 from typing import Optional
 from typing import Dict
 from typing import List
+from typing import Any
 
 import attr
-import eliot
-
-from intervoice import log
 
 
 @attr.s(auto_attribs=True)
 class PathLoader:
     namespace: dict
     fullname: str
-    path: str
+    path: Optional[str]
     target: types.ModuleType
 
-    @log.log_call
     def create_module(self, spec: importlib.machinery.ModuleSpec):
         module = types.ModuleType(spec.name)
         module.__dict__.update(self.namespace)
@@ -35,25 +33,71 @@ class PathLoader:
         pass
 
 
+@contextlib.contextmanager
+def skipping_finder(finder):
+    def placeholder_find_spec(_fullname, _path, _target):
+        return None
+
+    finder_placeholder = types.SimpleNamespace(find_spec=placeholder_find_spec)
+
+    sys.meta_path[sys.meta_path.index(finder)] = finder_placeholder
+    try:
+        yield
+    finally:
+        sys.meta_path[sys.meta_path.index(finder_placeholder)] = finder
+
+
+@contextlib.contextmanager
+def skipping_module_in_sys_modules(module_name):
+
+    # Use a sentinel to check if we need to restore parent module to sys.modules.
+    sentinel = object()
+    parent_module = sys.modules.pop(module_name, sentinel)
+    try:
+        yield
+    finally:
+        # Restore parent if necessary.
+        if parent_module is not sentinel:
+
+            # XXX Not sure if this is the right choice, or if it should leave
+            # the existing entry in place.
+
+            # Restore original module to sys.modules, bumping any entry created
+            # during the `yield` above.
+            sys.modules[module_name] = parent_module
+
+
+@contextlib.contextmanager
+def finder_patch(finder):
+    sys.meta_path.insert(0, finder)
+    try:
+        yield
+    finally:
+        sys.meta_path.remove(finder)
+
+
+@attr.s(auto_attribs=True)
 class PathFinder:
-    def __init__(self, modules, mapping):
+    modules_to_handle: List[str]
+    fullname_to_vars: Dict[str, Dict[str, Any]]
 
-        self.modules_to_handle = modules
-        self.fullname_to_vars = mapping
-
-    @log.log_call
     def find_spec(
         self, fullname: str, path: Optional[str], target=Optional[types.ModuleType]
     ):
 
-        if not fullname in self.modules_to_handle:
-            return None
-        return Spec(
-            name=fullname,
-            loader=PathLoader(
-                self.fullname_to_vars.get(fullname, {}), fullname, path, target
-            ),
-        )
+        if fullname not in self.modules_to_handle:
+            # Return a spec using the default behavior ignoring sys.modules and
+            # this finder.
+            parent_name = ".".join(fullname.split(".")[:-1])
+
+            with skipping_finder(self), skipping_module_in_sys_modules(parent_name):
+
+                return importlib.util.find_spec(fullname, path)
+
+        variables = self.fullname_to_vars.get(fullname, {})
+        loader = PathLoader(variables, fullname, path, target)
+
+        return Spec(name=fullname, loader=loader)
 
 
 @attr.s
@@ -85,7 +129,6 @@ def get_package_map(strings):
     return dict(m)
 
 
-@log.log_call
 def make_finder(mapping):
     package_map = get_package_map(mapping.keys())
     allowed_names = []
@@ -95,13 +138,3 @@ def make_finder(mapping):
 
     allowed_names += list(package_map.keys())
     return PathFinder(allowed_names, mapping)
-
-
-@contextlib.contextmanager
-def finder_patch(finder):
-    sys.meta_path.insert(0, finder)
-    with eliot.start_action(
-        action_type="meta_path_finder", finder=finder, sys_meta_path=sys.meta_path
-    ):
-        yield
-    sys.meta_path.remove(finder)
