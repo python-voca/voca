@@ -39,7 +39,7 @@ numpy==1.16.2             # via matplotlib
 outcome==1.0.0            # via trio
 pathtools==0.1.2          # via watchdog
 pex==1.6.3
-pip-tools==3.6.0
+pip-tools==3.6.1
 pkginfo==1.5.0.1          # via twine
 pluggy==0.9.0             # via pytest, tox
 pudb==2018.1

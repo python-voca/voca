@@ -15,7 +15,7 @@ sounddevice
 pytest-cov
 twine
 sneakysnek
-pip-tools
+pip-tools>=3.6.1
 q
 pudb
 pytest-trio
