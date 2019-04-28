@@ -17,14 +17,14 @@ from tests import helpers
     [
         ("baz", '"baz"'),
         ("<foo>", "foo"),
-        ("[foo]", '["foo"]'),
+        ("[foo]", '[ "foo" ]'),
         ("[<foo>]", "[foo]"),
-        ("(foo|bar)", '("foo" | "bar")'),
-        ("quux <n>", '"quux" n'),
-        ("quux [<n>]", '"quux" [n]'),
+        ("(foo|bar)", '( "foo" | "bar" )'),
+        ("quux <narg>", '"quux" narg'),
+        ("quux [<narg>]", '"quux" [narg]'),
         (
-            "[(foo bar | baz | eggs spam )] ham <n>",
-            '[("foo bar" | "baz" | "eggs spam")] "ham" n',
+            "[( foo bar | baz | eggs spam )] ham <narg>",
+            '[( "foo bar" | "baz" | "eggs spam" )] "ham" narg',
         ),
     ],
 )

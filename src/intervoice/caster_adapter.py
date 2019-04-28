@@ -209,10 +209,10 @@ def convert_key_name(name):
 
 class SpecTransformer(lark.Transformer):
     def name(self, args):
-        return args[0]
+        return "".join(args)
 
     def literal_name(self, args):
-        return utils.quote(args[0])
+        return " " + utils.quote(args[0].strip()) + " "
 
     def angled_name(self, args):
         return args[0]
@@ -227,10 +227,10 @@ class SpecTransformer(lark.Transformer):
         return args[0]
 
     def spec(self, args):
-        return args[0]
+        return "".join(args).strip()
 
     def group(self, args):
-        return "(" + " | ".join(args) + ")"
+        return "(" + "|".join(args) + ")"
 
 
 def convert_spec(spec):
@@ -257,8 +257,10 @@ def convert_spec(spec):
     parser = lark.Lark(pattern, debug=True, maybe_placeholders=True)
     tree = parser.parse(spec)
     result = "".join(SpecTransformer().transform(tree))
-    if result.startswith("[") and result.endswith("]"):
-        raise NotImplementedError("Buggy translator")
+    result = result.replace('""', "")
+    # XXX
+    # if result.startswith("[") and result.endswith("]"):
+    #     raise NotImplementedError(result + ": Buggy translator")
     return result
 
 
