@@ -105,10 +105,12 @@ class IntegerRefST:
     end: int
 
     def make_definitions(self):
+        mapping = utils.value_to_pronunciation()
 
         return {
             self.name: "|".join(
-                utils.quote(str(i)) for i in range(self.start, min(self.end, 30))
+                utils.quote("".join(mapping[c] for c in str(i)))
+                for i in range(self.start, min(self.end, 30))
             )
         }
 

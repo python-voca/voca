@@ -51,6 +51,10 @@ def pronunciation_to_value() -> MutableMapping[str, Any]:
     return toml.loads(text)
 
 
+def value_to_pronunciation():
+    return {v: k for k, v in pronunciation_to_value().items()}
+
+
 async def run_subprocess(
     command: List[str], *, input=None, capture_output=False, **options
 ):
