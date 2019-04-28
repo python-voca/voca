@@ -113,7 +113,7 @@ async def process_stream(receiver, num_workers, should_log, module_names):
         message = message_bytes.decode()
         with eliot.start_action(state=state):
             data = json.loads(message)
-            if 'result' not in data.keys():
+            if "result" not in data.keys():
                 # Received a log, not a command.
                 print(message)
                 continue
