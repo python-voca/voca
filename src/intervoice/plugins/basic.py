@@ -71,6 +71,7 @@ async def speak(message):
     await utils.run_subprocess(["say", message])
 
 
+@registry.register("chord")
 @registry.register('"say" chord')
 async def _say(message: List[str]):
     [chord_string] = message
