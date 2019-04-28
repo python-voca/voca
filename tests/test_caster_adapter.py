@@ -34,7 +34,7 @@ def test_convert_spec(spec, expected):
     assert got == expected
 
 
-@pytest.mark.usefixtures("virtual_display", "turtle_window")
+@pytest.mark.usefixtures("virtual_display")
 def test_simple_caster():
     from intervoice import caster_adapter
 
@@ -62,7 +62,7 @@ def test_simple_caster():
     assert typed == expected
 
 
-@pytest.mark.usefixtures("virtual_display", "turtle_window")
+@pytest.mark.usefixtures("virtual_display")
 def test_caster_extras():
     from intervoice import caster_adapter
 
@@ -90,6 +90,7 @@ def test_caster_extras():
     assert typed == expected
 
 
+@pytest.mark.usefixtures("virtual_display")
 def test_patch_caster():
 
     namespace = types.SimpleNamespace(python=types.SimpleNamespace(x=1))
@@ -112,6 +113,7 @@ def test_patch_caster():
         assert castervoice.lib.ccr.python.python.PythonNon.mapping["with"] == 1
 
 
+@pytest.mark.usefixtures("virtual_display")
 def test_patch_dragonfly():
 
     mapping = {"dragonfly": {"Repeat": 5}, "dragonfly.__init__": {}}
@@ -123,6 +125,7 @@ def test_patch_dragonfly():
         assert Repeat == 5
 
 
+@pytest.mark.usefixtures("virtual_display")
 def test_f_keys():
 
     from intervoice import caster_adapter
