@@ -85,11 +85,11 @@ async def _switch(message: List[str]):
     await press(f"super+{chord_value}")
 
 
-key: Callable = utils.async_runner(press)
+press_key: Callable = utils.async_runner(press)
 
 
-registry.pattern_to_function['"monitor"'] = key("M")
-registry.pattern_to_function['"mouse"'] = key("O")
+registry.pattern_to_function['"monitor"'] = press_key("M")
+registry.pattern_to_function['"mouse"'] = press_key("O")
 
 
 @registry.register('"div0"')
