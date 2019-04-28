@@ -169,7 +169,7 @@ class SimpleKey:
 @attr.dataclass
 class KeyChord:
     modifiers: List[KeyModifier]
-    name: SimpleKey
+    name: str
 
 
 def async_runner(async_function: Callable):
