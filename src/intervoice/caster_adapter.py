@@ -18,14 +18,18 @@ import intervoice.plugins
 from intervoice import utils
 from intervoice import context
 from intervoice import log
+from intervoice import patching
 
 
 class LazyLoader:
     def __getattr__(self, name):
         from intervoice.plugins import basic
+
         return getattr(basic, name)
 
+
 basic = LazyLoader()
+
 
 class AsyncActionType(Protocol):
     async def execute(self, arg=None) -> None:
@@ -140,13 +144,14 @@ class Choice:
 
 
 @attr.dataclass
-class Repeat:
+class MyRepeat:
     extra: str
 
     def __mul__(self, action):
         return RepeatedAction(action, self.extra)
 
-    __rmul__ = __mul__
+    def __rmul__(self, action):
+        return self * action
 
 
 @attr.dataclass
@@ -224,7 +229,6 @@ class SpecTransformer(lark.Transformer):
 
     def group(self, args):
         return "(" + " | ".join(args) + ")"
-
 
 
 def convert_spec(spec):
@@ -308,6 +312,7 @@ def monkeypatch_each(patches):
     for patch in patches:
         monkeypatch(patch.module, patch.name, patch.new)
 
+
 @log.log_call
 def add_wrapper(module):
     rules = find_merge_rule_classes(module)
@@ -331,8 +336,8 @@ def add_wrapper(module):
 
 
 def patch_all():
-    for module_path in paths_to_patch:
-        sys.modules[module_path] = namespace
+    finder = patching.make_finder(module_mapping)
+    sys.meta_path.insert(0, finder)
 
     # XXX Maybe replace this with an import hook.
     utils.MODULE_TRANSFORMERS.append(add_wrapper)
@@ -347,37 +352,40 @@ class Placeholder:
     pass
 
 
-paths_to_patch = [
-    "dragonfly",
-    "castervoice.lib",
-    "castervoice.lib.actions",
-    "castervoice.lib.context",
-    "castervoice.lib.dfplus.additions",
-    "castervoice.lib.dfplus.merge",
-    "castervoice.lib.dfplus.merge.mergerule",
-    "castervoice.lib.dfplus.state",
-    "castervoice.lib.dfplus.state.short",
-    "castervoice.lib.dfplus.merge.ccrmerger",
-]
+class VirtualModule:
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
 
 
-namespace = types.SimpleNamespace(
-    R=RegisteredAction,
-    Text=lambda x: ActionSequence([TextAction(x)]),
-    Key=lambda x: ActionSequence([KeyAction(x)]),
-    Function=_function,
-    settings=types.SimpleNamespace(SETTINGS=Settings()),
-    control=None,
-    gfilter=None,
-    AppContext=adapt_AppContext,
-    Dictation=adapt_Dictation,
-    Grammar=Grammar,
-    Context=None,
-    Repeat=Repeat,
-    Choice=Choice,
-    Mouse=None,
-    Pause=None,
-    IntegerRefST=IntegerRefST,
-    MergeRule=Placeholder,
-    CCRMerger=AttributeHaver(),
-)
+class VirtualPackage:
+    def __init__(self, path, contents):
+        self.__path__ = path
+        self.__dict__.update(contents)
+
+
+module_mapping = {
+    "dragonfly.__init__": {},
+    "dragonfly": {
+        "Grammar": Grammar,
+        "Context": None,
+        "AppContext": adapt_AppContext,
+        "Dictation": adapt_Dictation,
+        "Repeat": MyRepeat,
+        "Function": _function,
+        "Choice": Choice,
+        "Mouse": None,
+        "Pause": None,
+    },
+    "castervoice.lib.control": {},
+    "castervoice.lib.settings": {"SETTINGS": Settings()},
+    "castervoice.lib.actions": {
+        "Key": lambda x: ActionSequence([KeyAction(x)]),
+        "Text": lambda x: ActionSequence([TextAction(x)]),
+    },
+    "castervoice.lib.context": {"AppContext": adapt_AppContext},
+    "castervoice.lib.dfplus.additions": {"IntegerRefST": IntegerRefST},
+    "castervoice.lib.dfplus.merge": {"gfilter": None},
+    "castervoice.lib.dfplus.merge.mergerule": {"MergeRule": Placeholder},
+    "castervoice.lib.dfplus.state.short": {"R": RegisteredAction},
+    "castervoice.lib.dfplus.merge.ccrmerger": {"CCRMerger": AttributeHaver()},
+}

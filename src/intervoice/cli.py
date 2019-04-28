@@ -85,7 +85,14 @@ def _manage(obj, **kwargs):
 
 @cli.command("worker")
 @click.option("import_paths", "-i", multiple=True)
+@click.option(
+    "--patch-caster", is_flag=True, default=False, envvar="INTERVOICE_PATCH_CASTER"
+)
 @click.pass_obj
 @log_cli_call
-def _worker(obj, **kwargs):
+def _worker(obj, patch_caster, **kwargs):
+    if patch_caster:
+        from intervoice import caster_adapter
+
+        caster_adapter.patch_all()
     worker.main(**kwargs)
