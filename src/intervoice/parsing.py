@@ -42,8 +42,8 @@ def extract_commands(tree: lark.Tree) -> Tuple[str, List]:
 
 
 def _replace_match(match):
-    body = unicodedata.name(match.group(0)).replace(' ', '_')
-    return f'_{body}_'
+    body = unicodedata.name(match.group(0)).replace(" ", "_")
+    return f"_{body}_"
 
 
 @log.log_call
