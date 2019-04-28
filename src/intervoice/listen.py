@@ -118,6 +118,7 @@ class MyClient(WebSocketClient):
         threading.Thread(target=mic_to_ws).start()
 
     def received_message(self, m):
+
         response = json.loads(str(m))
         # print >> sys.stderr, "RESPONSE:", response
         # print >> sys.stderr, "JSON was:", m
@@ -127,8 +128,8 @@ class MyClient(WebSocketClient):
                 if response["result"]["final"]:
                     if self.show_hypotheses:
                         print("\r%s" % trans.replace("\n", "\\n"), file=sys.stderr)
-                    print("%s" % trans.replace("\n", "\\n"))  # final result!
-                    sys.stdout.flush()
+                    # print("%s" % trans.replace("\n", "\\n"), flush=True)  # final result!
+                    print(m, flush=True)
                 elif self.show_hypotheses:
                     print_trans = trans.replace("\n", "\\n")
                     if len(print_trans) > 80:

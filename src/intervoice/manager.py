@@ -109,10 +109,15 @@ async def process_stream(receiver, num_workers, should_log, module_names):
     pool = Pool(num_workers, should_log=should_log, module_names=module_names)
     pool.start()
 
-    async for message in receiver:
+    async for message_bytes in receiver:
+        message = message_bytes.decode()
         with eliot.start_action(state=state):
+            data = json.loads(message)
+            if 'result' not in data.keys():
+                # Received a log, not a command.
+                print(message)
+                continue
             # Handle state changes.
-            data = json.loads(message.decode())
             maybe_new_state = set_state(data, state)
             if maybe_new_state is not None:
                 state = maybe_new_state
