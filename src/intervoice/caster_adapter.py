@@ -20,6 +20,8 @@ from intervoice import context
 from intervoice import log
 from intervoice import patching
 
+import q
+
 
 class LazyLoader:
     def __getattr__(self, name):
@@ -106,13 +108,10 @@ class IntegerRefST:
 
     def make_definitions(self):
         mapping = utils.value_to_pronunciation()
-
-        return {
-            self.name: "|".join(
-                utils.quote("".join(mapping[c] for c in str(i)))
-                for i in range(self.start, min(self.end, 30))
-            )
-        }
+        alternatives = [
+            mapping.get(str(i)) for i in range(self.start, min(self.end, 20))
+        ]
+        return {self.name: "/" + "|".join(alternatives) + "/"}
 
 
 @attr.dataclass
@@ -121,9 +120,12 @@ class RepeatedAction:
     extra: str
 
     async def execute(self, arg=None):
-        times = arg[self.extra]
+
+        # self.extra should be the name of the extra, like 'n'
+        # arg should be a mapping of values said
+        times = int(arg[self.extra])
         for _ in range(times):
-            await self.action.execute()
+            await self.action.execute(arg)
 
 
 @attr.dataclass
@@ -166,10 +168,27 @@ class FunctionAction:
         return self.callable(*self.positional_arguments, **self.keyword_arguments)
 
 
+class CasterTransformer(lark.Transformer):
+    def n(self, arg):
+        pronunciation = "".join(arg[0])
+        value = utils.pronunciation_to_value()[pronunciation]
+        return {"n": int(value)}
+
+
+def transform_tree(tree):
+    result = CasterTransformer().transform(tree[0])
+    return result
+
+
+async def _run(action, data):
+    result = transform_tree(data)
+    await action.execute(result)
+
+
 def add_to_registry(mapping, registry):
     # TODO don't mutate registry
     for pattern, action in mapping.items():
-        registry.register(utils.quote(pattern))(action.execute)
+        registry.register(utils.quote(pattern))(lambda data: _run(action, data))
 
     return registry
 
@@ -198,13 +217,6 @@ class Settings:
 
     def __bool__(self):
         return False
-
-
-def convert_key_name(name):
-    modifiers, _dash, simple = name.partition("-")
-    modifier_map = {"c": "control", "a": "alt", "s": "shift", "w": "super"}
-    new_modifiers = [utils.KeyModifier(modifier_map[m]) for m in modifiers]
-    return utils.KeyChord(new_modifiers, simple)
 
 
 class SpecTransformer(lark.Transformer):
@@ -272,15 +284,30 @@ def adapt_Dictation(text):
     return Dictation(text)
 
 
+def convert_key_name(name):
+    modifiers, _dash, simple = name.rpartition("-")
+    modifier_map = {"c": "ctrl_l", "a": "alt", "s": "shift", "w": "cmd"}
+    key_map = {"pgup": "page_up", "pgdown": "page_down"}
+    new_modifiers = [utils.KeyModifier(modifier_map[m]) for m in modifiers]
+    return utils.KeyChord(new_modifiers, key_map.get(simple, simple))
+
+
 def adapt_Key(text):
 
     keys = [key.strip() for key in text.split(",")]
     actions = []
     for key in keys:
         name, _slash, delay = key.partition("/")
-        actions.append(KeyAction(name))
-        actions.append(DelayAction(delay))
+
+        actions.append(KeyAction(convert_key_name(name)))
+        if delay:
+            actions.append(DelayAction(float(delay)))
+
     return ActionSequence(actions)
+
+
+def adapt_Text(name):
+    return ActionSequence([TextAction(name)])
 
 
 def find_merge_rule_classes(module):
@@ -319,7 +346,7 @@ def monkeypatch_each(patches):
 
 @log.log_call
 def add_wrapper(module):
-    if getattr(module, 'wrapper', False):
+    if getattr(module, "wrapper", False):
         return module
 
     rules = find_merge_rule_classes(module)
@@ -332,8 +359,12 @@ def add_wrapper(module):
 
                 converted_spec = convert_spec(spec)
             except (lark.exceptions.UnexpectedCharacters, NotImplementedError):
+                # XXX
                 converted_spec = '"aklsdjfkldjfk"'
-            registry.register(converted_spec)(action.execute)
+            # TODO Make this easier to read.
+            registry.register(converted_spec)(
+                lambda data, action=action: _run(action, data)
+            )
         for extra in rule.extras:
             registry.define(extra.make_definitions())
 
@@ -342,6 +373,7 @@ def add_wrapper(module):
     module.wrapper = wrapper
     # XXX Avoid mutate-and-return.
     return module
+
 
 def patch_all():
     finder = patching.make_finder(module_mapping)
@@ -386,10 +418,7 @@ module_mapping = {
     },
     "castervoice.lib.control": {},
     "castervoice.lib.settings": {"SETTINGS": Settings()},
-    "castervoice.lib.actions": {
-        "Key": lambda x: ActionSequence([KeyAction(x)]),
-        "Text": lambda x: ActionSequence([TextAction(x)]),
-    },
+    "castervoice.lib.actions": {"Key": adapt_Key, "Text": adapt_Text},
     "castervoice.lib.context": {"AppContext": adapt_AppContext},
     "castervoice.lib.dfplus.additions": {"IntegerRefST": IntegerRefST},
     "castervoice.lib.dfplus.merge": {"gfilter": None},

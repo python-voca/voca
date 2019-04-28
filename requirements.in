@@ -9,3 +9,4 @@ six
 -e git+https://github.com/lark-parser/lark.git#egg=lark-parser
 sympy
 pyautogui
+pynput

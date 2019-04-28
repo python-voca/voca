@@ -86,7 +86,7 @@ def test_caster_extras():
             env={"INTERVOICE_PATCH_CASTER": "1", **os.environ},
         )
 
-    expected = ["KEY_PGUP"] * 5
+    expected = ["KEY_LEFT_ALT", "KEY_PAGE_UP"] * 5
     assert typed == expected
 
 

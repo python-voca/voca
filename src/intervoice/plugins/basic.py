@@ -12,6 +12,8 @@ from intervoice import platforms
 
 import trio
 import pyautogui
+import pynput
+import pynput.keyboard
 
 registry = utils.Registry()
 
@@ -24,10 +26,23 @@ registry.define(
 )
 
 
+def type_chord(chord):
+    keyboard = pynput.keyboard.Controller()
+    modifiers = [getattr(pynput.keyboard.Key, mod.name) for mod in chord.modifiers]
+    with keyboard.pressed(*modifiers):
+
+        keyboard.press(pynput.keyboard.Key[chord.name])
+        keyboard.release(pynput.keyboard.Key[chord.name])
+
+
 async def press(chord: str):
-    await trio.run_sync_in_worker_thread(
-        functools.partial(pyautogui.typewrite, [chord])
-    )
+    if isinstance(chord, str):
+        await trio.run_sync_in_worker_thread(
+            functools.partial(pyautogui.typewrite, [chord])
+        )
+        return
+
+    await trio.run_sync_in_worker_thread(type_chord, chord)
 
 
 async def write(message: str):
