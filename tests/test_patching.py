@@ -28,3 +28,16 @@ def test_patch():
 
     with pytest.raises(ImportError):
         import g.h.j
+
+
+def test_get_package_map():
+    modules = ["a.b", "a.b.c", "a.b.d", "a.b.c.e", "g.h.i.j"]
+    expected = {
+        "a": ["a.b"],
+        "a.b": ["a.b.c", "a.b.d"],
+        "a.b.c": ["a.b.c.e"],
+        "g": ["g.h"],
+        "g.h": ["g.h.i"],
+        "g.h.i": ["g.h.i.j"],
+    }
+    assert patching.get_package_map(modules) == expected
