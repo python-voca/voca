@@ -62,6 +62,34 @@ def test_simple_caster():
     assert typed == expected
 
 
+@pytest.mark.usefixtures("virtual_display", "turtle_window")
+def test_caster_extras():
+    from intervoice import caster_adapter
+
+    utterances = ["scroll page up five"]
+
+    rows = [
+        test_intervoice.make_command(utterance, final=True) for utterance in utterances
+    ]
+    lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
+
+    with helpers.capture_keypresses() as typed:
+        helpers.run(
+            [
+                "manage",
+                "-i",
+                "intervoice.plugins.basic",
+                "-i",
+                "intervoice.plugins.vscode",
+            ],
+            input=lines,
+            env={"INTERVOICE_PATCH_CASTER": "1", **os.environ},
+        )
+
+    expected = ["KEY_PGUP"] * 5
+    assert typed == expected
+
+
 def test_patch_caster():
 
     namespace = types.SimpleNamespace(python=types.SimpleNamespace(x=1))
