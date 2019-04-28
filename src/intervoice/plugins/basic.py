@@ -17,7 +17,7 @@ registry = utils.Registry()
 
 registry.define(
     {
-        "?text": r"/\w.+/",
+        "?any_text": r"/\w.+/",
         "key": utils.regex("|".join(utils.pronunciation_to_value().keys())),
         "chord": 'key ("+" chord)*',
     }
@@ -36,7 +36,7 @@ async def write(message: str):
     )
 
 
-@registry.register('"alert" text')
+@registry.register('"alert" any_text')
 async def _alert(text):
     await trio.run_sync_in_worker_thread(functools.partial(pyautogui.alert, text))
 
