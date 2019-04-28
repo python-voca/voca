@@ -12,7 +12,9 @@ from typing import Dict
 from typing import List
 
 import attr
-import pytest
+import eliot
+
+from intervoice import log
 
 
 @attr.s(auto_attribs=True)
@@ -22,6 +24,7 @@ class PathLoader:
     path: str
     target: types.ModuleType
 
+    @log.log_call
     def create_module(self, spec: importlib.machinery.ModuleSpec):
         module = types.ModuleType(spec.name)
         module.__dict__.update(self.namespace)
@@ -38,6 +41,7 @@ class PathFinder:
         self.modules_to_handle = modules
         self.fullname_to_vars = mapping
 
+    @log.log_call
     def find_spec(
         self, fullname: str, path: Optional[str], target=Optional[types.ModuleType]
     ):
@@ -81,6 +85,7 @@ def get_package_map(strings):
     return dict(m)
 
 
+@log.log_call
 def make_finder(mapping):
     package_map = get_package_map(mapping.keys())
     allowed_names = []
@@ -95,18 +100,8 @@ def make_finder(mapping):
 @contextlib.contextmanager
 def finder_patch(finder):
     sys.meta_path.insert(0, finder)
-    yield
+    with eliot.start_action(
+        action_type="meta_path_finder", finder=finder, sys_meta_path=sys.meta_path
+    ):
+        yield
     sys.meta_path.remove(finder)
-
-
-def test_get_package_map():
-    modules = ["a.b", "a.b.c", "a.b.d", "a.b.c.e", "g.h.i.j"]
-    expected = {
-        "a": ["a.b"],
-        "a.b": ["a.b.c", "a.b.d"],
-        "a.b.c": ["a.b.c.e"],
-        "g": ["g.h"],
-        "g.h": ["g.h.i"],
-        "g.h.i": ["g.h.i.j"],
-    }
-    assert get_package_map(modules) == expected
