@@ -34,9 +34,6 @@ def type_chord(chord):
         key = pynput.keyboard.Key[chord.name]
     except KeyError:
         key = chord.name
-        if len(key) != 1:
-
-            raise ValueError(key, "Should be a simple key.")
 
     if modifiers:
         with keyboard.pressed(*modifiers):
@@ -46,7 +43,7 @@ def type_chord(chord):
 
     else:
         # I'm not sure why pynput wasn't working on simple keys, but this seems to work.
-        pyautogui.press(key)
+        pyautogui.press(chord.name)
 
 
 async def press(chord: str):
