@@ -20,9 +20,11 @@ from tests import helpers
         ("[foo]", '["foo"]'),
         ("[<foo>]", "[foo]"),
         ("(foo|bar)", '("foo" | "bar")'),
+        ("quux <n>", '"quux" n'),
+        ("quux [<n>]", '"quux" [n]'),
         (
-            "[(go to | jump | jump to)] line <n>",
-            '[("go to" | "jump" | "jump to")] "line" n',
+            "[(foo bar | baz | eggs spam )] ham <n>",
+            '[("foo bar" | "baz" | "eggs spam")] "ham" n',
         ),
     ],
 )
