@@ -29,10 +29,24 @@ registry.define(
 def type_chord(chord):
     keyboard = pynput.keyboard.Controller()
     modifiers = [getattr(pynput.keyboard.Key, mod.name) for mod in chord.modifiers]
-    with keyboard.pressed(*modifiers):
 
-        keyboard.press(pynput.keyboard.Key[chord.name])
-        keyboard.release(pynput.keyboard.Key[chord.name])
+    try:
+        key = pynput.keyboard.Key[chord.name]
+    except KeyError:
+        key = chord.name
+        if len(key) != 1:
+
+            raise ValueError(key, "Should be a simple key.")
+
+    if modifiers:
+        with keyboard.pressed(*modifiers):
+
+            keyboard.press(key)
+            keyboard.release(key)
+
+    else:
+        # I'm not sure why pynput wasn't working on simple keys, but this seems to work.
+        pyautogui.press(key)
 
 
 async def press(chord: str):
