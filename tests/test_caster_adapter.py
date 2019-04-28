@@ -152,3 +152,30 @@ def test_f_keys():
 
     expected = ["KEY_F12"]
     assert typed == expected
+
+@pytest.mark.usefixtures("virtual_display", )
+def test_more_keys():
+
+    from intervoice import caster_adapter
+
+    utterances = ["up", "down", "left", "right"]
+    expected = ["KEY_UP", "KEY_DOWN", "KEY_LEFT", "KEY_RIGHT"]
+    rows = [
+        test_intervoice.make_command(utterance, final=True) for utterance in utterances
+    ]
+    lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
+
+    with helpers.capture_keypresses() as typed:
+        helpers.run(
+            [
+                "manage",
+                "-i",
+                "intervoice.plugins.basic",
+                "-i",
+                "intervoice.plugins.vscode",
+            ],
+            input=lines,
+            env={"INTERVOICE_PATCH_CASTER": "1", **os.environ},
+        )
+
+    assert typed == expected
