@@ -19,9 +19,11 @@ pyaudio==0.2.11
 pyautogui==0.9.42
 pygetwindow==0.0.4        # via pyautogui
 pymsgbox==1.0.6           # via pyautogui
+pynput==1.4.2
 pyrect==0.1.4             # via pygetwindow
 pyrsistent==0.14.11
 pyscreeze==0.1.20         # via pyautogui
+python-xlib==0.25         # via pynput
 pytweening==1.0.3         # via pyautogui
 six==1.12.0
 sniffio==1.0.0            # via trio
