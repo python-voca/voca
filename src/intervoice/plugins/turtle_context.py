@@ -1,6 +1,6 @@
-from intervoice import utils
-from intervoice import context
-from intervoice.plugins import basic
+from voca import utils
+from voca import context
+from voca.plugins import basic
 
 
 registry = utils.Registry()

@@ -8,7 +8,7 @@ import string
 from click.testing import CliRunner
 import pytest
 
-from intervoice import cli
+from voca import cli
 
 from tests import helpers
 
@@ -39,7 +39,7 @@ def test_strict():
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
 
     with helpers.capture_keypresses() as typed:
-        helpers.run(["manage", "-i", "intervoice.plugins.basic"], input=lines)
+        helpers.run(["manage", "-i", "voca.plugins.basic"], input=lines)
 
     expected = ["KEY_A", "KEY_B"]
     assert typed == expected
@@ -54,7 +54,7 @@ def test_eager():
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
 
     with helpers.capture_keypresses() as typed:
-        helpers.run(["manage", "-i", "intervoice.plugins.basic"], input=lines)
+        helpers.run(["manage", "-i", "voca.plugins.basic"], input=lines)
 
     expected = ["KEY_C", "KEY_D"]
     assert typed == expected
@@ -73,11 +73,11 @@ def test_context_always():
             [
                 "manage",
                 "-i",
-                "intervoice.plugins.basic",
+                "voca.plugins.basic",
                 "-i",
-                "intervoice.plugins.yes",
+                "voca.plugins.yes",
                 "-i",
-                "intervoice.plugins.no",
+                "voca.plugins.no",
             ],
             input=lines,
         )
@@ -115,9 +115,9 @@ def test_app_context_matches():
             [
                 "manage",
                 "-i",
-                "intervoice.plugins.basic",
+                "voca.plugins.basic",
                 "-i",
-                "intervoice.plugins.turtle_context",
+                "voca.plugins.turtle_context",
             ],
             input=lines,
         )

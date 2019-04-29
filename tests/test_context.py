@@ -5,7 +5,7 @@ import pytest
 import trio
 
 
-from intervoice import context
+from voca import context
 
 
 async def test_get_current_window_title(turtle_window):

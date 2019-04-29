@@ -1,10 +1,10 @@
-from intervoice.caster_adapter import R
-from intervoice.caster_adapter import Text
-from intervoice.caster_adapter import Key
-from intervoice.caster_adapter import add_to_registry
+from voca.caster_adapter import R
+from voca.caster_adapter import Text
+from voca.caster_adapter import Key
+from voca.caster_adapter import add_to_registry
 
 
-from intervoice import utils
+from voca import utils
 
 registry = utils.Registry()
 

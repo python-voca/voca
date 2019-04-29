@@ -5,10 +5,10 @@ import os
 
 import pytest
 
-from intervoice import patching
-from intervoice import caster_adapter
+from voca import patching
+from voca import caster_adapter
 
-from tests import test_intervoice
+from tests import test_voca
 from tests import helpers
 
 
@@ -36,12 +36,12 @@ def test_convert_spec(spec, expected):
 
 @pytest.mark.usefixtures("virtual_display")
 def test_simple_caster():
-    from intervoice import caster_adapter
+    from voca import caster_adapter
 
     utterances = ["simple"]
 
     rows = [
-        test_intervoice.make_command(utterance, final=True) for utterance in utterances
+        test_voca.make_command(utterance, final=True) for utterance in utterances
     ]
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
 
@@ -50,9 +50,9 @@ def test_simple_caster():
             [
                 "manage",
                 "-i",
-                "intervoice.plugins.basic",
+                "voca.plugins.basic",
                 "-i",
-                "intervoice.plugins.vscode",
+                "voca.plugins.vscode",
             ],
             input=lines,
             env={"INTERVOICE_PATCH_CASTER": "1", **os.environ},
@@ -64,12 +64,12 @@ def test_simple_caster():
 
 @pytest.mark.usefixtures("virtual_display", "hash_seed")
 def test_caster_extras():
-    from intervoice import caster_adapter
+    from voca import caster_adapter
 
     utterances = ["scroll page up five"]
 
     rows = [
-        test_intervoice.make_command(utterance, final=True) for utterance in utterances
+        test_voca.make_command(utterance, final=True) for utterance in utterances
     ]
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
 
@@ -78,9 +78,9 @@ def test_caster_extras():
             [
                 "manage",
                 "-i",
-                "intervoice.plugins.basic",
+                "voca.plugins.basic",
                 "-i",
-                "intervoice.plugins.vscode",
+                "voca.plugins.vscode",
             ],
             input=lines,
             env={"INTERVOICE_PATCH_CASTER": "1", **os.environ},
@@ -128,12 +128,12 @@ def test_patch_dragonfly():
 @pytest.mark.usefixtures("virtual_display")
 def test_f_keys():
 
-    from intervoice import caster_adapter
+    from voca import caster_adapter
 
     utterances = ["go to definition"]
 
     rows = [
-        test_intervoice.make_command(utterance, final=True) for utterance in utterances
+        test_voca.make_command(utterance, final=True) for utterance in utterances
     ]
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
 
@@ -142,9 +142,9 @@ def test_f_keys():
             [
                 "manage",
                 "-i",
-                "intervoice.plugins.basic",
+                "voca.plugins.basic",
                 "-i",
-                "intervoice.plugins.vscode",
+                "voca.plugins.vscode",
             ],
             input=lines,
             env={"INTERVOICE_PATCH_CASTER": "1", **os.environ},
@@ -157,12 +157,12 @@ def test_f_keys():
 @pytest.mark.usefixtures("virtual_display")
 def test_more_keys():
 
-    from intervoice import caster_adapter
+    from voca import caster_adapter
 
     utterances = ["up", "down", "left", "right"]
     expected = ["KEY_UP", "KEY_DOWN", "KEY_LEFT", "KEY_RIGHT"]
     rows = [
-        test_intervoice.make_command(utterance, final=True) for utterance in utterances
+        test_voca.make_command(utterance, final=True) for utterance in utterances
     ]
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
 
@@ -171,7 +171,7 @@ def test_more_keys():
             [
                 "manage",
                 "-i",
-                "intervoice.plugins.basic",
+                "voca.plugins.basic",
                 "-i",
                 "castervoice.apps.vscode",
             ],
@@ -185,12 +185,12 @@ def test_more_keys():
 @pytest.mark.usefixtures("virtual_display")
 def test_using_castervoice_apps():
 
-    from intervoice import caster_adapter
+    from voca import caster_adapter
 
     utterances = ["incremental reverse"]
 
     rows = [
-        test_intervoice.make_command(utterance, final=True) for utterance in utterances
+        test_voca.make_command(utterance, final=True) for utterance in utterances
     ]
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
 
@@ -199,7 +199,7 @@ def test_using_castervoice_apps():
             [
                 "manage",
                 "-i",
-                "intervoice.plugins.basic",
+                "voca.plugins.basic",
                 "-i",
                 "castervoice.apps.emacs",
             ],

@@ -2,6 +2,6 @@
 Usage
 =====
 
-To use intervoice in a project::
+To use voca in a project::
 
-	import intervoice
+	import voca

@@ -14,18 +14,18 @@ import attr
 import trio
 import lark
 
-import intervoice.plugins
-from intervoice import utils
-from intervoice import context
-from intervoice import log
-from intervoice import patching
+import voca.plugins
+from voca import utils
+from voca import context
+from voca import log
+from voca import patching
 
 import q
 
 
 class LazyLoader:
     def __getattr__(self, name):
-        from intervoice.plugins import basic
+        from voca.plugins import basic
 
         return getattr(basic, name)
 

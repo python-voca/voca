@@ -1,6 +1,6 @@
 import pytest
 
-from intervoice import patching
+from voca import patching
 
 def test_patch():
     mapping = {

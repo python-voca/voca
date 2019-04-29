@@ -9,7 +9,7 @@ import sneakysnek.recorder
 
 def run(args, **kwargs):
     return subprocess.check_output(
-        [sys.executable, "-m", "intervoice"] + args, **kwargs
+        [sys.executable, "-m", "voca"] + args, **kwargs
     )
 
 

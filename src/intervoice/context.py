@@ -8,8 +8,8 @@ import attr
 import trio
 
 
-from intervoice import platforms
-from intervoice import log
+from voca import platforms
+from voca import log
 
 
 @platforms.implementation(platforms.System.WINDOWS, platforms.System.DARWIN)
@@ -61,4 +61,4 @@ async def filter_wrappers(
     return utils.WrapperGroup(allowed)
 
 
-from intervoice import utils
+from voca import utils

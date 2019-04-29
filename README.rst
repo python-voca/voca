@@ -16,38 +16,38 @@ Overview
       - | |version| |wheel| |supported-versions| |supported-implementations|
         | |commits-since|
 
-.. |docs| image:: https://readthedocs.org/projects/python-intervoice/badge/?style=flat
-    :target: https://readthedocs.org/projects/python-intervoice
+.. |docs| image:: https://readthedocs.org/projects/python-voca/badge/?style=flat
+    :target: https://readthedocs.org/projects/python-voca
     :alt: Documentation Status
 
 
-.. |travis| image:: https://travis-ci.org/githubuser/python-intervoice.svg?branch=master
+.. |travis| image:: https://travis-ci.org/githubuser/python-voca.svg?branch=master
     :alt: Travis-CI Build Status
-    :target: https://travis-ci.org/githubuser/python-intervoice
+    :target: https://travis-ci.org/githubuser/python-voca
 
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/githubuser/python-intervoice?branch=master&svg=true
+.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/githubuser/python-voca?branch=master&svg=true
     :alt: AppVeyor Build Status
-    :target: https://ci.appveyor.com/project/githubuser/python-intervoice
+    :target: https://ci.appveyor.com/project/githubuser/python-voca
 
-.. |version| image:: https://img.shields.io/pypi/v/intervoice.svg
+.. |version| image:: https://img.shields.io/pypi/v/voca.svg
     :alt: PyPI Package latest release
-    :target: https://pypi.python.org/pypi/intervoice
+    :target: https://pypi.python.org/pypi/voca
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/githubuser/python-intervoice/v0.1.0.svg
+.. |commits-since| image:: https://img.shields.io/github/commits-since/githubuser/python-voca/v0.1.0.svg
     :alt: Commits since latest release
-    :target: https://github.com/githubuser/python-intervoice/compare/v0.1.0...master
+    :target: https://github.com/githubuser/python-voca/compare/v0.1.0...master
 
-.. |wheel| image:: https://img.shields.io/pypi/wheel/intervoice.svg
+.. |wheel| image:: https://img.shields.io/pypi/wheel/voca.svg
     :alt: PyPI Wheel
-    :target: https://pypi.python.org/pypi/intervoice
+    :target: https://pypi.python.org/pypi/voca
 
-.. |supported-versions| image:: https://img.shields.io/pypi/pyversions/intervoice.svg
+.. |supported-versions| image:: https://img.shields.io/pypi/pyversions/voca.svg
     :alt: Supported versions
-    :target: https://pypi.python.org/pypi/intervoice
+    :target: https://pypi.python.org/pypi/voca
 
-.. |supported-implementations| image:: https://img.shields.io/pypi/implementation/intervoice.svg
+.. |supported-implementations| image:: https://img.shields.io/pypi/implementation/voca.svg
     :alt: Supported implementations
-    :target: https://pypi.python.org/pypi/intervoice
+    :target: https://pypi.python.org/pypi/voca
 
 
 .. end-badges
@@ -61,7 +61,7 @@ Installation
 
 ::
 
-    pip install intervoice
+    pip install voca
 
 
 Documentation
@@ -80,7 +80,7 @@ Development
 - git clone this repo and cd inside
 - To start the kaldi server and workers in docker, plus a client listening to your mic, run ``./run-kaldi-server.sh``
 - ``./pycli init`` will create a virtualenv and install the package into it
-- ``./venv/bin/intervoice manage`` to start the manager process which accepts commands on stdin. The manager will start its workers.
+- ``./venv/bin/voca manage`` to start the manager process which accepts commands on stdin. The manager will start its workers.
 
 
 To run the all tests run::

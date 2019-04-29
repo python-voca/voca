@@ -1,6 +1,6 @@
 import platform
 
-from intervoice import platforms
+from voca import platforms
 
 
 @platforms.implementation(platforms.System.LINUX)

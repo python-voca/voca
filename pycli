@@ -142,8 +142,8 @@ def bundle(cfg):
             ".",
             *requirements,
             "-m",
-            "intervoice",
-            "-o" "intervoice.pex",
+            "voca",
+            "-o" "voca.pex",
             "--disable-cache",
         ]
     )

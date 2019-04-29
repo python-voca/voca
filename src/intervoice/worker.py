@@ -20,11 +20,11 @@ import toml
 import lark
 
 
-from intervoice import utils
-from intervoice import streaming
-from intervoice import log
-from intervoice import parsing
-from intervoice import context
+from voca import utils
+from voca import streaming
+from voca import log
+from voca import parsing
+from voca import context
 
 
 @log.log_async_call
@@ -91,7 +91,7 @@ def get_module(import_path, backup_dir):
 
 @log.log_call
 def collect_modules(import_paths: Iterable[str]) -> List[types.ModuleType]:
-    backup_dir = pathlib.Path(appdirs.user_config_dir("intervoice")) / "backup_modules"
+    backup_dir = pathlib.Path(appdirs.user_config_dir("voca")) / "backup_modules"
 
     modules = []
     for import_path in import_paths:

@@ -22,7 +22,7 @@ if os.getenv('SPELLCHECK'):
 
 source_suffix = '.rst'
 master_doc = 'index'
-project = 'intervoice'
+project = 'voca'
 year = '2019'
 author = 'Full Name'
 copyright = '{0}, {1}'.format(year, author)
@@ -31,8 +31,8 @@ version = release = '0.1.0'
 pygments_style = 'trac'
 templates_path = ['.']
 extlinks = {
-    'issue': ('https://github.com/githubuser/python-intervoice/issues/%s', '#'),
-    'pr': ('https://github.com/githubuser/python-intervoice/pull/%s', 'PR #'),
+    'issue': ('https://github.com/githubuser/python-voca/issues/%s', '#'),
+    'pr': ('https://github.com/githubuser/python-voca/pull/%s', 'PR #'),
 }
 # on_rtd is whether we are on readthedocs.org
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'

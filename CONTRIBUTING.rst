@@ -8,7 +8,7 @@ little bit helps, and credit will always be given.
 Bug reports
 ===========
 
-When `reporting a bug <https://github.com/githubuser/python-intervoice/issues>`_ please include:
+When `reporting a bug <https://github.com/githubuser/python-voca/issues>`_ please include:
 
     * Your operating system name and version.
     * Any details about your local setup that might be helpful in troubleshooting.
@@ -17,14 +17,14 @@ When `reporting a bug <https://github.com/githubuser/python-intervoice/issues>`_
 Documentation improvements
 ==========================
 
-intervoice could always use more documentation, whether as part of the
-official intervoice docs, in docstrings, or even on the web in blog posts,
+voca could always use more documentation, whether as part of the
+official voca docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
 Feature requests and feedback
 =============================
 
-The best way to send feedback is to file an issue at https://github.com/githubuser/python-intervoice/issues.
+The best way to send feedback is to file an issue at https://github.com/githubuser/python-voca/issues.
 
 If you are proposing a feature:
 
@@ -35,13 +35,13 @@ If you are proposing a feature:
 Development
 ===========
 
-To set up `python-intervoice` for local development:
+To set up `python-voca` for local development:
 
-1. Fork `python-intervoice <https://github.com/githubuser/python-intervoice>`_
+1. Fork `python-voca <https://github.com/githubuser/python-voca>`_
    (look for the "Fork" button).
 2. Clone your fork locally::
 
-    git clone git@github.com:your_name_here/python-intervoice.git
+    git clone git@github.com:your_name_here/python-voca.git
 
 3. Create a branch for local development::
 
@@ -74,7 +74,7 @@ For merging, you should:
 4. Add yourself to ``AUTHORS.rst``.
 
 .. [1] If you don't have all the necessary python versions available locally you can rely on Travis - it will
-       `run the tests <https://travis-ci.org/githubuser/python-intervoice/pull_requests>`_ for each change you add in the pull request.
+       `run the tests <https://travis-ci.org/githubuser/python-voca/pull_requests>`_ for each change you add in the pull request.
 
        It will be slower though ...
 

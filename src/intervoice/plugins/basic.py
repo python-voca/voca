@@ -13,9 +13,9 @@ import pyautogui
 import pynput
 import pynput.keyboard
 
-from intervoice import utils
-from intervoice import platforms
-from intervoice import log
+from voca import utils
+from voca import platforms
+from voca import log
 
 registry = utils.Registry()
 

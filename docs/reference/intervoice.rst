@@ -1,9 +1,9 @@
-intervoice
+voca
 ==========
 
 .. testsetup::
 
-    from intervoice import *
+    from voca import *
 
-.. automodule:: intervoice
+.. automodule:: voca
     :members:

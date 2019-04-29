@@ -1,6 +1,6 @@
 import sys
 
-from intervoice import utils
+from voca import utils
 
 
 registry = utils.Registry()

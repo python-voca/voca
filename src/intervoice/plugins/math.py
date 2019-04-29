@@ -5,8 +5,8 @@ from typing import List
 import sympy
 import sympy.parsing.sympy_parser
 
-from intervoice import utils
-from intervoice.plugins import basic
+from voca import utils
+from voca.plugins import basic
 
 registry = utils.Registry()
 registry.define({"?math": r"/[A-Za-z0-9\-\+ ]+/"})

@@ -18,10 +18,10 @@ import trio
 import eliot
 
 
-from intervoice import plugins
-from intervoice import utils
-from intervoice import streaming
-from intervoice import log
+from voca import plugins
+from voca import utils
+from voca import streaming
+from voca import log
 
 
 def worker_cli(should_log, module_names: Optional[List[str]] = None) -> List[str]:
@@ -29,7 +29,7 @@ def worker_cli(should_log, module_names: Optional[List[str]] = None) -> List[str
         module_names = utils.plugin_module_paths()
 
     log_arg = "--log" if should_log else "--no-log"
-    prefix = [sys.executable, "-m", "intervoice", log_arg, "worker"]
+    prefix = [sys.executable, "-m", "voca", log_arg, "worker"]
     command = prefix.copy()
     for module_name in module_names:
         command += ["-i", module_name]

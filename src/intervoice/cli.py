@@ -6,11 +6,11 @@ Why does this file exist, and why not put this in __main__?
   You might be tempted to import things from __main__ later, but that will cause
   problems: the code will get executed twice:
 
-  - When you run `python -mintervoice` python will execute
+  - When you run `python -mvoca` python will execute
     ``__main__.py`` as a script. That means there won't be any
-    ``intervoice.__main__`` in ``sys.modules``.
+    ``voca.__main__`` in ``sys.modules``.
   - When you import __main__ it will get executed again (as a module) because
-    there's no ``intervoice.__main__`` in ``sys.modules``.
+    there's no ``voca.__main__`` in ``sys.modules``.
 
   Also see (1) from http://click.pocoo.org/5/setuptools/#setuptools-integration
 """
@@ -21,11 +21,11 @@ import os
 import click
 import eliot
 
-from intervoice import app
-from intervoice import listen
-from intervoice import manager
-from intervoice import worker
-from intervoice import log
+from voca import app
+from voca import listen
+from voca import manager
+from voca import worker
+from voca import log
 
 
 CONTEXT_SETTINGS = {"auto_envvar_prefix": "INTERVOICE"}
@@ -53,7 +53,7 @@ def cli(ctx, **kwargs):
 @cli.command("mic")
 def _detect_mic(**kwargs):
     del sys.argv[1]
-    import intervoice.mic
+    import voca.mic
 
 
 @cli.command("listen")
@@ -92,7 +92,7 @@ def _manage(obj, **kwargs):
 @log_cli_call
 def _worker(obj, patch_caster, **kwargs):
     if patch_caster:
-        from intervoice import caster_adapter
+        from voca import caster_adapter
 
         caster_adapter.patch_all()
     worker.main(**kwargs)

@@ -13,8 +13,8 @@ from typing import Iterable
 import lark
 
 
-from intervoice import log
-from intervoice import utils
+from voca import log
+from voca import utils
 
 
 class Transformer(lark.Transformer):

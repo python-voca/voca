@@ -24,8 +24,8 @@ import pkg_resources
 import importlib_resources
 
 
-import intervoice
-from intervoice import context
+import voca
+from voca import context
 
 
 @attr.s
@@ -47,7 +47,7 @@ class Registry:
 
 
 def pronunciation_to_value() -> MutableMapping[str, Any]:
-    text = importlib_resources.read_text(intervoice, "pronunciation.toml")
+    text = importlib_resources.read_text(voca, "pronunciation.toml")
     return toml.loads(text)
 
 
@@ -192,7 +192,7 @@ def replace(message: str) -> str:
 def plugin_module_paths() -> List[str]:
     return [
         entry_point.module_name + "." + entry_point.name
-        for entry_point in pkg_resources.iter_entry_points("intervoice_plugins")
+        for entry_point in pkg_resources.iter_entry_points("voca_plugins")
     ]
 
 

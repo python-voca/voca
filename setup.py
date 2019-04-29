@@ -35,7 +35,7 @@ except FileNotFoundError:
     INSTALL_REQUIRES = []
 
 
-NAME = "intervoice"
+NAME = "voca"
 
 setup(
     name=NAME,
@@ -52,7 +52,7 @@ setup(
     long_description_content_type="text/x-rst",
     author="Full Name",
     author_email="email@example.com",
-    url="https://github.com/githubuser/python-intervoice",
+    url="https://github.com/githubuser/python-voca",
     packages=list(find_packages("src")),
     package_dir={"": "src"},
     py_modules=[splitext(basename(path))[0] for path in glob("src/*.py")],
@@ -93,15 +93,15 @@ setup(
         #   ':python_version=="2.6"': ['argparse'],
     },
     entry_points={
-        "console_scripts": ["intervoice = intervoice.cli:cli"],
-        "intervoice_plugins": [
-            "basic = intervoice.plugins:basic",
-            "math = intervoice.plugins:math",
-            "python = intervoice.plugins:python",
-            "yes = intervoice.plugins:yes",
-            "no = intervoice.plugins:no",
-            "turtle_context = intervoice.plugins:turtle_context",
-            'vscode = intervoice.plugins:vscode'
+        "console_scripts": ["voca = voca.cli:cli"],
+        "voca_plugins": [
+            "basic = voca.plugins:basic",
+            "math = voca.plugins:math",
+            "python = voca.plugins:python",
+            "yes = voca.plugins:yes",
+            "no = voca.plugins:no",
+            "turtle_context = voca.plugins:turtle_context",
+            'vscode = voca.plugins:vscode'
         ],
     },
 )

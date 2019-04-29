@@ -1,8 +1,8 @@
 #!/bin/bash
 
 run (){
-    venv/bin/intervoice manage /tmp/intervoice/sock & sleep 1 && fg
-    venv/bin/intervoice mic | nc -U /tmp/intervoice/sock
+    venv/bin/voca manage /tmp/voca/sock & sleep 1 && fg
+    venv/bin/voca mic | nc -U /tmp/voca/sock
 }
 
 run
