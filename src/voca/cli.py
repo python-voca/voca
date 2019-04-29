@@ -28,7 +28,7 @@ from voca import worker
 from voca import log
 
 
-CONTEXT_SETTINGS = {"auto_envvar_prefix": "INTERVOICE"}
+CONTEXT_SETTINGS = {"auto_envvar_prefix": "VOCA"}
 
 
 def log_cli_call(f):
@@ -86,7 +86,7 @@ def _manage(obj, **kwargs):
 @cli.command("worker")
 @click.option("import_paths", "-i", multiple=True)
 @click.option(
-    "--patch-caster", is_flag=True, default=False, envvar="INTERVOICE_PATCH_CASTER"
+    "--patch-caster", is_flag=True, default=False, envvar="VOCA_PATCH_CASTER"
 )
 @click.pass_obj
 @log_cli_call

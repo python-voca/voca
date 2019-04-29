@@ -55,7 +55,7 @@ def test_simple_caster():
                 "voca.plugins.vscode",
             ],
             input=lines,
-            env={"INTERVOICE_PATCH_CASTER": "1", **os.environ},
+            env={"VOCA_PATCH_CASTER": "1", **os.environ},
         )
 
     expected = ["KEY_X"]
@@ -83,7 +83,7 @@ def test_caster_extras():
                 "voca.plugins.vscode",
             ],
             input=lines,
-            env={"INTERVOICE_PATCH_CASTER": "1", **os.environ},
+            env={"VOCA_PATCH_CASTER": "1", **os.environ},
         )
 
     expected = ["KEY_LEFT_ALT", "KEY_PAGE_UP"] * 5
@@ -147,7 +147,7 @@ def test_f_keys():
                 "voca.plugins.vscode",
             ],
             input=lines,
-            env={"INTERVOICE_PATCH_CASTER": "1", **os.environ},
+            env={"VOCA_PATCH_CASTER": "1", **os.environ},
         )
 
     expected = ["KEY_F12"]
@@ -176,7 +176,7 @@ def test_more_keys():
                 "castervoice.apps.vscode",
             ],
             input=lines,
-            env={"INTERVOICE_PATCH_CASTER": "1", **os.environ},
+            env={"VOCA_PATCH_CASTER": "1", **os.environ},
         )
 
     assert typed == expected
@@ -204,7 +204,7 @@ def test_using_castervoice_apps():
                 "castervoice.apps.emacs",
             ],
             input=lines,
-            env={"INTERVOICE_PATCH_CASTER": "1", **os.environ},
+            env={"VOCA_PATCH_CASTER": "1", **os.environ},
         )
 
     expected = ["KEY_LEFT_CTRL", "KEY_R"]
