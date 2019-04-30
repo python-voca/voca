@@ -5,8 +5,8 @@ jobs:
   - job: test
     strategy:
       matrix:
-        Python36:
-          PYTHON_VERSION: '3.7.2'
+        Python37:
+          PYTHON_VERSION: '3.7'
     displayName: Test
     pool:
       vmImage: 'Ubuntu-16.04'
@@ -14,7 +14,6 @@ jobs:
       - task: UsePythonVersion@0
         inputs:
           versionSpec: '$(python.version)'
-          architecture: 'x64'
       - bash: |
             sudo apt-get install -y libasound-dev portaudio19-dev libportaudio2 libportaudiocpp0 ffmpeg libav-tools
       - bash: |
