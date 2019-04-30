@@ -8,6 +8,7 @@ before_install:
 - sudo apt-get install -y i3-wm
 - sudo apt-get install -y python3-tk
 - sudo apt-get install -y idle
+- sudo apt-get install -y xdotool
 install:
 - ./pycli init
 - ./pycli lock
