@@ -26,6 +26,7 @@ from voca import parsing
 from voca import context
 from voca import config
 
+
 @log.log_async_call
 async def handle_message(wrapper_group: utils.WrapperGroup, data: dict):
     message = data["result"]["hypotheses"][0]["transcript"]
