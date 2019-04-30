@@ -24,7 +24,7 @@ def _virtual_display():
         ["/usr/bin/Xvfb", name, "-screen", "0", "1920x1080x24+32", "-fbdir", "/var/tmp"]
     )
     virtual_display = VirtualDisplay(name, proc)
-
+    time.sleep(1.0)
     try:
         yield virtual_display
     finally:
