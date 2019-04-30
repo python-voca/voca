@@ -39,7 +39,7 @@ NAME = "voca"
 
 setup(
     name=NAME,
-    version="0.1.2",
+    version="'0.1.3'",
     license="GNU General Public License v3 (GPLv3)",
     description="Control your computer by voice!",
     long_description="%s\n%s"
