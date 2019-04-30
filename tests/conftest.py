@@ -49,7 +49,7 @@ def _window_manager(virtual_display):
 @pytest.fixture(name="turtle_window")
 def _turtle_window(window_manager):
     turtle = subprocess.Popen(["/usr/bin/python3", "-m", "turtle"])
-    time.sleep(1)
+    time.sleep(2)
     try:
         yield
     finally:
