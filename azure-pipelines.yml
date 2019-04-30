@@ -2,8 +2,8 @@ trigger:
 - master
 
 jobs:
-  - job: test
-    displayName: Test
+  - job: test-linux
+    displayName: Test on Linux
     pool:
       vmImage: 'Ubuntu-16.04'
     strategy:
@@ -31,6 +31,34 @@ jobs:
           sudo apt-get install -y idle
     - bash: |
           sudo apt-get install -y xdotool
+    - bash: |
+        python3 -c 'import sys; print(sys.version); print(sys.platform)'
+      displayName: Report Python version
+    - bash: |
+        python3 -m pip install tox
+      displayName: Install tox
+    - bash: |
+        tox
+      displayName: tox
+
+
+  - job: test-macos
+    displayName: Test on MacOS
+    pool:
+      vmImage: 'macOS-10.13'
+    strategy:
+      matrix:
+        Python36:
+          python.version: '3.6'
+        Python37:
+          python.version: '3.7'
+      maxParallel: 2
+
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '$(python.version)'
+        architecture: 'x64'
     - bash: |
         python3 -c 'import sys; print(sys.version); print(sys.platform)'
       displayName: Report Python version
