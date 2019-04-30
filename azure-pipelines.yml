@@ -10,8 +10,6 @@ jobs:
     displayName: Test
     pool:
       vmImage: 'Ubuntu-16.04'
-    strategy:
-      maxParallel: 4
     steps:
       - task: UsePythonVersion@0
         inputs:
