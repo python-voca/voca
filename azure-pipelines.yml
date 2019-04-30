@@ -5,8 +5,8 @@ jobs:
   - job: test
     strategy:
       matrix:
-        Python37:
-          PYTHON_VERSION: '3.7'
+        Python36:
+          PYTHON_VERSION: '3.6'
     displayName: Test
     pool:
       vmImage: 'Ubuntu-16.04'
