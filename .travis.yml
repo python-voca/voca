@@ -7,6 +7,7 @@ before_install:
 - sudo apt-get install -y xvfb
 - sudo apt-get install -y i3-wm
 - sudo apt-get install -y python3-tk
+- sudo apt-get install -y idle
 install:
 - ./pycli init
 - ./pycli lock
