@@ -5,7 +5,7 @@ jobs:
   - job: test
     displayName: Test
     pool:
-      vmImage: "Ubuntu-18.04"
+      vmImage: 'Ubuntu-16.04'
     strategy:
       maxParallel: 4
     steps:
