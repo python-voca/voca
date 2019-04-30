@@ -3,14 +3,14 @@ import platform
 from voca import platforms
 
 
-@platforms.implementation(platforms.System.LINUX)
-def get_platform():
-    return "This is Linux"
-
-
 @platforms.implementation(platforms.System.DARWIN)
 def get_platform():
     return "This is Darwin"
+
+
+@platforms.implementation(platforms.System.LINUX)
+def get_platform():
+    return "This is Linux"
 
 
 @platforms.implementation(platforms.System.WINDOWS)

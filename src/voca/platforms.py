@@ -12,14 +12,14 @@ class System(enum.Enum):
 
 def implementation(*which):
     def wrap(func):
+
         try:
             seen_function = _name_to_function[func.__name__]
         except KeyError:
             seen_function = func
             _name_to_function[func.__name__] = func
-            seen_function.implementations = getattr(
-                seen_function, "implementations", {}
-            )
+
+        func.implementations = getattr(seen_function, "implementations", {})
 
         for item in which:
             seen_function.implementations[item] = func
