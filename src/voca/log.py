@@ -26,7 +26,7 @@ import six
 @functools.singledispatch
 def to_serializable(obj: Any) -> Union[str, list, dict, int, float]:
     try:
-        return attr.asdict(obj)
+        return {"type": type(obj).__name__, "attributes": attr.asdict(obj)}
     except attr.exceptions.NotAnAttrsClassError:
         return str(obj)
 
