@@ -13,7 +13,6 @@ from typing import Iterable
 from typing import List
 from typing import Tuple
 
-import appdirs
 import eliot
 import trio
 import toml
@@ -25,7 +24,7 @@ from voca import streaming
 from voca import log
 from voca import parsing
 from voca import context
-
+from voca import config
 
 @log.log_async_call
 async def handle_message(wrapper_group: utils.WrapperGroup, data: dict):
@@ -75,7 +74,7 @@ def save_backup_module(module, import_path, backup_dir):
 
 
 @log.log_call
-def get_module(import_path, backup_dir):
+def get_module(import_path, backup_dir, use_backup_modules):
     """Import module and cache it in backup_dir, returning backup on failure."""
     try:
         with eliot.start_action(
@@ -86,8 +85,8 @@ def get_module(import_path, backup_dir):
         ):
             module = importlib.import_module(import_path)
     except Exception:
-        # XXX Probably remove this ``raise``.
-        # raise
+        if not use_backup_modules:
+            raise
         module = get_backup_module(import_path, backup_dir)
     else:
         save_backup_module(module, import_path, backup_dir)
@@ -95,12 +94,14 @@ def get_module(import_path, backup_dir):
 
 
 @log.log_call
-def collect_modules(import_paths: Iterable[str]) -> List[types.ModuleType]:
-    backup_dir = pathlib.Path(appdirs.user_config_dir("voca")) / "backup_modules"
+def collect_modules(
+    import_paths: Iterable[str], use_backup_modules: bool
+) -> List[types.ModuleType]:
+    backup_dir = pathlib.Path(config.get_config_dir()) / "backup_modules"
 
     modules = []
     for import_path in import_paths:
-        module = get_module(import_path, backup_dir)
+        module = get_module(import_path, backup_dir, use_backup_modules)
         if module is not None:
             modules.append(module)
     return modules
@@ -152,9 +153,9 @@ async def async_main(wrapper_group):
 
 
 @log.log_call
-def main(import_paths: Tuple[str]):
+def main(import_paths: Tuple[str], use_backup_modules: bool):
 
-    modules = collect_modules(import_paths)
+    modules = collect_modules(import_paths, use_backup_modules)
     modules = [utils.transform_module(module) for module in modules]
 
     wrapper_group = parsing.combine_modules(modules)

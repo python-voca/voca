@@ -77,3 +77,9 @@ def _hash_seed():
             del os.environ["PYTHONHASHSEED"]
         else:
             os.environ["PYTHONHASHSEED"] = original_hash_seed
+
+
+@pytest.fixture(name="config_dir")
+def _config_dir(tmp_path):
+    os.environ["VOCA_CONFIG_DIR"] = str(tmp_path)
+    return tmp_path

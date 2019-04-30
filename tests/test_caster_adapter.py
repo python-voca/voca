@@ -34,26 +34,18 @@ def test_convert_spec(spec, expected):
     assert got == expected
 
 
-@pytest.mark.usefixtures("virtual_display")
+@pytest.mark.usefixtures("virtual_display", "config_dir")
 def test_simple_caster():
     from voca import caster_adapter
 
     utterances = ["simple"]
 
-    rows = [
-        test_voca.make_command(utterance, final=True) for utterance in utterances
-    ]
+    rows = [test_voca.make_command(utterance, final=True) for utterance in utterances]
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
 
     with helpers.capture_keypresses() as typed:
         helpers.run(
-            [
-                "worker",
-                "-i",
-                "voca.plugins.basic",
-                "-i",
-                "voca.plugins.vscode",
-            ],
+            ["worker", "-i", "voca.plugins.basic", "-i", "voca.plugins.vscode"],
             input=lines,
             env={"VOCA_PATCH_CASTER": "1", **os.environ},
         )
@@ -62,26 +54,18 @@ def test_simple_caster():
     assert typed == expected
 
 
-@pytest.mark.usefixtures("virtual_display", "hash_seed")
+@pytest.mark.usefixtures("virtual_display", "hash_seed", "config_dir")
 def test_caster_extras():
     from voca import caster_adapter
 
     utterances = ["scroll page up five"]
 
-    rows = [
-        test_voca.make_command(utterance, final=True) for utterance in utterances
-    ]
+    rows = [test_voca.make_command(utterance, final=True) for utterance in utterances]
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
 
     with helpers.capture_keypresses() as typed:
         helpers.run(
-            [
-                "worker",
-                "-i",
-                "voca.plugins.basic",
-                "-i",
-                "voca.plugins.vscode",
-            ],
+            ["worker", "-i", "voca.plugins.basic", "-i", "voca.plugins.vscode"],
             input=lines,
             env={"VOCA_PATCH_CASTER": "1", **os.environ},
         )
@@ -90,7 +74,7 @@ def test_caster_extras():
     assert typed == expected
 
 
-@pytest.mark.usefixtures("virtual_display")
+@pytest.mark.usefixtures("virtual_display", "config_dir")
 def test_patch_caster():
 
     namespace = types.SimpleNamespace(python=types.SimpleNamespace(x=1))
@@ -113,7 +97,7 @@ def test_patch_caster():
         assert castervoice.lib.ccr.python.python.PythonNon.mapping["with"] == 1
 
 
-@pytest.mark.usefixtures("virtual_display")
+@pytest.mark.usefixtures("virtual_display", "config_dir")
 def test_patch_dragonfly():
 
     mapping = {"dragonfly": {"Repeat": 5}, "dragonfly.__init__": {}}
@@ -125,27 +109,19 @@ def test_patch_dragonfly():
         assert Repeat == 5
 
 
-@pytest.mark.usefixtures("virtual_display")
+@pytest.mark.usefixtures("virtual_display", "config_dir")
 def test_f_keys():
 
     from voca import caster_adapter
 
     utterances = ["go to definition"]
 
-    rows = [
-        test_voca.make_command(utterance, final=True) for utterance in utterances
-    ]
+    rows = [test_voca.make_command(utterance, final=True) for utterance in utterances]
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
 
     with helpers.capture_keypresses() as typed:
         helpers.run(
-            [
-                "worker",
-                "-i",
-                "voca.plugins.basic",
-                "-i",
-                "voca.plugins.vscode",
-            ],
+            ["worker", "-i", "voca.plugins.basic", "-i", "voca.plugins.vscode"],
             input=lines,
             env={"VOCA_PATCH_CASTER": "1", **os.environ},
         )
@@ -154,27 +130,19 @@ def test_f_keys():
     assert typed == expected
 
 
-@pytest.mark.usefixtures("virtual_display")
+@pytest.mark.usefixtures("virtual_display", "config_dir")
 def test_more_keys():
 
     from voca import caster_adapter
 
     utterances = ["up", "down", "left", "right"]
     expected = ["KEY_UP", "KEY_DOWN", "KEY_LEFT", "KEY_RIGHT"]
-    rows = [
-        test_voca.make_command(utterance, final=True) for utterance in utterances
-    ]
+    rows = [test_voca.make_command(utterance, final=True) for utterance in utterances]
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
 
     with helpers.capture_keypresses() as typed:
         helpers.run(
-            [
-                "manage",
-                "-i",
-                "voca.plugins.basic",
-                "-i",
-                "castervoice.apps.vscode",
-            ],
+            ["manage", "-i", "voca.plugins.basic", "-i", "castervoice.apps.vscode"],
             input=lines,
             env={"VOCA_PATCH_CASTER": "1", **os.environ},
         )
@@ -182,16 +150,14 @@ def test_more_keys():
     assert typed == expected
 
 
-@pytest.mark.usefixtures("virtual_display")
+@pytest.mark.usefixtures("virtual_display", "config_dir")
 def test_using_castervoice_apps():
 
     from voca import caster_adapter
 
     utterances = ["incremental reverse"]
 
-    rows = [
-        test_voca.make_command(utterance, final=True) for utterance in utterances
-    ]
+    rows = [test_voca.make_command(utterance, final=True) for utterance in utterances]
     lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
 
     with helpers.capture_keypresses() as typed:
@@ -202,6 +168,7 @@ def test_using_castervoice_apps():
                 "voca.plugins.basic",
                 "-i",
                 "castervoice.apps.emacs",
+                "--no-backup-modules",
             ],
             input=lines,
             env={"VOCA_PATCH_CASTER": "1", **os.environ},

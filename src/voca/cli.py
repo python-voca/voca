@@ -86,6 +86,12 @@ def _manage(obj, **kwargs):
 @cli.command("worker")
 @click.option("import_paths", "-i", multiple=True)
 @click.option("--patch-caster", is_flag=True, default=False, envvar="VOCA_PATCH_CASTER")
+@click.option(
+    "--backup-modules/--no-backup-modules",
+    "use_backup_modules",
+    is_flag=True,
+    default=True,
+)
 @click.pass_obj
 @log_cli_call
 def _worker(obj, patch_caster, **kwargs):
