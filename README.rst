@@ -55,7 +55,29 @@ Overview
 Control your computer by voice!
 
 Features
+========
+
+
+- Write your own commands using a simple syntax, or use the existing ones.
+- Different commands are available for each app.
+- When editing a command file, your new commands are immediately available as soon as you save. No need to fiddle with reloading.
+- If there's a fatal error in a command file, don't worry -- Voca simply uses a backup from the last time that file worked.
+- Your commands are executed asynchronously, so you never need to wait for one to finish before executing the next.
+- Voca uses a modern parser, so your grammar can be arbitrarily complex.
+- Use any speech engine you like -- Voca takes its input as newline-separated json on stdin.
+- Voca provides adapters for current Caster and Dragonfly commands, so you can keep using commands you like -- just install Voca alongside Caster. More plugins and adapters for other systems can be added.
+- Voca has a pluggable architecture. Install independent plugins for controlling your apps, without needing to fork the main repository.
+- Voca uses Python 3.7+, so all the newest Python features are available.
+- Voca is continuously tested in CI, and maintains test coverage checks.
 - Free and open source, licensed GPLv3.
+
+Limitations
+===========
+
+
+- Nobody has used it at all, so I don't know if it's useful.
+- Voca does not provide a speech engine; it requires input from an existing one like Dragon, Kaldi, or DeepSpeech.
+- Multiple platforms are planned, and the basic outline is there, but tests are not currently passing on OSX or Windows. Linux is working.
 
 
 Installation
