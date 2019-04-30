@@ -54,7 +54,9 @@ Overview
 
 Control your computer by voice!
 
-* Free software: GPLv3 license
+Features
+- Free and open source, licensed GPLv3.
+
 
 Installation
 ============
