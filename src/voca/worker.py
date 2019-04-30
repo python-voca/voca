@@ -78,7 +78,12 @@ def save_backup_module(module, import_path, backup_dir):
 def get_module(import_path, backup_dir):
     """Import module and cache it in backup_dir, returning backup on failure."""
     try:
-        with eliot.start_action(action_type="import_module", import_path=import_path, sys_path=sys.path, sys_meta_path=sys.meta_path):
+        with eliot.start_action(
+            action_type="import_module",
+            import_path=import_path,
+            sys_path=sys.path,
+            sys_meta_path=sys.meta_path,
+        ):
             module = importlib.import_module(import_path)
     except Exception:
         # XXX Probably remove this ``raise``.
