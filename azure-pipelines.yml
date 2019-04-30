@@ -3,6 +3,10 @@ trigger:
 
 jobs:
   - job: test
+    strategy:
+      matrix:
+        Python36:
+          PYTHON_VERSION: '3.6'
     displayName: Test
     pool:
       vmImage: 'Ubuntu-16.04'
@@ -22,10 +26,10 @@ jobs:
       - bash: |
             sudo apt-get install -y xdotool
       - bash: |
-          python -c 'import sys; print(sys.version); print(sys.platform)'
+          python3 -c 'import sys; print(sys.version); print(sys.platform)'
         displayName: Report Python version
       - bash: |
-          python -m pip install tox
+          python3 -m pip install tox
         displayName: Install tox
       - bash: |
           tox
