@@ -48,7 +48,7 @@ def test_simple_caster():
     with helpers.capture_keypresses() as typed:
         helpers.run(
             [
-                "manage",
+                "worker",
                 "-i",
                 "voca.plugins.basic",
                 "-i",
@@ -76,7 +76,7 @@ def test_caster_extras():
     with helpers.capture_keypresses() as typed:
         helpers.run(
             [
-                "manage",
+                "worker",
                 "-i",
                 "voca.plugins.basic",
                 "-i",
@@ -140,7 +140,7 @@ def test_f_keys():
     with helpers.capture_keypresses() as typed:
         helpers.run(
             [
-                "manage",
+                "worker",
                 "-i",
                 "voca.plugins.basic",
                 "-i",
@@ -197,7 +197,7 @@ def test_using_castervoice_apps():
     with helpers.capture_keypresses() as typed:
         helpers.run(
             [
-                "manage",
+                "worker",
                 "-i",
                 "voca.plugins.basic",
                 "-i",
