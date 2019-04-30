@@ -6,6 +6,7 @@ before_install:
 - sudo apt-get install -y libasound-dev portaudio19-dev libportaudio2 libportaudiocpp0 ffmpeg libav-tools
 - sudo apt-get install -y xvfb
 - sudo apt-get install -y i3-wm
+- sudo apt-get install -y python3-tk
 install:
 - ./pycli init
 - ./pycli lock
