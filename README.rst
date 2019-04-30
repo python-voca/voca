@@ -67,10 +67,11 @@ Installation
 Documentation
 =============
 
-* Prerequisites:
-  - kaldi/silvius server via included dockerfile or online
-  - Microphone
-  - Python 3
+Prerequisites:
+
+- A speech engine, e.g. kaldi/silvius server via included docker script or on its website
+- Microphone
+- Python 3
 
 
 
