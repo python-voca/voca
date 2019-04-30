@@ -2,6 +2,8 @@ dist: xenial
 language: python
 python: '3.7'
 env: LC_ALL=C.UTF-8 LANG=C.UTF-8
+before_install:
+- sudo apt-get install -y libasound-dev portaudio19-dev libportaudio2 libportaudiocpp0 ffmpeg libav-tools
 install:
 - ./pycli init
 - ./pycli lock
