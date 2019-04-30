@@ -2,7 +2,7 @@ trigger:
 - master
 
 jobs:
-  - job: test-linux
+  - job: test_linux
     displayName: Test on Linux
     pool:
       vmImage: 'Ubuntu-16.04'
@@ -42,7 +42,7 @@ jobs:
       displayName: tox
 
 
-  - job: test-macos
+  - job: test_macos
     displayName: Test on MacOS
     pool:
       vmImage: 'macOS-10.13'
