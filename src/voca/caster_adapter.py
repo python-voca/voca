@@ -20,8 +20,6 @@ from voca import context
 from voca import log
 from voca import patching
 
-import q
-
 
 class LazyLoader:
     def __getattr__(self, name):
@@ -378,7 +376,6 @@ def add_wrapper(module):
 
 
 def patch_all():
-
 
     # XXX Should fix this to avoid having to actually import castervoice.
     # Currently sys.modules is used to find castervoice in order to find its submodules.
