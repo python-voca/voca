@@ -1,0 +1,33 @@
+trigger:
+- master
+
+jobs:
+  - job: test
+    displayName: Test
+    pool:
+      vmImage: "Ubuntu-18.04"
+    strategy:
+      maxParallel: 4
+    steps:
+      - template: deployed_ci/azure/templates/tasks/get_python.yml
+      - bash: |
+            sudo apt-get install -y libasound-dev portaudio19-dev libportaudio2 libportaudiocpp0 ffmpeg libav-tools
+      - bash: |
+            sudo apt-get install -y xvfb
+      - bash: |
+            sudo apt-get install -y i3-wm
+      - bash: |
+            sudo apt-get install -y python3-tk
+      - bash: |
+            sudo apt-get install -y idle
+      - bash: |
+            sudo apt-get install -y xdotool
+      - bash: |
+          python -c 'import sys; print(sys.version); print(sys.platform)'
+        displayName: Report Python version
+      - bash: |
+          python -m pip install tox
+        displayName: Install tox
+      - bash: |
+          tox
+        displayName: tox
