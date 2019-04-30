@@ -54,7 +54,7 @@ Overview
 
 An example package. Generated with cookiecutter-pylibrary.
 
-* Free software: BSD 2-Clause License
+* Free software: GPLv3 license
 
 Installation
 ============
