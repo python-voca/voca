@@ -52,7 +52,7 @@ Overview
 
 .. end-badges
 
-An example package. Generated with cookiecutter-pylibrary.
+Control your computer by voice!
 
 * Free software: GPLv3 license
 
