@@ -6,7 +6,7 @@ jobs:
     strategy:
       matrix:
         Python36:
-          PYTHON_VERSION: '3.6'
+          PYTHON_VERSION: '3.7.2'
     displayName: Test
     pool:
       vmImage: 'Ubuntu-16.04'
