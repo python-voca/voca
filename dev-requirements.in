@@ -19,3 +19,5 @@ pip-tools>=3.6.1
 q
 pudb
 pytest-trio
+sphinx
+sphinx_rtd_theme
