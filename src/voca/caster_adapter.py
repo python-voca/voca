@@ -408,6 +408,10 @@ class VirtualPackage:
         self.__dict__.update(contents)
 
 
+R = RegisteredAction
+Text = adapt_Text
+Key = adapt_Key
+
 module_mapping = {
     "dragonfly.__init__": {},
     "dragonfly": {
