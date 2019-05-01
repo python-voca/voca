@@ -63,6 +63,7 @@ Features
 - When editing a command file, your new commands are immediately available as soon as you save. No need to fiddle with reloading.
 - If there's a fatal error in a command file, don't worry -- Voca simply uses a backup from the last time that file worked.
 - Your commands are executed asynchronously, so you never need to wait for one to finish before executing the next.
+- Get immediate visual feedback during an utterance -- Voca's *eager mode* can start acting on your commands as soon as the first word in your utterance. Switch to *strict mode* and Voca will wait until the end of your utterance.
 - Voca uses a modern parser, so your grammar can be arbitrarily complex.
 - Use any speech engine you like -- Voca takes its input as newline-separated json on stdin.
 - Voca generates detailed structured logs you can use for debugging or analyzing your command history.
