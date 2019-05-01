@@ -204,3 +204,14 @@ def transform_module(module):
         module = transform(module)
 
     return module
+
+
+@attr.dataclass
+class ModuleLazyRaise:
+    owner_name: str
+    exc: Exception
+
+    def __getattr__(self, name):
+        raise ImportError(
+            "Could not access {name} on {self.owner_name} because {self.owner_name} failed to import, with exception:"
+        ) from self.exc

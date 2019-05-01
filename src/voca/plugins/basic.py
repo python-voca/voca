@@ -15,6 +15,20 @@ from voca import utils
 from voca import platforms
 from voca import log
 
+
+try:
+    import pyautogui
+except KeyError as e:
+    # Display failed
+    pyautogui = utils.ModuleLazyRaise("pyautogui", e)
+
+try:
+    import pynput
+    import pynput.keyboard
+except Exception as e:
+    pynput = utils.ModuleLazyRaise("pynput", e)
+
+
 registry = utils.Registry()
 
 registry.define(
@@ -28,9 +42,6 @@ registry.define(
 
 @log.log_call
 def type_chord(chord):
-    import pyautogui
-    import pynput
-    import pynput.keyboard
 
     keyboard = pynput.keyboard.Controller()
     modifiers = [getattr(pynput.keyboard.Key, mod.name) for mod in chord.modifiers]
