@@ -59,7 +59,7 @@ Features
 
 
 - Write your own commands using a simple syntax, or use the existing ones.
-- Different commands are available for each app.
+- Different commands are available for each app, in addition to globally available commands.
 - When editing a command file, your new commands are immediately available as soon as you save. No need to fiddle with reloading.
 - If there's a fatal error in a command file, don't worry -- Voca simply uses a backup from the last time that file worked.
 - Your commands are executed asynchronously, so you never need to wait for one to finish before executing the next.
