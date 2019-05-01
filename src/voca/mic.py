@@ -21,7 +21,6 @@ def int_or_str(text):
         return text
 
 
-
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument(
     "-l",
@@ -69,7 +68,6 @@ parser.add_argument(
 )
 
 
-
 def audio_callback(indata, frames, time, status):
     """This is called (from a separate thread) for each audio block."""
     if status:
@@ -98,14 +96,14 @@ def update_plot(frame):
         line.set_ydata(plotdata[:, column])
     return lines
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     args = parser.parse_args()
 
     if any(c < 1 for c in args.channels):
         parser.error("argument CHANNEL: must be >= 1")
     mapping = [c - 1 for c in args.channels]  # Channel numbers start with 1
     q = queue.Queue()
-
 
     try:
         from matplotlib.animation import FuncAnimation
