@@ -9,9 +9,7 @@ from typing import Awaitable
 
 
 import trio
-import pyautogui
-import pynput
-import pynput.keyboard
+
 
 from voca import utils
 from voca import platforms
@@ -30,6 +28,10 @@ registry.define(
 
 @log.log_call
 def type_chord(chord):
+    import pyautogui
+    import pynput
+    import pynput.keyboard
+
     keyboard = pynput.keyboard.Controller()
     modifiers = [getattr(pynput.keyboard.Key, mod.name) for mod in chord.modifiers]
 
