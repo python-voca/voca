@@ -65,6 +65,7 @@ Features
 - Your commands are executed asynchronously, so you never need to wait for one to finish before executing the next.
 - Voca uses a modern parser, so your grammar can be arbitrarily complex.
 - Use any speech engine you like -- Voca takes its input as newline-separated json on stdin.
+- Voca generates detailed structured logs you can use for debugging or analyzing your command history.
 - Voca provides adapters for current Caster and Dragonfly commands, so you can keep using commands you like -- just install Voca alongside Caster. More plugins and adapters for other systems can be added.
 - Voca has a pluggable architecture. Install independent plugins for controlling your apps, without needing to fork the main repository.
 - Voca uses Python 3.7+, so all the newest Python features are available.
