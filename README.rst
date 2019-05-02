@@ -16,8 +16,8 @@ Overview
       - | |version| |wheel| |supported-versions| |supported-implementations|
         | |commits-since|
 
-.. |docs| image:: https://readthedocs.org/projects/python-voca/badge/?style=flat
-    :target: https://readthedocs.org/projects/python-voca
+.. |docs| image:: https://readthedocs.org/projects/voca/badge/?style=flat
+    :target: https://readthedocs.org/projects/voca
     :alt: Documentation Status
 
 
