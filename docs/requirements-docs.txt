@@ -1,0 +1,34 @@
+ws4py
+click
+trio
+toml
+importlib_resources
+six
+-e git+git://github.com/itamarst/eliot.git/@0645b6a5ff00cf926cdd9ff2379f51ac324329eb#egg=eliot
+-e git+https://github.com/lark-parser/lark.git#egg=lark-parser
+sympy
+pyautogui
+pynput
+dragonfly2
+coverage
+cuvner
+pytest
+tox
+versioneer
+flake8
+pylint
+black
+pex
+bump2version
+trio-typing
+mypy
+matplotlib
+pytest-cov
+twine
+sneakysnek
+pip-tools>=3.6.1
+q
+pudb
+pytest-trio
+sphinx
+sphinx_rtd_theme
