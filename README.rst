@@ -21,9 +21,9 @@ Overview
     :alt: Documentation Status
 
 
-.. |travis| image:: https://travis-ci.org/python-voca/voca.svg?branch=master
+.. |travis| image:: https://travis-ci.com/python-voca/voca.svg?branch=master
     :alt: Travis-CI Build Status
-    :target: https://travis-ci.org/python-voca/voca
+    :target: https://travis-ci.com/python-voca/voca
 
 .. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/python-voca/voca?branch=master&svg=true
     :alt: AppVeyor Build Status
