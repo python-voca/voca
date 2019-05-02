@@ -10,7 +10,7 @@ Overview
     * - docs
       - |docs|
     * - tests
-      - | |travis| |appveyor|
+      - | |travis| |appveyor| |codecov|
         |
     * - package
       - | |version| |wheel| |supported-versions| |supported-implementations|
@@ -49,6 +49,9 @@ Overview
     :alt: Supported implementations
     :target: https://pypi.python.org/pypi/voca
 
+.. |codecov| image:: https://img.shields.io/codecov/c/github/python-voca/voca.svg
+      :alt: Code coverage
+      :target: https://codecov.io/gh/python-voca/voca
 
 .. end-badges
 
