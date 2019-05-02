@@ -33,9 +33,9 @@ Overview
     :alt: PyPI Package latest release
     :target: https://pypi.python.org/pypi/voca
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/python-voca/voca/v0.1.4..svg
+.. |commits-since| image:: https://img.shields.io/github/commits-since/python-voca/voca/v0.1.4.svg
     :alt: Commits since latest release
-    :target: https://github.com/python-voca/voca/compare/v0.1.4....master
+    :target: https://github.com/python-voca/voca/compare/v0.1.4...master
 
 .. |wheel| image:: https://img.shields.io/pypi/wheel/voca.svg
     :alt: PyPI Wheel
