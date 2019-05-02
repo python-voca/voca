@@ -95,7 +95,7 @@ def unpack_zipfile(filename):
 parser = argparse.ArgumentParser(description='Download artifacts from AppVeyor.')
 parser.add_argument('--id',
                     metavar='PROJECT_ID',
-                    default='githubuser/python-voca',
+                    default='python-voca/python-voca',
                     help='Project ID in AppVeyor.')
 parser.add_argument('build',
                     nargs='?',

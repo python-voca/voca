@@ -51,7 +51,7 @@ setup(
     long_description_content_type="text/x-rst",
     author="Full Name",
     author_email="email@example.com",
-    url="https://github.com/githubuser/python-voca",
+    url="https://github.com/python-voca/python-voca",
     packages=list(find_packages("src")),
     package_dir={"": "src"},
     py_modules=[splitext(basename(path))[0] for path in glob("src/*.py")],

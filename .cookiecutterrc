@@ -31,7 +31,7 @@ default_context:
     distribution_name:         'voca'
     email:                     'email@example.com'
     full_name:                 'Full Name'
-    github_username:           'githubuser'
+    github_username:           'python-voca'
     landscape:                 'no'
     license:                   'BSD 2-Clause License'
     linter:                    'flake8'

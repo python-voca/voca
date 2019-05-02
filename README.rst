@@ -21,21 +21,21 @@ Overview
     :alt: Documentation Status
 
 
-.. |travis| image:: https://travis-ci.org/githubuser/python-voca.svg?branch=master
+.. |travis| image:: https://travis-ci.org/python-voca/voca.svg?branch=master
     :alt: Travis-CI Build Status
-    :target: https://travis-ci.org/githubuser/python-voca
+    :target: https://travis-ci.org/python-voca/voca
 
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/githubuser/python-voca?branch=master&svg=true
+.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/python-voca/voca?branch=master&svg=true
     :alt: AppVeyor Build Status
-    :target: https://ci.appveyor.com/project/githubuser/python-voca
+    :target: https://ci.appveyor.com/project/python-voca/voca
 
 .. |version| image:: https://img.shields.io/pypi/v/voca.svg
     :alt: PyPI Package latest release
     :target: https://pypi.python.org/pypi/voca
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/githubuser/python-voca/vv0.1.4..svg
+.. |commits-since| image:: https://img.shields.io/github/commits-since/python-voca/voca/vv0.1.4..svg
     :alt: Commits since latest release
-    :target: https://github.com/githubuser/python-voca/compare/vv0.1.4....master
+    :target: https://github.com/python-voca/python-voca/compare/v0.1.4....master
 
 .. |wheel| image:: https://img.shields.io/pypi/wheel/voca.svg
     :alt: PyPI Wheel
