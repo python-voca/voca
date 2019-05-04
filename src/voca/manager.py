@@ -142,6 +142,7 @@ async def process_stream(
                 data = json.loads(message)
             except json.JSONDecodeError:
                 handle_unexpected_worker_bytes(message_bytes)
+                continue
             if "result" not in data.keys():
                 # Received a log, not a command.
                 print(message)
