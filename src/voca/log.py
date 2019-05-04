@@ -24,6 +24,8 @@ import attr
 import eliot
 import six
 
+from voca import config
+
 
 @functools.singledispatch
 def to_serializable(obj: Any) -> Union[str, list, dict, int, float]:
@@ -42,9 +44,11 @@ def json_to_file(file: Optional[io.TextIOWrapper] = None) -> Callable:
     """Serialize to json and print into a file, defaulting to stdout."""
 
     if file is None:
+
         file = sys.stdout
 
     def _json_to_file(x):
+
         print(json.dumps(x, default=to_serializable), file=file)
 
     return _json_to_file

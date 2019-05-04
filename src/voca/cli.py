@@ -26,6 +26,7 @@ from voca import listen
 from voca import manager
 from voca import worker
 from voca import log
+from voca import config
 
 
 CONTEXT_SETTINGS = {"auto_envvar_prefix": "VOCA"}
@@ -80,7 +81,11 @@ def _listen(**kwargs):
 @click.pass_obj
 @log_cli_call
 def _manage(obj, **kwargs):
-    manager.main(**obj.kwargs, **kwargs)
+    log_filename = config.get_config_dir() / "log.jsonl"
+    with open(log_filename, "w") as log_file:
+        eliot.add_destinations(log.json_to_file(log_file))
+
+        manager.main(**obj.kwargs, **kwargs)
 
 
 @cli.command("worker")
@@ -95,6 +100,9 @@ def _manage(obj, **kwargs):
 @click.pass_obj
 @log_cli_call
 def _worker(obj, patch_caster, **kwargs):
+
+    eliot.add_destinations(log.json_to_file(sys.stdout))
+
     if patch_caster:
         from voca import caster_adapter
 

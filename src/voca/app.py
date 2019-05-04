@@ -19,4 +19,3 @@ def main(should_log: bool) -> None:
         return
 
     eliot.register_exception_extractor(Exception, voca.log.summarize_exception)
-    eliot.add_destinations(voca.log.json_to_file(sys.stdout))

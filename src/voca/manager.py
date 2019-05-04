@@ -45,7 +45,15 @@ async def replay_child_messages(child: trio.Process) -> None:
     async for message_from_child in streaming.TerminatedFrameReceiver(
         child.stdout, b"\n"
     ):
-        print(message_from_child.decode())
+        message_str = message_from_child.decode()
+        try:
+            message_dict = json.loads(message_str)
+        except json.decoder.JSONDecodeError:
+            eliot.Message.log(
+                message_type="unexpected_message_from_child", message=message_str
+            )
+        else:
+            print(message_dict)
 
 
 @log.log_call
@@ -126,6 +134,7 @@ async def process_stream(
 
     async for message_bytes in receiver:
         message = message_bytes.decode()
+
         with eliot.start_action(state=state):
             data = json.loads(message)
             if "result" not in data.keys():
