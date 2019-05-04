@@ -9,6 +9,7 @@ import shutil
 import pathlib
 import importlib.util
 
+
 from typing import Iterable
 from typing import List
 from typing import Tuple
@@ -169,6 +170,7 @@ async def async_main(wrapper_group: utils.WrapperGroup):
 @log.log_call
 def main(import_paths: Tuple[str], use_backup_modules: bool):
     """Get the wrapper group and start the event loop."""
+
     modules = collect_modules(import_paths, use_backup_modules)
     modules = [utils.transform_module(module) for module in modules]
 

@@ -26,6 +26,10 @@ from voca import streaming
 from voca import log
 
 
+def handle_unexpected_worker_bytes(message: bytes):
+    eliot.Message.log(message_type="unexpected_worker_output", message=message)
+
+
 def worker_cli(should_log, module_names: Optional[List[str]] = None) -> List[str]:
     """Build the list of strings for invoking a worker subprocess."""
     if module_names is None:
@@ -49,9 +53,7 @@ async def replay_child_messages(child: trio.Process) -> None:
         try:
             message_dict = json.loads(message_str)
         except json.decoder.JSONDecodeError:
-            eliot.Message.log(
-                message_type="unexpected_message_from_child", message=message_str
-            )
+            handle_unexpected_worker_bytes(message_from_child)
         else:
             print(message_dict)
 
@@ -136,7 +138,10 @@ async def process_stream(
         message = message_bytes.decode()
 
         with eliot.start_action(state=state):
-            data = json.loads(message)
+            try:
+                data = json.loads(message)
+            except json.JSONDecodeError:
+                handle_unexpected_worker_bytes(message_bytes)
             if "result" not in data.keys():
                 # Received a log, not a command.
                 print(message)
