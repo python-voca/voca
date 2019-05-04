@@ -5,7 +5,6 @@ import os
 
 
 extensions = [
-    'autoapi.extension',
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.coverage',
