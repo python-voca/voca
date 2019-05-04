@@ -7,7 +7,7 @@ registry = utils.Registry()
 
 
 @registry.register('"start"')
-async def _start(message):
+async def _start(message: str):
     sys.exit(3)
 
 

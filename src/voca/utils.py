@@ -34,6 +34,8 @@ class Registry:
     patterns: MutableMapping = attr.ib(factory=dict)
 
     def register(self, pattern: str) -> Callable:
+        """Decorator registering a pattern to map to a function."""
+
         def _register(function: Callable) -> Callable:
             self.pattern_to_function[pattern] = function
             return function
@@ -41,23 +43,27 @@ class Registry:
         return _register
 
     def define(self, patterns: Optional[Mapping[str, str]] = None, **kwargs):
+        """Define a rule to map to a combination of other known rules."""
         if patterns:
             self.patterns.update(patterns)
         self.patterns.update(kwargs)
 
 
 def pronunciation_to_value() -> MutableMapping[str, Any]:
+    """Return a dict of pronunciation to value."""
     text = importlib_resources.read_text(voca, "pronunciation.toml")
     return toml.loads(text)
 
 
-def value_to_pronunciation():
+def value_to_pronunciation() -> Dict[Any, str]:
+    """Return a dict of value to pronunciation."""
     return {v: k for k, v in pronunciation_to_value().items()}
 
 
 async def run_subprocess(
-    command: List[str], *, input=None, capture_output=False, **options
+    command: List[str], *, input=None, capture_output=False, **options: Dict[str, Any]
 ):
+    """Run a subprocess an wait for it to exit."""
     if input is not None:
         options["stdin"] = subprocess.PIPE
     if capture_output:
@@ -104,12 +110,14 @@ async def run_subprocess(
 
 
 def quote(word: str) -> str:
+    """Format a word in single or double quotation marks for lark."""
     if word.startswith('"'):
         return f"'{word}'"
     return f'"{word}"'
 
 
-def regex(word):
+def regex(word: str) -> str:
+    """Format a word in slashes for lark."""
     return f"/{word}/"
 
 
@@ -124,7 +132,8 @@ class Handler:
 class HandlerGroup:
     handlers: List[Handler]
 
-    async def pick_handler(self, data):
+    async def pick_handler(self, data: dict) -> Handler:
+        """Select the first handler."""
         return self.handlers[0]
 
 
@@ -184,12 +193,14 @@ def async_runner(async_function: Callable):
 
 
 def replace(message: str) -> str:
+    """Replace pronunciation with its value."""
     lookup = pronunciation_to_value()
     pattern = re.compile(r"\b(" + "|".join(lookup.keys()) + r")\b")
     return pattern.sub(lambda x: lookup[x.group()], message)
 
 
 def plugin_module_paths() -> List[str]:
+    """Get the import paths of the plugin modules."""
     return [
         entry_point.module_name + "." + entry_point.name
         for entry_point in pkg_resources.iter_entry_points("voca_plugins")
@@ -199,7 +210,8 @@ def plugin_module_paths() -> List[str]:
 MODULE_TRANSFORMERS = []
 
 
-def transform_module(module):
+def transform_module(module: types.ModuleType) -> types.ModuleType:
+    """Call each function in MODULE_TRANSFORMERS on the module."""
     for transform in MODULE_TRANSFORMERS:
         module = transform(module)
 
@@ -211,7 +223,7 @@ class ModuleLazyRaise:
     owner_name: str
     exc: Exception
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str):
         raise ImportError(
             "Could not access {name} on {self.owner_name} because {self.owner_name} failed to import, with exception:"
         ) from self.exc

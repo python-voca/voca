@@ -11,7 +11,7 @@ wrapper = utils.Wrapper(registry, context=context.NeverContext())
 
 
 @registry.register('"nope"')
-async def _say_xyz(message):
+async def _say_xyz(message: str):
     await basic.write("xyz")
 
 

@@ -8,12 +8,19 @@ import importlib
 import importlib.machinery
 import importlib.util
 
+from typing import Generator
+from typing import ContextManager
 from typing import Optional
 from typing import Dict
 from typing import List
 from typing import Any
+from typing import DefaultDict
+from typing import TypeVar
+
 
 import attr
+
+T = TypeVar("T")
 
 
 @attr.s(auto_attribs=True)
@@ -23,18 +30,22 @@ class PathLoader:
     path: Optional[str]
     target: types.ModuleType
 
-    def create_module(self, spec: importlib.machinery.ModuleSpec):
+    def create_module(self, spec: importlib.machinery.ModuleSpec) -> types.ModuleType:
+        """Create a module with the name and namespace."""
         module = types.ModuleType(spec.name)
         module.__dict__.update(self.namespace)
 
         return module
 
     def exec_module(self, module):
+        """No-op to match the Loader interface."""
         pass
 
 
 @contextlib.contextmanager
-def skipping_finder(finder):
+def skipping_finder(finder: importlib.abc.MetaPathFinder) -> Generator:
+    """Context manager for importing modules while excluding the ``finder`` from ``sys.meta_path``."""
+
     def placeholder_find_spec(_fullname, _path, _target):
         return None
 
@@ -48,8 +59,8 @@ def skipping_finder(finder):
 
 
 @contextlib.contextmanager
-def skipping_module_in_sys_modules(module_name):
-
+def skipping_module_in_sys_modules(module_name: star) -> Generator:
+    """Context manager for importing modules while skipping any cached entry in ``sys.modules``."""
     # Use a sentinel to check if we need to restore parent module to sys.modules.
     sentinel = object()
     parent_module = sys.modules.pop(module_name, sentinel)
@@ -68,7 +79,8 @@ def skipping_module_in_sys_modules(module_name):
 
 
 @contextlib.contextmanager
-def finder_patch(finder):
+def finder_patch(finder: importlib.abc.MetaPathFinder) -> Generator:
+    """Context manager for importing modules with ``finder`` on ``sys.meta_path``."""
     sys.meta_path.insert(0, finder)
     try:
         yield
@@ -83,8 +95,8 @@ class PathFinder:
 
     def find_spec(
         self, fullname: str, path: Optional[str], target=Optional[types.ModuleType]
-    ):
-
+    ) -> Spec:
+        """Build a spec for modules in ``self.modules_to_handle``, behave normally otherwise."""
         if fullname not in self.modules_to_handle:
             # Return a spec using the default behavior ignoring sys.modules and
             # this finder.
@@ -110,13 +122,14 @@ class Spec:
     origin = attr.ib(default=None)
 
 
-def ancestors(items):
+def ancestors(items: List[T]) -> Generator[T, List[T], None]:
     for i, item in enumerate(reversed(items), start=1):
         yield item, items[:-i]
 
 
-def get_package_map(strings):
-    m = collections.defaultdict(list)
+def get_package_map(strings: List[str]) -> Dict[str, List[str]]:
+    """Return a dict mapping packages to the modules they contain."""
+    m: DefaultDict[str, List[str]] = collections.defaultdict(list)
     for string in strings:
         items = string.split(".")
         for module_name, parents in ancestors(items):
@@ -129,7 +142,8 @@ def get_package_map(strings):
     return dict(m)
 
 
-def make_finder(mapping):
+def make_finder(mapping: Dict[str, Dict[str, Any]]) -> PathFinder:
+    """Build a Finder that handles modules in ``mapping``."""
     package_map = get_package_map(mapping.keys())
     allowed_names = []
     for lst in package_map.values():

@@ -79,7 +79,7 @@ class TerminatedFrameReceiver:
 
 
 async def handle_stream(handle_message: Callable, stream: trio.abc.ReceiveStream):
-
+    """Handle each line as a separate task."""
     receiver = TerminatedFrameReceiver(stream, b"\n")
     async with trio.open_nursery() as nursery:
 

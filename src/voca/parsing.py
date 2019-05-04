@@ -30,30 +30,34 @@ class Transformer(lark.Transformer):
 
 @log.log_call
 def extract(tree: lark.Tree) -> Tuple[str, List]:
+    """Transform the parse tree to extract node type and children."""
     tree = Transformer().transform(tree)
     return tree.data, tree.children
 
 
 @log.log_call
 def extract_commands(tree: lark.Tree) -> Tuple[str, List]:
+    """Transform the parse tree to extract the node's children."""
     tree = Transformer().transform(tree)
 
     return tree.children
 
 
-def _replace_match(match):
+def _replace_match(match: re.Match) -> str:
+    """Replace a symbol with its name."""
     body = unicodedata.name(match.group(0)).replace(" ", "_")
     return f"_{body}_"
 
 
 @log.log_call
 def normalize_pattern(text):
-
+    """Create a human-readable ascii-lowercase form of the rule."""
     return re.sub(r"\W", _replace_match, text).lower()
 
 
 @log.log_call
 def build_rules(registry: utils.Registry) -> List[utils.Rule]:
+    """Build a list of rules and attach human-readable names."""
     rules = []
     for i, (pattern, function) in enumerate(registry.pattern_to_function.items()):
         normalized_pattern = normalize_pattern(pattern)
@@ -65,6 +69,7 @@ def build_rules(registry: utils.Registry) -> List[utils.Rule]:
 
 @log.log_call
 def build_grammar(registry: utils.Registry, rules: List[utils.Rule]) -> str:
+    """Build a lark grammar string by combining rules and definitions in the registry."""
 
     start = "?start : message_group"
 
@@ -95,8 +100,8 @@ def build_grammar(registry: utils.Registry, rules: List[utils.Rule]) -> str:
 
 
 @log.log_call
-def combine_modules(modules: Iterable[utils.PluginModule]):
-
+def combine_modules(modules: Iterable[utils.PluginModule]) -> utils.WrapperGroup:
+    """Combine the wrappers of multiple modules into a single WrapperGroup."""
     wrapper_group = utils.WrapperGroup()
     for module in modules:
         wrapper_group.wrappers.append(module.wrapper)
@@ -105,6 +110,7 @@ def combine_modules(modules: Iterable[utils.PluginModule]):
 
 
 def combine_registries(registries):
+    """Combine several registries together into a single registry."""
     combined = utils.Registry()
     for registry in registries:
         combined.pattern_to_function.update(registry.pattern_to_function)

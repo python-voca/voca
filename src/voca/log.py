@@ -17,6 +17,8 @@ from typing import Any
 from typing import Union
 from typing import Iterable
 from typing import Container
+from typing import List
+from typing import Dict
 
 import attr
 import eliot
@@ -37,6 +39,7 @@ def _(obj):
 
 
 def json_to_file(file: Optional[io.TextIOWrapper] = None) -> Callable:
+    """Serialize to json and print into a file, defaulting to stdout."""
 
     if file is None:
         file = sys.stdout
@@ -47,20 +50,24 @@ def json_to_file(file: Optional[io.TextIOWrapper] = None) -> Callable:
     return _json_to_file
 
 
-def _exception_lines(exc: BaseException):
+def _exception_lines(exc: BaseException) -> List[str]:
+    """Get a list of traceback string lines from an exception."""
     return traceback.format_exception(type(exc), exc, exc.__traceback__)
 
 
-def _extract_traceback(exc: BaseException):
+def _extract_traceback(exc: BaseException) -> str:
+    """Make a traceback string from an exception."""
     return "".join(_exception_lines(exc))
 
 
-def _exception_data(exc: BaseException):
+def _exception_data(exc: BaseException) -> Dict[str, Any]:
+    """Collect interesting data to report about the exception."""
     exclude = set(dir(Exception())) - {"args", "__cause__", "__context__"}
     return {k: v for k, v in inspect.getmembers(exc) if k not in exclude}
 
 
-def summarize_exception(exc: BaseException):
+def summarize_exception(exc: BaseException) -> Dict[str, dict]:
+    """Combine exception data with traceback into a dict for logging."""
     return {
         "traceback": _extract_traceback(exc),
         "exception_data": _exception_data(exc),

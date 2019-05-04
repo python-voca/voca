@@ -29,6 +29,7 @@ from voca import config
 
 @log.log_async_call
 async def handle_message(wrapper_group: utils.WrapperGroup, data: dict):
+    """Execute the command in ``data`` with the ``wrapper_group`` containing the grammar."""
     message = data["result"]["hypotheses"][0]["transcript"]
 
     with eliot.start_action(action_type="parse_command") as action:
@@ -48,7 +49,8 @@ async def handle_message(wrapper_group: utils.WrapperGroup, data: dict):
 
 
 @log.log_call
-def load_from_path(import_path, filename):
+def load_from_path(import_path: str, filename: str) -> types.ModuleType:
+    """Load a module from a filesystem path."""
     spec = importlib.util.spec_from_file_location(import_path, filename)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -56,7 +58,8 @@ def load_from_path(import_path, filename):
 
 
 @log.log_call
-def get_backup_module(import_path, backup_dir):
+def get_backup_module(import_path: str, backup_dir: pathlib.Path) -> types.ModuleType:
+    """Import a module from the backup directory."""
     sys.path.insert(0, str(backup_dir))
     try:
         module = importlib.import_module(import_path)
@@ -68,14 +71,19 @@ def get_backup_module(import_path, backup_dir):
 
 
 @log.log_call
-def save_backup_module(module, import_path, backup_dir):
+def save_backup_module(
+    module: types.ModuleType, import_path: str, backup_dir: pathlib.Path
+) -> None:
+    """Save a module in the backup directory."""
     new_path = (backup_dir / import_path.replace(".", "/")).with_suffix(".py")
     new_path.parent.mkdir(exist_ok=True, parents=True)
     shutil.copy2(module.__file__, new_path)
 
 
 @log.log_call
-def get_module(import_path, backup_dir, use_backup_modules):
+def get_module(
+    import_path: str, backup_dir: pathlib.Path, use_backup_modules: bool
+) -> types.ModuleType:
     """Import module and cache it in backup_dir, returning backup on failure."""
     try:
         with eliot.start_action(
@@ -98,6 +106,8 @@ def get_module(import_path, backup_dir, use_backup_modules):
 def collect_modules(
     import_paths: Iterable[str], use_backup_modules: bool
 ) -> List[types.ModuleType]:
+    """Collect modules from import paths, optionally defaulting to backup modules on failure."""
+
     backup_dir = pathlib.Path(config.get_config_dir()) / "backup_modules"
 
     modules = []
@@ -108,7 +118,8 @@ def collect_modules(
     return modules
 
 
-def combine_registries(registries):
+def combine_registries(registries: utils.Registry) -> utils.Registry:
+    """Combine multiple registries into a single one."""
     combined = utils.Registry()
     for registry in registries:
         combined.pattern_to_function.update(registry.pattern_to_function)
@@ -116,7 +127,8 @@ def combine_registries(registries):
     return combined
 
 
-async def make_specific_handler(wrapper_group, data):
+async def make_specific_handler(wrapper_group: utils.WrapperGroup, data: dict):
+    """Build the command handler for the specific context."""
     filtered = await context.filter_wrappers(wrapper_group, data)
     registry = combine_registries([wrapper.registry for wrapper in filtered.wrappers])
 
@@ -134,7 +146,8 @@ async def make_specific_handler(wrapper_group, data):
 
 
 @log.log_async_call
-async def async_main(wrapper_group):
+async def async_main(wrapper_group: utils.WrapperGroup):
+    """Process input commands as newline-separated json on stdin."""
     stream = trio._unix_pipes.PipeReceiveStream(os.dup(0))
     receiver = streaming.TerminatedFrameReceiver(stream, b"\n")
 
@@ -155,7 +168,7 @@ async def async_main(wrapper_group):
 
 @log.log_call
 def main(import_paths: Tuple[str], use_backup_modules: bool):
-
+    """Get the wrapper group and start the event loop."""
     modules = collect_modules(import_paths, use_backup_modules)
     modules = [utils.transform_module(module) for module in modules]
 

@@ -1,6 +1,10 @@
 import enum
 import platform
 
+from typing import Tuple
+from typing import Callable
+
+
 _name_to_function = {}
 
 
@@ -10,8 +14,10 @@ class System(enum.Enum):
     DARWIN = enum.auto()
 
 
-def implementation(*which):
-    def wrap(func):
+def implementation(*which: Tuple[System]) -> Callable:
+    """Decorator for functions that provide a platform-specific functionality."""
+
+    def wrap(func: Callable) -> Callable:
 
         try:
             seen_function = _name_to_function[func.__name__]

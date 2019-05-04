@@ -41,8 +41,8 @@ registry.define(
 
 
 @log.log_call
-def type_chord(chord):
-
+def type_chord(chord: str):
+    """Press a key chord. To avoid blocking, call this in a thread."""
     keyboard = pynput.keyboard.Controller()
     modifiers = [getattr(pynput.keyboard.Key, mod.name) for mod in chord.modifiers]
 
@@ -65,6 +65,7 @@ def type_chord(chord):
 
 @log.log_async_call
 async def press(chord: str):
+    """Press a key chord."""
     if isinstance(chord, str):
         await trio.run_sync_in_worker_thread(
             functools.partial(pyautogui.typewrite, [chord])
@@ -76,6 +77,7 @@ async def press(chord: str):
 
 @log.log_async_call
 async def write(message: str):
+    """Type the ``message``."""
     await trio.run_sync_in_worker_thread(
         functools.partial(pyautogui.typewrite, message)
     )
@@ -83,12 +85,14 @@ async def write(message: str):
 
 @registry.register('"alert" any_text')
 @log.log_async_call
-async def _alert(text):
+async def _alert(text: str):
+    """Show a gui alert with ``text``."""
     await trio.run_sync_in_worker_thread(functools.partial(pyautogui.alert, text))
 
 
 @log.log_async_call
-async def speak(message):
+async def speak(message: str):
+    """Speak ``message`` aloud."""
     await utils.run_subprocess(["say", message])
 
 
@@ -96,6 +100,7 @@ async def speak(message):
 @registry.register('"say" chord')
 @log.log_async_call
 async def _say(message: List[str]):
+    """Press a key."""
     [chord_string] = message
     chord_value = utils.pronunciation_to_value()[chord_string]
     await press(chord_value)
@@ -104,6 +109,7 @@ async def _say(message: List[str]):
 @registry.register('"switch" chord')
 @log.log_async_call
 async def _switch(message: List[str]):
+    """Press super + key."""
     [chord_string] = message
     chord_value = utils.pronunciation_to_value()[chord_string]
     await press(f"super+{chord_value}")

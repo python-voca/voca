@@ -8,7 +8,7 @@ registry.define({"?text": r"/\w.+/"})
 
 
 @registry.register('"check"')
-async def _say_def(message):
+async def _say_def(message: str):
     await basic.write("turt")
 
 

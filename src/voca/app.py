@@ -6,7 +6,14 @@ import eliot
 import voca.log
 
 
-def main(should_log):
+def main(should_log: bool) -> None:
+    """
+    Set up the app execution environment.
+
+    Args:
+        should_log: Enable or disable logging.
+
+    """
 
     if not should_log:
         return

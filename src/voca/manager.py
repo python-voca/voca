@@ -12,6 +12,8 @@ import copy
 
 from typing import List
 from typing import Optional
+from typing import Dict
+from typing import Set
 
 import attr
 import trio
@@ -25,6 +27,7 @@ from voca import log
 
 
 def worker_cli(should_log, module_names: Optional[List[str]] = None) -> List[str]:
+    """Build the list of strings for invoking a worker subprocess."""
     if module_names is None:
         module_names = utils.plugin_module_paths()
 
@@ -38,6 +41,7 @@ def worker_cli(should_log, module_names: Optional[List[str]] = None) -> List[str
 
 @log.log_async_call
 async def replay_child_messages(child: trio.Process) -> None:
+    """Log the child's messages to the parent's stdout."""
     async for message_from_child in streaming.TerminatedFrameReceiver(
         child.stdout, b"\n"
     ):
@@ -45,7 +49,8 @@ async def replay_child_messages(child: trio.Process) -> None:
 
 
 @log.log_call
-def set_state(data, state):
+def set_state(data: Dict[str, dict], state: Dict[str, dict]):
+    """Handle switching between ``eager`` and ``strict`` mode."""
     state = copy.deepcopy(state)
     body = data["result"]["hypotheses"][0]["transcript"]
     command, _space, _args = body.partition(" ")
@@ -57,7 +62,11 @@ def set_state(data, state):
 
 
 @log.log_async_call
-async def delegate_task(data, worker, state, action):
+async def delegate_task(
+    data: Dict, worker: trio.Process, state: dict, action: eliot.Action
+):
+    """Send input data to worker process over std streams."""
+
     wrapped_data = dict(
         **data, state=state, eliot_task_id=action.serialize_task_id().decode()
     )
@@ -68,17 +77,20 @@ async def delegate_task(data, worker, state, action):
 class Pool:
     num_workers: int = attr.ib(default=1)
     should_log: bool = attr.ib(default=True)
-    module_names: list = attr.ib(factory=list)
-    processes: set = attr.ib(factory=set)
+    module_names: List[str] = attr.ib(factory=list)
+    processes: Set[trio.Process] = attr.ib(factory=set)
 
-    def start(self):
+    def start(self) -> None:
+        """Start a new process."""
         for _ in range(self.num_workers):
             self.add_new_process()
 
-    def get_process(self):
+    def get_process(self) -> trio.Process:
+        """Pop an process outof the pool and return it."""
         return self.processes.pop()
 
-    def add_new_process(self):
+    def add_new_process(self) -> None:
+        """Start a new process and add it to the pool."""
         self.processes.add(
             trio.Process(
                 worker_cli(self.should_log, self.module_names),
@@ -89,8 +101,8 @@ class Pool:
 
 
 @log.log_async_call
-async def run_worker(data, state, pool):
-
+async def run_worker(data: dict, state: dict, pool: Pool):
+    """Get a process from the pool, send a job to it. Replace that worker when it quits."""
     with eliot.start_action(action_type="run_with_work") as action:
         worker = pool.get_process()
 
@@ -102,7 +114,10 @@ async def run_worker(data, state, pool):
 
 
 @log.log_async_call
-async def process_stream(receiver, num_workers, should_log, module_names):
+async def process_stream(
+    receiver, num_workers: int, should_log: bool, module_names: Optional[List[str]]
+):
+    """Handle all the commands coming in by delegating them to workers."""
 
     state = {"modes": {"strict": True}}
 
@@ -134,6 +149,7 @@ async def process_stream(receiver, num_workers, should_log, module_names):
 
 @log.log_async_call
 async def async_main(should_log, module_names: Optional[List[str]], num_workers: int):
+    """Read newline-separated inputs on stdin, and process them."""
 
     stream = trio._unix_pipes.PipeReceiveStream(os.dup(0))
     receiver = streaming.TerminatedFrameReceiver(stream, b"\n")
@@ -147,5 +163,6 @@ async def async_main(should_log, module_names: Optional[List[str]], num_workers:
 
 
 @log.log_call
-def main(should_log, module_names: Optional[List[str]], num_workers: int):
+def main(should_log: bool, module_names: Optional[List[str]], num_workers: int):
+    """Start the event loop."""
     trio.run(functools.partial(async_main, should_log, module_names, num_workers))
