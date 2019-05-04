@@ -11,7 +11,7 @@ import pytest
 from voca import cli
 
 from tests import helpers
-
+from tests.helpers import make_command
 
 def test_main():
     runner = CliRunner()
@@ -20,14 +20,6 @@ def test_main():
     assert result.output.startswith("Usage")
     assert result.exit_code == 0
 
-
-def make_command(utterance, final=True):
-    return {
-        "status": 0,
-        "segment": 0,
-        "result": {"hypotheses": [{"transcript": utterance}], "final": final},
-        "id": "eec37b79-f55e-4bf8-9afe-01f278902599",
-    }
 
 
 @pytest.mark.usefixtures("virtual_display")

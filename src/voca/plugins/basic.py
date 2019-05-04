@@ -1,6 +1,8 @@
 import functools
 import sys
 import time
+import signal
+import os
 
 from typing import List
 from typing import Callable
@@ -9,7 +11,7 @@ from typing import Awaitable
 
 
 import trio
-
+import eliot
 
 from voca import utils
 from voca import platforms
@@ -31,11 +33,16 @@ except Exception as e:
 
 registry = utils.Registry()
 
+v2p = utils.value_to_pronunciation()
 registry.define(
     {
         "?any_text": r"/\w.+/",
         "key": utils.regex("|".join(utils.pronunciation_to_value().keys())),
         "chord": 'key ("+" chord)*',
+        "?sigstr": utils.regex(
+            "|".join(["SIGUSR1", "SIGUSR2"] + list(v2p[str(x)] for x in range(20)))
+        ),
+        "?pid": r"/\d+/",
     }
 )
 
@@ -113,6 +120,20 @@ async def _switch(message: List[str]):
     [chord_string] = message
     chord_value = utils.pronunciation_to_value()[chord_string]
     await press(f"super+{chord_value}")
+
+
+@registry.register('"signal" pid sigstr')
+async def send_signal(message):
+    """Send a signal to a process."""
+
+    pid, sigstr = message
+    try:
+        sig = int(sigstr)
+    except ValueError:
+        sig = getattr(signal, sigstr)
+
+    with eliot.start_action(action_type="kill_signal", signum=sig, pid=pid):
+        os.kill(int(pid), sig)
 
 
 press_key: Callable = utils.async_runner(press)

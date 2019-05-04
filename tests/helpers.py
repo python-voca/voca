@@ -37,3 +37,13 @@ async def async_capture_keypresses():
     rec = await trio.run_sync_in_worker_thread(sneakysnek.recorder.Recorder.record, capture)
     yield captured
     rec.stop()
+
+
+
+def make_command(utterance, final=True):
+    return {
+        "status": 0,
+        "segment": 0,
+        "result": {"hypotheses": [{"transcript": utterance}], "final": final},
+        "id": "eec37b79-f55e-4bf8-9afe-01f278902599",
+    }
