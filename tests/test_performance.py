@@ -37,13 +37,12 @@ def test_manager_time():
     start = time.perf_counter()
 
     try:
-        proc.communicate(input=lines, timeout=2)
+        proc.communicate(input=lines, timeout=5)
     except subprocess.TimeoutExpired:
         pass
 
     time.sleep(2)
     proc.terminate()
-
 
     durations = [when - start for when in received_at]
 
