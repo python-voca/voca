@@ -32,7 +32,7 @@ def test_manager_time():
     )
 
     # Wait for startup.
-    time.sleep(1.0)
+    time.sleep(2.0)
 
     start = time.perf_counter()
 
@@ -41,7 +41,9 @@ def test_manager_time():
     except subprocess.TimeoutExpired:
         pass
 
+    time.sleep(2)
     proc.terminate()
+
 
     durations = [when - start for when in received_at]
 
