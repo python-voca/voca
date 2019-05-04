@@ -49,5 +49,5 @@ def test_manager_time():
     assert len(durations) == num_utterances
     assert durations == sorted(durations)
 
-    assert durations[0] < 0.05
+    assert durations[0] < 0.1
     assert durations < [1.0] * num_utterances
