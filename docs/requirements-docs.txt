@@ -33,4 +33,5 @@ pytest-trio
 sphinx
 sphinx_rtd_theme
 doc8
---no-deps -e ..
+-e ..
+--install-option='--no-deps'
