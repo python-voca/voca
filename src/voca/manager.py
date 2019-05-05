@@ -62,6 +62,7 @@ async def replay_child_messages(child: trio.Process) -> None:
 @log.log_call
 def set_state(data: Dict[str, dict], state: Dict[str, dict]):
     """Handle switching between ``eager`` and ``strict`` mode."""
+    # XXX maybe this should be in the worker.
     state = copy.deepcopy(state)
     body = data["result"]["hypotheses"][0]["transcript"]
     command, _space, _args = body.partition(" ")
@@ -149,6 +150,7 @@ async def process_stream(
                 print(message)
                 continue
             # Handle state changes.
+            # XXX maybe this should be in the worker, but where to store state?
             maybe_new_state = set_state(data, state)
             if maybe_new_state is not None:
                 state = maybe_new_state
