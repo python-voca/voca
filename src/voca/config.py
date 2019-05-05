@@ -1,3 +1,10 @@
+"""Define the user configuration.
+
+The location of the configuration directory is determined by platform standards,
+pulled from https://pypi.org/project/appdirs/.
+
+"""
+
 import os
 import pathlib
 
