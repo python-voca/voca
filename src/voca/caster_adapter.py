@@ -289,7 +289,7 @@ def convert_key_name(name):
     modifier_map = {"c": "ctrl_l", "a": "alt", "s": "shift", "w": "cmd"}
     key_map = {"pgup": "page_up", "pgdown": "page_down"}
     new_modifiers = [utils.KeyModifier(modifier_map[m]) for m in modifiers]
-    return utils.KeyChord(new_modifiers, key_map.get(simple, simple))
+    return utils.KeyChord(key_map.get(simple, simple), new_modifiers)
 
 
 def adapt_Key(text):

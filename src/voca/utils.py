@@ -206,8 +206,8 @@ class SimpleKey:
 @public
 @attr.dataclass
 class KeyChord:
-    modifiers: List[KeyModifier]
-    name: str
+    name: str = attr.ib(default=None)
+    modifiers: List[KeyModifier] = attr.ib(factory=list)
 
 
 @public
