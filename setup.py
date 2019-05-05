@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+import os
 import io
 import re
 import sys
@@ -27,6 +28,7 @@ def read(*names, **kwargs):
 
 PROJECT_ROOT = pathlib.Path(__file__).parent
 
+
 try:
     with open(PROJECT_ROOT / "requirements.in") as f:
         INSTALL_REQUIRES = [line for line in f.read().splitlines() if line[0].isalpha()]
@@ -34,6 +36,8 @@ except FileNotFoundError:
     print(sys.exc_info())
     INSTALL_REQUIRES = []
 
+if os.environ["READTHEDOCS"] == "True":
+    INSTALL_REQUIRES = []
 
 NAME = "voca"
 
