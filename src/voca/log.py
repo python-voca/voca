@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import collections
 import contextlib
+import datetime
 import functools
 import json
 import sys
@@ -10,6 +11,7 @@ import os
 import io
 import traceback
 import types
+import pathlib
 
 from typing import Optional
 from typing import Callable
@@ -206,3 +208,15 @@ def log_async_call(
             return result
 
     return logging_wrapper
+
+
+def get_log_filename() -> pathlib.Path:
+    """Return the filename of the session log, creating any parent directories."""
+
+    log_dir = config.get_config_dir() / "logs"
+    log_dir.mkdir(exist_ok=True, parents=True)
+
+    timestamp = datetime.datetime.now().isoformat()
+    name = timestamp + ".voca-log.jsonl"
+
+    return log_dir / name

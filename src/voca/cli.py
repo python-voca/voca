@@ -17,6 +17,7 @@ Why does this file exist, and why not put this in __main__?
 import sys
 import types
 import os
+import datetime
 
 import click
 import eliot
@@ -81,7 +82,7 @@ def _listen(**kwargs):
 @click.pass_obj
 @log_cli_call
 def _manage(obj, **kwargs):
-    log_filename = config.get_config_dir() / "log.jsonl"
+    log_filename = log.get_log_filename()
     with open(log_filename, "w") as log_file:
         eliot.add_destinations(log.json_to_file(log_file))
 
