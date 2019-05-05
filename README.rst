@@ -143,6 +143,7 @@ Usage
 
   ::
 
+   pip install --no-deps castervoice # Exclude Caster dependencies like wxpython.
    voca listen -d <device_number>  | VOCA_PATCH_CASTER=1 voca manage
 
 
