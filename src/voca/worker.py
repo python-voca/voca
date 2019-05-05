@@ -1,3 +1,14 @@
+"""Definition of the worker process.
+
+Each worker is started by the manager. It loads the grammar from the specified
+modules matching in the current context, and it executes the received command
+before exiting.
+
+The worker sends its logs up to the manager over stdout rather than writing
+directly to the log file so the manager can make sure log lines are interleaved
+without overlapping in the output.
+"""
+
 import importlib
 import functools
 import sys

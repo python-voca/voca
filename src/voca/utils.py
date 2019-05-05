@@ -1,3 +1,6 @@
+"""Utilities for working with Voca."""
+
+
 import re
 import functools
 import subprocess
@@ -28,6 +31,8 @@ import voca
 
 
 public = atpublic.public
+
+# XXX There are too many things in here -- it should be split up.
 
 
 @public

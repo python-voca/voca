@@ -1,3 +1,7 @@
+"""Define a meta-path finder and loader for importing modules from a synthetic
+namespace.
+"""
+
 from __future__ import annotations
 
 import contextlib

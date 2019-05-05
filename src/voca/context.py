@@ -1,3 +1,6 @@
+"""Classes for restricting which grammars should be active during a command invocation.
+"""
+
 from __future__ import annotations
 
 import subprocess
@@ -36,6 +39,7 @@ async def get_current_window_title():
 @utils.public
 @attr.dataclass
 class WindowContext:
+    """Match based on the current window name."""
     title: str
 
     async def check(self, data=None) -> bool:

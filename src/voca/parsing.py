@@ -1,3 +1,8 @@
+"""Functions for building a grammar and parsing commands.
+
+Combine rules from multiple modules into a single Lark grammar.
+"""
+
 from __future__ import annotations
 
 import re

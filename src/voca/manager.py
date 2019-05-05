@@ -1,3 +1,10 @@
+"""The manager starts worker processes and delegates input commands to workers.
+
+The manager is the primary supervisor process, restarting its workers to allow
+reloading and error handling.
+
+"""
+
 from __future__ import annotations
 
 import functools

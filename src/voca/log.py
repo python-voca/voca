@@ -1,3 +1,8 @@
+"""Provide logging functions.
+
+Eliot is used for structured logging.
+"""
+
 from __future__ import annotations
 
 import collections

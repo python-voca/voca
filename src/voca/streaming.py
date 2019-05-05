@@ -1,3 +1,6 @@
+"""Objects for handling input and output streams.
+"""
+
 from __future__ import annotations
 
 import itertools

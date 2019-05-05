@@ -1,3 +1,7 @@
+"""
+Functions for implementing cross-platform functionality.
+"""
+
 import enum
 import platform
 
@@ -18,7 +22,28 @@ class System(enum.Enum):
 
 @utils.public
 def implementation(*which: Tuple[System]) -> Callable:
-    """Decorator for functions that provide a platform-specific functionality."""
+    """Decorator for functions that provide a platform-specific functionality.
+
+    To define a function ``create_new_window`` for multiple platforms, use the
+    decorator:
+
+    ::
+
+        @implementation(System.LINUX)
+        def create_new_window(name):
+            return window(name)
+
+
+        @implementation(System.WINDOWS)
+        def create_new_window(name):
+            return application(name)
+
+
+    Then just call it with ``create_new_window()`` and the proper platform
+    implementation will be called. Access the dictionary mapping platform to
+    implementation function as ``create_new_window.implementations``.
+
+    """
 
     def wrap(func: Callable) -> Callable:
 
