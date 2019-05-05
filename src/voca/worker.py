@@ -86,6 +86,7 @@ def get_module(
     import_path: str, backup_dir: pathlib.Path, use_backup_modules: bool
 ) -> types.ModuleType:
     """Import module and cache it in backup_dir, returning backup on failure."""
+
     try:
         with eliot.start_action(
             action_type="import_module",
@@ -172,6 +173,7 @@ async def async_main(wrapper_group: utils.WrapperGroup):
 def main(import_paths: Tuple[str], use_backup_modules: bool):
     """Get the wrapper group and start the event loop."""
 
+    sys.path.insert(0, str(config.get_config_dir()))
     modules = collect_modules(import_paths, use_backup_modules)
     modules = [utils.transform_module(module) for module in modules]
 

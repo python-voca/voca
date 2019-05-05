@@ -4,6 +4,7 @@ import json
 import secrets
 import subprocess
 import string
+import textwrap
 
 from click.testing import CliRunner
 import pytest
@@ -13,13 +14,13 @@ from voca import cli
 from tests import helpers
 from tests.helpers import make_command
 
+
 def test_main():
     runner = CliRunner()
     result = runner.invoke(cli.cli, [])
 
     assert result.output.startswith("Usage")
     assert result.exit_code == 0
-
 
 
 @pytest.mark.usefixtures("virtual_display")
@@ -104,13 +105,7 @@ def test_app_context_matches():
 
     with helpers.capture_keypresses() as typed:
         helpers.run(
-            [
-                "manage",
-                "-i",
-                "voca.plugins.basic",
-                "-i",
-                "voca.plugins.turtle_context",
-            ],
+            ["manage", "-i", "voca.plugins.basic", "-i", "voca.plugins.turtle_context"],
             input=lines,
         )
 
@@ -131,4 +126,42 @@ def test_app_context_does_not_match():
         helpers.run(["manage"], input=lines)
 
     expected = []
+    assert typed == expected
+
+
+@pytest.mark.usefixtures("virtual_display")
+def test_config_module(tmp_path):
+    """Can add grammars from user config modules."""
+
+    # Given
+    source = textwrap.dedent(
+        """\
+        from voca import utils
+        from voca.plugins import basic
+
+
+        registry = utils.Registry()
+        wrapper = utils.Wrapper(registry)
+
+
+        @registry.register('"my config"')
+        async def _type_xy(_):
+            await basic.write("xy")
+        """
+    )
+
+    user_modules_path = tmp_path / "user_modules"
+    user_modules_path.mkdir()
+    (user_modules_path / "my_module.py").write_text(source)
+
+    # When
+    utterances = ["my config"]
+    rows = [make_command(utterance, final=True) for utterance in utterances]
+    lines = ("\n".join(json.dumps(row) for row in rows) + "\n").encode()
+
+    with helpers.capture_keypresses() as typed:
+        helpers.run(["manage", "-i", "user_modules.my_module"], input=lines)
+
+    # Then
+    expected = ["KEY_X", "KEY_Y"]
     assert typed == expected

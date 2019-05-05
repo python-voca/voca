@@ -239,6 +239,14 @@ def plugin_module_paths() -> List[str]:
     ]
 
 
+def get_module_names() -> List[str]:
+    config_files = config.get_config_dir() / "user_modules".glob("*.py")
+    config_modules = [
+        "user_modules" + file.with_suffix("").name for file in config_files
+    ]
+    return config_modules + plugin_module_paths()
+
+
 MODULE_TRANSFORMERS = []
 
 

@@ -33,7 +33,8 @@ def handle_unexpected_worker_bytes(message: bytes):
 def worker_cli(should_log, module_names: Optional[List[str]] = None) -> List[str]:
     """Build the list of strings for invoking a worker subprocess."""
     if module_names is None:
-        module_names = utils.plugin_module_paths()
+        # TODO This case should be handled in the worker, not the manager.
+        module_names = utils.get_module_names()
 
     log_arg = "--log" if should_log else "--no-log"
     prefix = [sys.executable, "-m", "voca", log_arg, "worker"]
