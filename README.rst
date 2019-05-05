@@ -84,6 +84,7 @@ Limitations
 - Voca does not provide a speech engine; it requires input from an existing one like Dragon, Kaldi, or DeepSpeech.
 - Multiple platforms are planned, and the basic outline is there, but tests are not currently passing on OSX or Windows. Linux is working.
 - The documentation is minimal.
+- The Caster commands for specific programming languages aren't yet implemented.
 
 
 Installation
