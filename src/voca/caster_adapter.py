@@ -20,6 +20,11 @@ place of the Caster objects.
 
 This process is started by calling the ``patch_all()`` function.
 
+
+This is a bit complex because it hooks into the import process so early. It
+avoids importing ``castervoice.lib``'s Python 2-only code, which can't be
+imported under Python 3.
+
 """
 
 from __future__ import annotations
