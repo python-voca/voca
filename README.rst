@@ -133,6 +133,7 @@ Usage
 
 For example, in Visual Studio Code, say ``new file``. It should open new file in the editor by automatically pressing ``control-n``.
 
+- Structured logs are stored in ``{config_dir}/logs/``. Examine them with ``eliot-tree --color=always -l0 {filepath} | less -SR``. They'll show how your commands flowed through the program, and will display the full grammar that was active during each command.
 
 
 Documentation
