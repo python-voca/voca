@@ -7,12 +7,14 @@ from typing import Callable
 
 import trio
 
+from voca import utils
 
 BUFSIZE = 2 ** 14
 counter = itertools.count()
 _RECEIVE_SIZE = 4096  # pretty arbitrary
 
 
+@utils.public
 class TerminatedFrameReceiver:
     """Parse frames out of a Trio stream, where each frame is terminated by a
     fixed byte sequence.

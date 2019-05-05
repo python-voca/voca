@@ -35,6 +35,7 @@ def extract(tree: lark.Tree) -> Tuple[str, List]:
     return tree.data, tree.children
 
 
+@utils.public
 @log.log_call
 def extract_commands(tree: lark.Tree) -> Tuple[str, List]:
     """Transform the parse tree to extract the node's children."""
@@ -55,6 +56,7 @@ def normalize_pattern(text):
     return re.sub(r"\W", _replace_match, text).lower()
 
 
+@utils.public
 @log.log_call
 def build_rules(registry: utils.Registry) -> List[utils.Rule]:
     """Build a list of rules and attach human-readable names."""
@@ -67,6 +69,7 @@ def build_rules(registry: utils.Registry) -> List[utils.Rule]:
     return rules
 
 
+@utils.public
 @log.log_call
 def build_grammar(registry: utils.Registry, rules: List[utils.Rule]) -> str:
     """Build a lark grammar string by combining rules and definitions in the registry."""
@@ -99,6 +102,7 @@ def build_grammar(registry: utils.Registry, rules: List[utils.Rule]) -> str:
     return "\n".join([start, body, imports])
 
 
+@utils.public
 @log.log_call
 def combine_modules(modules: Iterable[utils.PluginModule]) -> utils.WrapperGroup:
     """Combine the wrappers of multiple modules into a single WrapperGroup."""

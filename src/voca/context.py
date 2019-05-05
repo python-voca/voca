@@ -10,8 +10,10 @@ import trio
 
 from voca import platforms
 from voca import log
+from voca import utils
 
 
+@utils.public
 @platforms.implementation(platforms.System.WINDOWS, platforms.System.DARWIN)
 async def get_current_window_title() -> str:
     """Get the title of the current window."""
@@ -21,6 +23,7 @@ async def get_current_window_title() -> str:
     return window.title
 
 
+@utils.public
 @platforms.implementation(platforms.System.LINUX)
 async def get_current_window_title():
     """Get the title of the current window."""
@@ -30,6 +33,7 @@ async def get_current_window_title():
     return proc.stdout.decode()[:-1]
 
 
+@utils.public
 @attr.dataclass
 class WindowContext:
     title: str
@@ -40,20 +44,7 @@ class WindowContext:
         return self.title in current_title
 
 
-@attr.dataclass
-class AlwaysContext:
-    async def check(self, data=None) -> bool:
-        """Always True."""
-        return True
-
-
-@attr.dataclass
-class NeverContext:
-    async def check(self, data=None) -> bool:
-        """Always False."""
-        return False
-
-
+@utils.public
 @log.log_async_call
 async def filter_wrappers(
     wrapper_group: utils.WrapperGroup, data: dict
@@ -67,4 +58,5 @@ async def filter_wrappers(
     return utils.WrapperGroup(allowed)
 
 
-from voca import utils
+AlwaysContext = utils.AlwaysContext
+NeverContext = utils.NeverContext

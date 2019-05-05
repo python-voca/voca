@@ -20,6 +20,8 @@ from typing import TypeVar
 
 import attr
 
+from voca import utils
+
 T = TypeVar("T")
 
 
@@ -142,6 +144,7 @@ def get_package_map(strings: List[str]) -> Dict[str, List[str]]:
     return dict(m)
 
 
+@utils.public
 def make_finder(mapping: Dict[str, Dict[str, Any]]) -> PathFinder:
     """Build a Finder that handles modules in ``mapping``."""
     package_map = get_package_map(mapping.keys())

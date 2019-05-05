@@ -4,16 +4,19 @@ import platform
 from typing import Tuple
 from typing import Callable
 
+from voca import utils
 
 _name_to_function = {}
 
 
+@utils.public
 class System(enum.Enum):
     LINUX = enum.auto()
     WINDOWS = enum.auto()
     DARWIN = enum.auto()
 
 
+@utils.public
 def implementation(*which: Tuple[System]) -> Callable:
     """Decorator for functions that provide a platform-specific functionality."""
 

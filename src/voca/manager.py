@@ -177,6 +177,7 @@ async def async_main(should_log, module_names: Optional[List[str]], num_workers:
     )
 
 
+@utils.public
 @log.log_call
 def main(should_log: bool, module_names: Optional[List[str]], num_workers: int):
     """Start the event loop."""

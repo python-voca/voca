@@ -25,8 +25,10 @@ import eliot
 import six
 
 from voca import config
+from voca import utils
 
 
+@utils.public
 @functools.singledispatch
 def to_serializable(obj: Any) -> Union[str, list, dict, int, float]:
     try:
@@ -40,6 +42,7 @@ def _(obj):
     return vars(obj)
 
 
+@utils.public
 def json_to_file(file: Optional[io.TextIOWrapper] = None) -> Callable:
     """Serialize to json and print into a file, defaulting to stdout."""
 
@@ -78,6 +81,7 @@ def summarize_exception(exc: BaseException) -> Dict[str, dict]:
     }
 
 
+@utils.public
 def log_call(
     wrapped_function: Optional[Callable] = None,
     action_type: Optional[str] = None,
@@ -140,6 +144,7 @@ def log_call(
     return logging_wrapper
 
 
+@utils.public
 def log_async_call(
     wrapped_function: Optional[Callable] = None,
     action_type: Optional[str] = None,

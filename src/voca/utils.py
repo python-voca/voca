@@ -22,12 +22,15 @@ import trio
 import lark
 import pkg_resources
 import importlib_resources
-
+import public as atpublic
 
 import voca
-from voca import context
 
 
+public = atpublic.public
+
+
+@public
 @attr.s
 class Registry:
     pattern_to_function: MutableMapping[str, Callable] = attr.ib(factory=dict)
@@ -49,17 +52,20 @@ class Registry:
         self.patterns.update(kwargs)
 
 
+@public
 def pronunciation_to_value() -> MutableMapping[str, Any]:
     """Return a dict of pronunciation to value."""
     text = importlib_resources.read_text(voca, "pronunciation.toml")
     return toml.loads(text)
 
 
+@public
 def value_to_pronunciation() -> Dict[Any, str]:
     """Return a dict of value to pronunciation."""
     return {v: k for k, v in pronunciation_to_value().items()}
 
 
+@public
 async def run_subprocess(
     command: List[str], *, input=None, capture_output=False, **options: Dict[str, Any]
 ):
@@ -109,6 +115,7 @@ async def run_subprocess(
     return subprocess.CompletedProcess(proc.args, proc.returncode, stdout, stderr)
 
 
+@public
 def quote(word: str) -> str:
     """Format a word in single or double quotation marks for lark."""
     if word.startswith('"'):
@@ -116,6 +123,7 @@ def quote(word: str) -> str:
     return f'"{word}"'
 
 
+@public
 def regex(word: str) -> str:
     """Format a word in slashes for lark."""
     return f"/{word}/"
@@ -143,11 +151,29 @@ class Context(Protocol):
 
 
 @attr.dataclass
+class AlwaysContext:
+    # TODO Move this into context.py.
+    async def check(self, data=None) -> bool:
+        """Always True."""
+        return True
+
+
+@attr.dataclass
+class NeverContext:
+    # TODO Move this into context.py.
+    async def check(self, data=None) -> bool:
+        """Always False."""
+        return False
+
+
+@public
+@attr.dataclass
 class Wrapper:
     registry: Registry
-    context: Context = attr.ib(default=context.AlwaysContext)
+    context: Context = attr.ib(default=AlwaysContext)
 
 
+@public
 @attr.s
 class WrapperGroup:
     wrappers: List[Wrapper] = attr.ib(factory=list)
@@ -165,22 +191,26 @@ class PluginModule(Protocol):
     wrapper: Wrapper
 
 
+@public
 @attr.dataclass
 class KeyModifier:
     name: str
 
 
+@public
 @attr.dataclass
 class SimpleKey:
     name: str
 
 
+@public
 @attr.dataclass
 class KeyChord:
     modifiers: List[KeyModifier]
     name: str
 
 
+@public
 def async_runner(async_function: Callable):
     def build(*args, **kwargs) -> Callable:
         @functools.wraps(async_function)
@@ -192,6 +222,7 @@ def async_runner(async_function: Callable):
     return build
 
 
+@public
 def replace(message: str) -> str:
     """Replace pronunciation with its value."""
     lookup = pronunciation_to_value()
@@ -199,6 +230,7 @@ def replace(message: str) -> str:
     return pattern.sub(lambda x: lookup[x.group()], message)
 
 
+@public
 def plugin_module_paths() -> List[str]:
     """Get the import paths of the plugin modules."""
     return [
@@ -210,6 +242,7 @@ def plugin_module_paths() -> List[str]:
 MODULE_TRANSFORMERS = []
 
 
+@public
 def transform_module(module: types.ModuleType) -> types.ModuleType:
     """Call each function in MODULE_TRANSFORMERS on the module."""
     for transform in MODULE_TRANSFORMERS:
@@ -218,6 +251,7 @@ def transform_module(module: types.ModuleType) -> types.ModuleType:
     return module
 
 
+@public
 @attr.dataclass
 class ModuleLazyRaise:
     owner_name: str

@@ -167,6 +167,7 @@ async def async_main(wrapper_group: utils.WrapperGroup):
         sys.exit(0)
 
 
+@utils.public
 @log.log_call
 def main(import_paths: Tuple[str], use_backup_modules: bool):
     """Get the wrapper group and start the event loop."""

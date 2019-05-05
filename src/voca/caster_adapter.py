@@ -375,7 +375,9 @@ def add_wrapper(module):
     return module
 
 
+@utils.public
 def patch_all():
+    """Patch castervoice.lib to provide Voca's objects instead of Caster's."""
 
     # XXX Should fix this to avoid having to actually import castervoice.
     # Currently sys.modules is used to find castervoice in order to find its submodules.
@@ -439,3 +441,5 @@ module_mapping = {
     "castervoice.lib.dfplus.state.short": {"R": RegisteredAction},
     "castervoice.lib.dfplus.merge.ccrmerger": {"CCRMerger": AttributeHaver()},
 }
+
+__all__ = ["patch_all"]
