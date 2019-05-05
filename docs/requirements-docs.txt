@@ -1,3 +1,5 @@
+--install-option="--no-deps"
+
 ws4py
 click
 trio
@@ -34,4 +36,3 @@ sphinx
 sphinx_rtd_theme
 doc8
 -e .
---install-option='--no-deps'
