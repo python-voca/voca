@@ -48,7 +48,7 @@ registry.define(
 
 
 @log.log_call
-def type_chord(chord: str):
+def type_chord(chord: utils.KeyChord):
     """Press a key chord. To avoid blocking, call this in a thread."""
     keyboard = pynput.keyboard.Controller()
     modifiers = [getattr(pynput.keyboard.Key, mod.name) for mod in chord.modifiers]
