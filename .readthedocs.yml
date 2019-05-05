@@ -20,4 +20,5 @@ formats: all
 python:
   version: 3.7
   install:
-    - requirements: --no-deps docs/requirements-docs.txt
+    - requirements: docs/requirements-docs.txt
+    - --no-deps -e .
