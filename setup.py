@@ -43,7 +43,7 @@ NAME = "voca"
 
 setup(
     name=NAME,
-    version="0.1.4",
+    version="0.1.5",
     description="Control your computer by voice!",
     long_description="%s\n%s"
     % (
