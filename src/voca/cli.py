@@ -52,13 +52,27 @@ def cli(ctx, **kwargs):
     app.main(**kwargs)
 
 
-@cli.command("mic")
+cli.help = rf"""
+Voca: a customizable command-execution environment.
+
+GitHub: https://github.com/python-voca/voca/
+
+Docs: https://voca.readthedocs.org
+
+Config directory: {config.get_config_dir()}{os.sep}
+
+"""
+
+
+@cli.command("mic", help="Detect which mic is running.")
 def _detect_mic(**kwargs):
     del sys.argv[1]
     import voca.mic
 
 
-@cli.command("listen")
+@cli.command(
+    "listen", help="Send microphone audio to server and print results on stdout."
+)
 @click.option("--server", "-s", default="127.0.0.1")
 @click.option("--port", "-p", default=8019, type=int)
 @click.option("--device", "-d", default=7, type=int)
@@ -76,7 +90,10 @@ def _listen(**kwargs):
     )
 
 
-@cli.command("manage")
+@cli.command(
+    "manage",
+    help="Start Voca manager, running a pool of workers and reading from stdin.",
+)
 @click.option("--import-path", "-i", "module_names", multiple=True, default=None)
 @click.option("--num-workers", type=int, default=5)
 @click.pass_obj
@@ -89,7 +106,7 @@ def _manage(obj, **kwargs):
         manager.main(**obj.kwargs, **kwargs)
 
 
-@cli.command("worker")
+@cli.command("worker", help="Start a worker executing commands from stdin.")
 @click.option("import_paths", "-i", multiple=True)
 @click.option("--patch-caster", is_flag=True, default=False, envvar="VOCA_PATCH_CASTER")
 @click.option(
