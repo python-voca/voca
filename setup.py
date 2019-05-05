@@ -36,7 +36,7 @@ except FileNotFoundError:
     print(sys.exc_info())
     INSTALL_REQUIRES = []
 
-if os.environ["READTHEDOCS"] == "True":
+if os.environ.get("READTHEDOCS") == "True":
     INSTALL_REQUIRES = []
 
 NAME = "voca"
