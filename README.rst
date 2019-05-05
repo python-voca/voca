@@ -94,6 +94,47 @@ Installation
     pip install voca
 
 
+Usage
+=====
+
+- Start the server with Docker by running ``./run-kaldi-server.sh`` or use another, such as the online servers at http://voxhub.io/silvius. (Voca is not affiliated with Silvius, but is compatible.)
+- Detect which audio device you're using as the microphone by running ``voca --mic`` with different ``--device`` numbers until one of them shows output.
+- Send audio to the server and receive transcripts on stdout by running ``voca --listen -d 2``, replacing ``2`` with your microphone's device number from the previous step. Try saying something and check that you get json output. Cancel this process with ``control-c``.
+- Check that the manager is working by sending it a transcript. The ``-i`` option says which command module you want to load.
+
+  ::
+
+    voca manage -i voca.plugins.basic   <<EOF
+    {"status": 0, "segment": 0, "result": {"hypotheses": [{"transcript": "say bravo"}], "final": true}, "id": "eec37b79-f55e-4bf8-9afe-01f278902599"}
+    EOF
+
+
+  It should type the letter ``b`` on your screen. Cancel this process with ``control-c``.
+
+
+- Start the listener and manager, piping the listener's transcripts into the manager.
+
+  ::
+
+     voca listen -d <device_number>  | voca manage -i voca.plugins.basic
+
+
+  Speak into your microphone ``say charlie``. It should type the letter ``c`` on your screen. Cancel this process with ``control-c``.
+
+
+- See the location of your config directory in ``voca --help``, and add new commands in any ``.py`` file at ``{config_dir}/user_modules/*.py``. Run ``voca manage -i user_modules.my_module`` (replacing ``my_module`` with the name of your file, excluding the ``.py`` suffix.)
+
+- Try using the Caster commands.
+
+  ::
+
+   voca listen -d <device_number>  | VOCA_PATCH_CASTER=1 voca manage
+
+
+For example, in Visual Studio Code, say ``new file``. It should open new file in the editor by automatically pressing ``control-n``.
+
+
+
 Documentation
 =============
 
