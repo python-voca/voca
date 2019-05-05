@@ -85,6 +85,7 @@ Limitations
 - Multiple platforms are planned, and the basic outline is there, but tests are not currently passing on OSX or Windows. Linux is working.
 - The documentation is minimal.
 - The Caster commands for specific programming languages aren't yet implemented.
+- There are several ways to define commands, but a single obvious way would be better.
 
 
 Installation
