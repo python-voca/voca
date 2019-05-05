@@ -1,3 +1,27 @@
+"""Patch the ``castervoice`` module.
+
+Caster provides a large number of useful grammar rules and commands. This module
+extracts those objects from caster, but builds Voca objects instead of
+``castervoice`` objects. This procedure has several components.
+
+First, define a set of adapters for each object defined in ``castervoice.lib``.
+For example, define a ``caster_adapter.TextAction`` that can be created with the
+same signature as Caster's ``TextAction`` object.
+
+Second, add these adapter objects into synthetic modules that mimic the tree
+structure of ``castervoice.lib``.
+
+Third, insert a meta-path finder for objects in the ``castervoice.lib``
+namespace. With this finder enabled, when objects in ``castervoice.apps``
+attempt to import classes from ``castervoice.lib``, they will instead get the
+Voca objects. When the classes are called, Voca objects are instantiated in
+place of the Caster objects.
+
+
+This process is started by calling the ``patch_all()`` function.
+
+"""
+
 from __future__ import annotations
 
 import contextlib
