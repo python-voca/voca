@@ -40,6 +40,7 @@ async def get_current_window_title():
 @attr.dataclass
 class WindowContext:
     """Match based on the current window name."""
+
     title: str
 
     async def check(self, data=None) -> bool:
