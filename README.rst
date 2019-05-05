@@ -91,9 +91,22 @@ Limitations
 Installation
 ============
 
-::
+Some of Voca's dependencies are not yet available on PyPI, so it can't be installed directly with pip. In bash, run these commands:
 
-    pip install voca
+::
+    # Clone the repository.
+    git clone git@github.com:python-voca/voca.git
+    # Change working directory to inside the repository.
+    cd voca
+    # Create a virtual environment with Python 3.7.
+    virtualenv -p python3.7 venv
+    # Install the dependencies into the virtual environment.
+    venv/bin/pip install -r dev-requirements.txt -r requirements.txt
+    # Install Voca into the virtual environment.
+    venv/bin/pip install --no-deps -e .
+    # Activate the virtual environment to add its packages onto your PATH.
+    source venv/bin/activate
+
 
 
 Usage
