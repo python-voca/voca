@@ -94,6 +94,7 @@ Installation
 Some of Voca's dependencies are not yet available on PyPI, so it can't be installed directly with pip. In bash, run these commands:
 
 ::
+
     # Clone the repository.
     git clone git@github.com:python-voca/voca.git
     # Change working directory to inside the repository.
