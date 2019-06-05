@@ -1,0 +1,14 @@
+export KALDI_DIR=../kaldi-active-grammar/venv/lib/python2.7/site-packages/kaldi_active_grammar/exec/linux
+
+rm -rf venv
+virtualenv -p python3.7 venv
+
+venv/bin/pip install pyparsing webrtcvad
+venv/bin/pip install -e ../dragonfly
+
+venv/bin/pip install future
+venv/bin/pip install -e ../kaldi-active-grammar/kaldi-active-grammar
+
+venv/bin/pip install -e .
+
+KALDI_DIR=../kaldi-active-grammar/venv/lib/python2.7/site-packages/kaldi_active_grammar/exec/linux venv/bin/python -m voca.kag
