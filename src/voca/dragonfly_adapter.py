@@ -11,7 +11,7 @@ spec_grammar = r"""
 rule : "<" body ">"
 wordlist : "{" body "}"
 group : "(" body ")"
-alternative : "(" body "|" body ")"
+alternative : "(" body ("|" body )+ ")"
 zero_or_more : body "*"
 one_or_more : body "+"
 optional : "[" body "]"
@@ -42,27 +42,29 @@ wordlist = t.Iterable[str]
 
 
 @attr.dataclass
-class Context:
+class Lexicon:
     wordlists: t.Dict[str, wordlist] = attr.ib(factory=list)
 
 
 @attr.dataclass
 class SpecTransformer(lark.Transformer):
-    context: Context
+    lexicon: Lexicon
 
     def __attrs_post_init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def wordlist(self, name):
-        return "(" + "|".join(self.context.wordlists[name[0]]) + ")"
+        return "(" + "|".join(self.lexicon.wordlists[name[0]]) + ")"
 
 
     def spec(self, arg):
         return " ".join(arg)
 
 
-def build(spec: str, context: Context):
+def transform_spec(spec: str, lexicon: Lexicon):
     parser = lark.Lark(spec_grammar)
     tree = parser.parse(spec)
-    transformer = SpecTransformer(context)
+    transformer = SpecTransformer(lexicon)
     return transformer.transform(tree)
+
+
