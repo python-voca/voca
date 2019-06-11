@@ -37,10 +37,10 @@ v2p = utils.value_to_pronunciation()
 registry.define(
     {
         "?any_text": r"/\w.+/",
-        "key": utils.regex("|".join(utils.pronunciation_to_value().keys())),
+        "key": utils.one_of(utils.pronunciation_to_value().keys()),
         "chord": 'key ("+" chord)*',
-        "?sigstr": utils.regex(
-            "|".join(["SIGUSR1", "SIGUSR2"] + list(v2p[str(x)] for x in range(20)))
+        "?sigstr": utils.one_of(
+            ("|".join(["SIGUSR1", "SIGUSR2"] + list(v2p[str(x)] for x in range(20))))
         ),
         "?pid": r"/\d+/",
     }
@@ -90,7 +90,7 @@ async def write(message: str):
     )
 
 
-@registry.register('"alert" any_text')
+@registry.register("alert <any_text>")
 @log.log_async_call
 async def _alert(text: str):
     """Show a gui alert with ``text``."""
@@ -104,7 +104,7 @@ async def speak(message: str):
 
 
 @registry.register("chord")
-@registry.register('"say" chord')
+@registry.register("say <chord>")
 @log.log_async_call
 async def _say(message: List[str]):
     """Press a key."""
@@ -113,7 +113,7 @@ async def _say(message: List[str]):
     await press(chord_value)
 
 
-@registry.register('"switch" chord')
+@registry.register("switch <chord>")
 @log.log_async_call
 async def _switch(message: List[str]):
     """Press super + key."""
@@ -122,7 +122,7 @@ async def _switch(message: List[str]):
     await press(f"super+{chord_value}")
 
 
-@registry.register('"signal" pid sigstr')
+@registry.register("signal <pid> <sigstr>")
 async def send_signal(message):
     """Send a signal to a process."""
 
@@ -139,11 +139,11 @@ async def send_signal(message):
 press_key: Callable = utils.async_runner(press)
 
 
-registry.pattern_to_function['"monitor"'] = press_key("M")
-registry.pattern_to_function['"mouse"'] = press_key("O")
+registry.pattern_to_function["monitor"] = press_key("M")
+registry.pattern_to_function["mouse"] = press_key("O")
 
 
-@registry.register('"div0"')
+@registry.register("div0")
 async def _div0(*args):
     1 / 0
 
