@@ -134,6 +134,12 @@ def regex(word: str) -> str:
     return f"/{word}/"
 
 
+@public
+def one_of(words: List[str]) -> str:
+    """Format as alternative."""
+    return "(" + "|".join(words) + ")"
+
+
 @attr.dataclass
 class Handler:
     registry: Registry
