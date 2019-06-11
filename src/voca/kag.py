@@ -153,11 +153,6 @@ class ExampleRule(dragonfly.CompoundRule):
 
 
 
-    def __getattribute__(self, name):
-        print(self, name)
-        return super(ExampleRule, self).__getattribute__(name)
-
-
 
 def random_string(length):
     return "".join(
@@ -183,13 +178,15 @@ def main():
     dragonfly.engines.get_engine = lambda: engine
 
     print("getting mic")
-    audio = dragonfly.engines.backend_kaldi.audio.VADAudio(input_device_index=7)
+    audio = dragonfly.engines.backend_kaldi.audio.VADAudio(input_device_index=4)
 
     # Instantiate the Kaldi decoder.
     print("connecting")
     connect(engine, audio)
 
     rule = ExampleRule()
+
+    grammar = make_grammar()
 
     grammar._rules.append(rule)
     rule._grammar = grammar
@@ -227,4 +224,4 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
+     main()
