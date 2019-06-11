@@ -151,9 +151,12 @@ class ExampleRule(dragonfly.CompoundRule):
         good_or_bad = extras["food"]
         print("That is a %s idea!" % good_or_bad)
 
-    # def __getattribute__(self, name):
-    #     print(self, name)
-    #     return super(ExampleRule, self).__getattribute__(name)
+
+
+    def __getattribute__(self, name):
+        print(self, name)
+        return super(ExampleRule, self).__getattribute__(name)
+
 
 
 def random_string(length):
@@ -167,13 +170,6 @@ def make_grammar(*args, **kwargs):
     if name is None:
         name = random_string(10)
     return dragonfly.Grammar(*args, name=name, **kwargs)
-
-
-def make_dragonfly_rule(*args, **kwargs):
-    name = kwargs.pop("name", None)
-    if name is None:
-        name = random_string(10)
-    return dragonfly.CompoundRule(*args, name=name, **kwargs)
 
 
 def main():
@@ -193,16 +189,7 @@ def main():
     print("connecting")
     connect(engine, audio)
 
-    rule = make_dragonfly_rule(
-        spec="I see <food>",
-        extras=[
-            dragonfly.Choice(
-                "food", {"(an | a juicy) apple": "good", "a [greasy] hamburger": "bad"}
-            )
-        ],
-    )
-
-    grammar = make_grammar()
+    rule = ExampleRule()
 
     grammar._rules.append(rule)
     rule._grammar = grammar
@@ -212,20 +199,18 @@ def main():
     print("loading")
     load_grammar(engine, grammar)
 
-    print("Listening...")
+    print("Listening..." )
 
     ######
 
     print("connecting")
     connect(engine, audio)
 
+    rule = ExampleRule()
+
     grammar = make_grammar()
 
     grammar._rules.append(rule)
-
-    rule2 = make_dragonfly_rule(spec="cat dog")
-
-    grammar._rules.append(rule2)
     rule._grammar = grammar
 
     grammar.load = None
@@ -242,4 +227,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
