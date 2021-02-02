@@ -4,96 +4,248 @@
 #
 #    pip-compile --output-file dev-requirements.txt dev-requirements.in
 #
-alabaster==0.7.12         # via sphinx
-ansicolors==1.0.2         # via cuvner
-appdirs==1.4.3            # via black
-argh==0.26.2              # via watchdog
-astroid==2.2.5            # via pylint
-async-generator==1.10     # via pytest-trio, trio
-atomicwrites==1.3.0       # via pytest
-attrs==19.1.0             # via black, outcome, pytest, trio
-babel==2.6.0              # via sphinx
+alabaster==0.7.12
+    # via sphinx
+ansicolors==1.0.2
+    # via cuvner
+appdirs==1.4.3
+    # via black
+argh==0.26.2
+    # via watchdog
+astroid==2.2.5
+    # via pylint
+async-generator==1.10
+    # via
+    #   pytest-trio
+    #   trio
+atomicwrites==1.3.0
+    # via pytest
+attrs==19.1.0
+    # via
+    #   black
+    #   outcome
+    #   pytest
+    #   trio
+babel==2.6.0
+    # via sphinx
 black==19.3b0
-bleach==3.1.0             # via readme-renderer
+    # via -r dev-requirements.in
+bleach==3.3.0
+    # via readme-renderer
 bump2version==0.5.10
-certifi==2019.3.9         # via requests
-cffi==1.12.2              # via sounddevice
-chardet==3.0.4            # via requests
-click==7.0                # via black, cuvner, pip-tools
+    # via -r dev-requirements.in
+certifi==2019.3.9
+    # via requests
+cffi==1.12.2
+    # via sounddevice
+chardet==3.0.4
+    # via requests
+click==7.0
+    # via
+    #   black
+    #   cuvner
+    #   pip-tools
 coverage==4.5.3
+    # via
+    #   -r dev-requirements.in
+    #   cuvner
+    #   pytest-cov
 cuvner==18.0.1
-cycler==0.10.0            # via matplotlib
-docutils==0.14            # via readme-renderer, sphinx
-entrypoints==0.3          # via flake8
-filelock==3.0.10          # via tox
+    # via -r dev-requirements.in
+cycler==0.10.0
+    # via matplotlib
+docutils==0.14
+    # via
+    #   readme-renderer
+    #   sphinx
+entrypoints==0.3
+    # via flake8
+filelock==3.0.10
+    # via tox
 flake8==3.7.7
-idna==2.8                 # via requests, trio
-imagesize==1.1.0          # via sphinx
-incremental==17.5.0       # via cuvner
-isort==4.3.15             # via pylint
-jinja2==2.10.1            # via sphinx
-kiwisolver==1.0.1         # via matplotlib
-lazy-object-proxy==1.3.1  # via astroid
-markupsafe==1.1.1         # via jinja2
+    # via -r dev-requirements.in
+idna==2.8
+    # via
+    #   requests
+    #   trio
+imagesize==1.1.0
+    # via sphinx
+incremental==17.5.0
+    # via cuvner
+isort==4.3.15
+    # via pylint
+jinja2==2.10.1
+    # via sphinx
+kiwisolver==1.0.1
+    # via matplotlib
+lazy-object-proxy==1.3.1
+    # via astroid
+markupsafe==1.1.1
+    # via jinja2
 matplotlib==3.0.3
-mccabe==0.6.1             # via flake8, pylint
-more-itertools==6.0.0     # via pytest
-mypy-extensions==0.4.1    # via mypy, trio-typing
+    # via -r dev-requirements.in
+mccabe==0.6.1
+    # via
+    #   flake8
+    #   pylint
+more-itertools==6.0.0
+    # via pytest
+mypy-extensions==0.4.1
+    # via
+    #   mypy
+    #   trio-typing
 mypy==0.670
-numpy==1.16.2             # via matplotlib
-outcome==1.0.0            # via trio
-packaging==19.0           # via sphinx
-pathtools==0.1.2          # via watchdog
+    # via
+    #   -r dev-requirements.in
+    #   trio-typing
+numpy==1.16.2
+    # via matplotlib
+outcome==1.0.0
+    # via trio
+packaging==19.0
+    # via
+    #   bleach
+    #   sphinx
+pathtools==0.1.2
+    # via watchdog
 pex==1.6.3
+    # via -r dev-requirements.in
 pip-tools==3.6.1
-pkginfo==1.5.0.1          # via twine
-pluggy==0.9.0             # via pytest, tox
+    # via -r dev-requirements.in
+pkginfo==1.5.0.1
+    # via twine
+pluggy==0.9.0
+    # via
+    #   pytest
+    #   tox
 pudb==2018.1
-py==1.8.0                 # via pytest, tox
-pycodestyle==2.5.0        # via flake8
-pycparser==2.19           # via cffi
-pyflakes==2.1.1           # via flake8
-pygments==2.3.1           # via cuvner, pudb, readme-renderer, sphinx
+    # via -r dev-requirements.in
+py==1.8.0
+    # via
+    #   pytest
+    #   tox
+pycodestyle==2.5.0
+    # via flake8
+pycparser==2.19
+    # via cffi
+pyflakes==2.1.1
+    # via flake8
+pygments==2.3.1
+    # via
+    #   cuvner
+    #   pudb
+    #   readme-renderer
+    #   sphinx
 pylint==2.3.1
-pyparsing==2.4.0          # via matplotlib, packaging
+    # via -r dev-requirements.in
+pyparsing==2.4.0
+    # via
+    #   matplotlib
+    #   packaging
 pytest-cov==2.6.1
+    # via -r dev-requirements.in
 pytest-trio==0.5.2
+    # via -r dev-requirements.in
 pytest==4.3.1
-python-dateutil==2.8.0    # via matplotlib
-python-xlib==0.25         # via sneakysnek
-pytz==2019.1              # via babel
-pyyaml==5.1               # via watchdog
+    # via
+    #   -r dev-requirements.in
+    #   pytest-cov
+    #   pytest-trio
+python-dateutil==2.8.0
+    # via matplotlib
+python-xlib==0.25
+    # via sneakysnek
+pytz==2019.1
+    # via babel
+pyyaml==5.1
+    # via watchdog
 q==2.6
-readme-renderer==24.0     # via twine
-requests-toolbelt==0.9.1  # via twine
-requests==2.21.0          # via requests-toolbelt, sphinx, twine
-six==1.12.0               # via astroid, bleach, cuvner, cycler, packaging, pip-tools, pytest, python-dateutil, python-xlib, readme-renderer, tox
+    # via -r dev-requirements.in
+readme-renderer==24.0
+    # via twine
+requests-toolbelt==0.9.1
+    # via twine
+requests==2.21.0
+    # via
+    #   requests-toolbelt
+    #   sphinx
+    #   twine
+six==1.12.0
+    # via
+    #   astroid
+    #   bleach
+    #   cuvner
+    #   cycler
+    #   packaging
+    #   pip-tools
+    #   pytest
+    #   python-dateutil
+    #   python-xlib
+    #   readme-renderer
+    #   tox
 sneakysnek==0.1.1
-sniffio==1.0.0            # via trio
-snowballstemmer==1.2.1    # via sphinx
-sortedcontainers==2.1.0   # via trio
+    # via -r dev-requirements.in
+sniffio==1.0.0
+    # via trio
+snowballstemmer==1.2.1
+    # via sphinx
+sortedcontainers==2.1.0
+    # via trio
 sounddevice==0.3.13
+    # via -r dev-requirements.in
 sphinx-rtd-theme==0.4.3
+    # via -r dev-requirements.in
 sphinx==2.0.1
-sphinxcontrib-applehelp==1.0.1  # via sphinx
-sphinxcontrib-devhelp==1.0.1  # via sphinx
-sphinxcontrib-htmlhelp==1.0.2  # via sphinx
-sphinxcontrib-jsmath==1.0.1  # via sphinx
-sphinxcontrib-qthelp==1.0.2  # via sphinx
-sphinxcontrib-serializinghtml==1.1.3  # via sphinx
-toml==0.10.0              # via black, tox
+    # via
+    #   -r dev-requirements.in
+    #   sphinx-rtd-theme
+sphinxcontrib-applehelp==1.0.1
+    # via sphinx
+sphinxcontrib-devhelp==1.0.1
+    # via sphinx
+sphinxcontrib-htmlhelp==1.0.2
+    # via sphinx
+sphinxcontrib-jsmath==1.0.1
+    # via sphinx
+sphinxcontrib-qthelp==1.0.2
+    # via sphinx
+sphinxcontrib-serializinghtml==1.1.3
+    # via sphinx
+toml==0.10.0
+    # via
+    #   black
+    #   tox
 tox==3.7.0
-tqdm==4.31.1              # via twine
+    # via -r dev-requirements.in
+tqdm==4.31.1
+    # via twine
 trio-typing==0.2.0
-trio==0.11.0              # via pytest-trio, trio-typing
+    # via -r dev-requirements.in
+trio==0.11.0
+    # via
+    #   pytest-trio
+    #   trio-typing
 twine==1.13.0
-typed-ast==1.3.1          # via astroid, mypy
-typing-extensions==3.7.2  # via trio-typing
-unidiff==0.5.5            # via cuvner
-urllib3==1.24.2           # via requests
-urwid==2.0.1              # via pudb
+    # via -r dev-requirements.in
+typed-ast==1.3.1
+    # via
+    #   astroid
+    #   mypy
+typing-extensions==3.7.2
+    # via trio-typing
+unidiff==0.5.5
+    # via cuvner
+urllib3==1.24.2
+    # via requests
+urwid==2.0.1
+    # via pudb
 versioneer==0.18
-virtualenv==16.4.3        # via tox
-watchdog==0.9.0           # via cuvner
-webencodings==0.5.1       # via bleach
-wrapt==1.11.1             # via astroid
+    # via -r dev-requirements.in
+virtualenv==16.4.3
+    # via tox
+watchdog==0.9.0
+    # via cuvner
+webencodings==0.5.1
+    # via bleach
+wrapt==1.11.1
+    # via astroid
